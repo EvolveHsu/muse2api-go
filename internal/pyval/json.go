@@ -105,7 +105,16 @@ func writeJSON(b *strings.Builder, v any, ascii bool, itemSep, kvSep string) {
 	case int64:
 		b.WriteString(strconv.FormatInt(t, 10))
 	default:
-		b.WriteString(strconv.Quote(fmt.Sprintf("%v", v)))
+		// 其余 Go 类型（自定义 struct、[]map[string]any、[]string 等）交给 encoding/json：
+		// 键序按字母排，但值不会像 fmt.Sprintf 那样被糊成字符串。
+		var buf strings.Builder
+		enc := json.NewEncoder(&buf)
+		enc.SetEscapeHTML(false)
+		if err := enc.Encode(v); err != nil {
+			b.WriteString(strconv.Quote(fmt.Sprintf("%v", v)))
+			return
+		}
+		b.WriteString(strings.TrimRight(buf.String(), "\n"))
 	}
 }
 

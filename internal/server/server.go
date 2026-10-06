@@ -78,6 +78,14 @@ type App struct {
 
 	routes []*route
 
+	// mu 护着运行时可改的配置（目前只有 API Key 轮换）；
+	// updMu/kaMu 对应 _UPDATE_CACHE 与保活状态那两份模块级可变对象。
+	mu       sync.Mutex
+	updMu    sync.Mutex
+	updCache updateCache
+	kaMu     sync.Mutex
+	kaState  keepaliveState
+
 	// now 是墙钟（落盘时间戳），mono 是单调钟（deadline）。Python 也是这么混用的，
 	// 不「顺手统一」：前者会被系统校时拉动，后者不会 —— Go 的 time.Time 自带单调读数，
 	// 只要两端都取自 time.Now，Sub/Before 走的就是单调钟。

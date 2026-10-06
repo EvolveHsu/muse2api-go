@@ -2,6 +2,8 @@ package server
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"net/http/httptest"
 	"os"
@@ -49,11 +51,7 @@ func TestV1ReadOnlyContract(t *testing.T) {
 		}
 	}
 
-	cases := []struct {
-		name string
-		mode string
-		drop []string
-	}{
+	cases := []replayCase{
 		{"healthz", "body", []string{"time"}},
 		{"readyz", "shape", nil},
 		{"models_anon", "body", nil},
@@ -85,7 +83,16 @@ func TestV1ReadOnlyContract(t *testing.T) {
 		{"responses_empty", "body", nil}, {"responses_bad_input", "body", nil},
 		{"responses_noauth", "body", nil}, {"edits_noauth", "body", nil},
 		{"edits_badjson", "body", nil},
+		// 管理面：只读几条按线上态用 shape/shallow 比，写接口用坏 token 比 401 壳。
+		{"status_ok", "shape", nil}, {"accounts_ok", "shape", nil}, {"media_list", "shape", nil},
+		{"apikey_ok", "shape", nil}, {"tasks_limit", "shape", nil}, {"tasks_bad_limit", "body", nil},
+		{"extension_files", "shape", nil}, {"keepalive_status", "shallow", nil},
+		{"update_check", "shallow", nil}, {"repo_status", "shallow", nil},
+		{"cookie_helper", "blob", nil}, {"cookie_helper_dl", "blob", nil},
+		{"index", "blob", nil}, {"admin_page", "blob", nil},
+		{"extension", "head", nil}, {"anon_admin", "shape", nil},
 	}
+	cases = append(cases, writeProbeCases(g)...)
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			row := section(t, g, c.name)
@@ -123,8 +130,33 @@ func TestV1ReadOnlyContract(t *testing.T) {
 				if !sameShape(shapeOf(t, row), decode(rec.Body.Bytes())) {
 					t.Errorf("键集合/类型不同\n py=%v\n go=%s", row["body_shape"], rec.Body.String())
 				}
+			case "shallow":
+				pyKeys := shapeKeys(t, row)
+				gm, _ := decode(rec.Body.Bytes()).(map[string]any)
+				var mine []string
+				for k := range gm {
+					mine = append(mine, k)
+				}
+				sort.Strings(mine)
+				if strings.Join(mine, ",") != strings.Join(pyKeys, ",") {
+					t.Errorf("顶层键集合不同\n py=%v\n go=%v", pyKeys, mine)
+				}
+			case "blob":
+				if got := "fmt-x"; got != "" {
+					_ = got
+				}
+				sum := sha256.Sum256(rec.Body.Bytes())
+				if got := hex.EncodeToString(sum[:]); got != row["blob_sha256"] {
+					t.Errorf("静态资源与线上不一致: go=%s py=%v", got, row["blob_sha256"])
+				}
+				if ct := rec.Header().Get("content-type"); ct != wantHead["content-type"] {
+					t.Errorf("content-type go=%q py=%q", ct, wantHead["content-type"])
+				}
 			case "head":
 				for k, want := range wantHead {
+					if k == "etag" || k == "last-modified" {
+						continue // 由各自实现按文件时间生成，不参与比对
+					}
 					if k == "vary" && !strings.Contains(rec.Header().Get("vary"), "Origin") {
 						t.Errorf("vary 里应有 Origin，go=%q", rec.Header().Get("vary"))
 						continue
@@ -163,8 +195,17 @@ func TestGoldenCasesAllAccountedFor(t *testing.T) {
 		"chat_empty": true, "chat_bad_msgs": true, "chat_bad_role": true, "chat_noauth": true,
 		"responses_empty": true, "responses_bad_input": true, "responses_noauth": true,
 		"edits_noauth": true, "edits_badjson": true,
-		"cors_get": true, "cors_options": true,
+		"status_ok": true, "accounts_ok": true, "media_list": true, "apikey_ok": true,
+		"tasks_limit": true, "tasks_bad_limit": true, "extension_files": true,
+		"keepalive_status": true, "update_check": true, "repo_status": true, "anon_admin": true,
+		"cookie_helper": true, "cookie_helper_dl": true, "index": true, "admin_page": true,
+		"extension": true,
+		"cors_get":  true, "cors_options": true,
 	}
+	for _, c := range writeProbeCases(g) {
+		replayed[c.name] = true
+	}
+
 	deferred := map[string]string{
 		"openapi": "D3：内嵌 /openapi.json 静态文件",
 		"docs":    "D3：内嵌 /docs",
@@ -306,6 +347,7 @@ func testApp(t *testing.T, key string, now time.Time) (*App, string) {
 	cfg := &config.Config{BaseDir: base, Host: "0.0.0.0", Port: 18610,
 		Chromium: "/usr/bin/chromium", CdpPort: 19210, HomeDir: base,
 		ExtraPath: "/snap/bin", SiteURL: "https://muse.ai/", LoginWait: 60,
+		ImageTimeout: 240, VideoTimeout: 600, ChatTimeout: 300,
 		ProfileRoot: filepath.Join(base, "profiles"), APIKey: key}
 	cfg.EnsureDirs()
 	a := NewApp(cfg, store.New(cfg), engine.NewEngine(cfg, nil, nil))
@@ -493,4 +535,56 @@ func sameShape(shape any, got any) bool {
 		}
 		return true
 	}
+}
+
+// replayCase 是一条金样本用例的回放方式。
+type replayCase struct {
+	name string
+	mode string
+	drop []string
+}
+
+// writeProbeCases 把金样本里「坏 token 探写接口」的用例搬进回放表，
+// 只取已经实现的那几条 —— 没实现的留在台账的 deferred 里点名。
+func writeProbeCases(g map[string]any) []replayCase {
+	done := map[string]bool{
+		"write_post_admin_accounts": true, "write_patch_admin_accounts_capnope": true,
+		"write_delete_admin_accounts_capnope": true, "write_post_admin_apikey_rotate": true,
+		"write_post_admin_tasks_clear": true, "write_delete_admin_tasks_capnope": true,
+		"write_post_admin_accounts_capnope_cookies": true,
+		"write_post_admin_update_upgrade":           true, "write_post_admin_repo_pull": true,
+		"write_post_admin_repo_push": true,
+	}
+	var names []string
+	for k := range g {
+		if strings.HasPrefix(k, "write_") {
+			names = append(names, k)
+		}
+	}
+	sort.Strings(names)
+	var out []replayCase
+	for _, k := range names {
+		if done[k] {
+			out = append(out, replayCase{k, "body", nil})
+		}
+	}
+	return out
+}
+
+// shapeKeys 只取顶层键集合：线上态数据（账号数、任务列表、GitHub 检测结果）
+// 没法逐值比，但字段集合必须齐 —— 面板就是按这些键渲染的。
+func shapeKeys(t *testing.T, row map[string]any) []string {
+	t.Helper()
+	s, _ := row["body_shape"].(map[string]any)
+	if s == nil {
+		t.Fatalf("这一段没有 body_shape")
+	}
+	var out []string
+	for _, k := range arr(s["__keys__"]) {
+		if name, ok := k.(string); ok {
+			out = append(out, name)
+		}
+	}
+	sort.Strings(out)
+	return out
 }
