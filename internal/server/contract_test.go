@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http/httptest"
 	"os"
@@ -8,12 +9,12 @@ import (
 	"reflect"
 	"sort"
 	"strings"
-	"sync"
 	"testing"
 	"time"
 
 	"muse2api-go/internal/config"
 	"muse2api-go/internal/engine"
+	"muse2api-go/internal/pyval"
 	"muse2api-go/internal/store"
 )
 
@@ -73,6 +74,17 @@ func TestV1ReadOnlyContract(t *testing.T) {
 		{"admin_unmatched", "body", nil},
 		{"cors_get", "body", nil},
 		{"cors_options", "head", nil},
+		// 生成类路由：body 合法才会进 handler，所以金样本里这些用例全是「进不去」的分支。
+		{"images_gen_noauth", "body", nil}, {"images_gen_bad", "body", nil},
+		{"images_gen_empty", "body", nil}, {"images_gen_prompt_type", "body", nil},
+		{"images_gen_timeout", "body", nil}, {"images_tasks_empty", "body", nil},
+		{"images_tasks_bad", "body", nil}, {"videos_empty", "body", nil},
+		{"videos_gen_empty", "body", nil}, {"videos_bad", "body", nil},
+		{"chat_empty", "body", nil}, {"chat_bad_msgs", "body", nil},
+		{"chat_bad_role", "body", nil}, {"chat_noauth", "body", nil},
+		{"responses_empty", "body", nil}, {"responses_bad_input", "body", nil},
+		{"responses_noauth", "body", nil}, {"edits_noauth", "body", nil},
+		{"edits_badjson", "body", nil},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -90,9 +102,19 @@ func TestV1ReadOnlyContract(t *testing.T) {
 				}
 				got := decode(rec.Body.Bytes())
 				want := row["body"]
+				if want == nil && row["blob_len"] != nil {
+					// 非 JSON 响应（比如坏 JSON 打穿到 500 的那条）：金样本记的是摘要。
+					if intOf(row["blob_len"]) != rec.Body.Len() {
+						t.Errorf("响应长度不同: go=%d py=%v", rec.Body.Len(), row["blob_len"])
+					}
+					if bh, _ := row["blob_head"].(string); bh != "" && !strings.HasPrefix(rec.Body.String(), bh) {
+						t.Errorf("响应体不同: go=%q py 前缀=%q", rec.Body.String(), bh)
+					}
+					break
+				}
 				for _, k := range c.drop {
-					dropKey(got, k)
-					dropKey(want, k)
+					dropBodyKey(got, k)
+					dropBodyKey(want, k)
 				}
 				if !jsonEquiv(want, got) {
 					t.Errorf("响应体不同\n py=%v\n go=%s", row["body"], rec.Body.String())
@@ -134,6 +156,13 @@ func TestGoldenCasesAllAccountedFor(t *testing.T) {
 		"media_traversal": true, "media_dotdot_plain": true, "media_utf8_name": true,
 		"media_real_0": true, "media_real_1": true,
 		"v1_unmatched": true, "admin_unmatched": true,
+		"images_gen_noauth": true, "images_gen_bad": true, "images_gen_empty": true,
+		"images_gen_prompt_type": true, "images_gen_timeout": true,
+		"images_tasks_empty": true, "images_tasks_bad": true,
+		"videos_empty": true, "videos_gen_empty": true, "videos_bad": true,
+		"chat_empty": true, "chat_bad_msgs": true, "chat_bad_role": true, "chat_noauth": true,
+		"responses_empty": true, "responses_bad_input": true, "responses_noauth": true,
+		"edits_noauth": true, "edits_badjson": true,
 		"cors_get": true, "cors_options": true,
 	}
 	deferred := map[string]string{
@@ -185,8 +214,10 @@ func loadRoutesGolden(t *testing.T) map[string]any {
 	if err != nil {
 		t.Skip("缺 routes_golden.json:", err)
 	}
+	dec := json.NewDecoder(bytes.NewReader(raw))
+	dec.UseNumber() // 保留 Python 的 int/float 之分，回放请求体时 123 不能变成 123.0
 	var g map[string]any
-	if err := json.Unmarshal(raw, &g); err != nil {
+	if err := dec.Decode(&g); err != nil {
 		t.Fatal(err)
 	}
 	return g
@@ -199,6 +230,17 @@ func section(t *testing.T, g map[string]any, name string) map[string]any {
 		t.Fatalf("金样本里没有 %s", name)
 	}
 	return row
+}
+
+func intOf(v any) int {
+	switch t := v.(type) {
+	case float64:
+		return int(t)
+	case json.Number:
+		i, _ := t.Int64()
+		return int(i)
+	}
+	return 0
 }
 
 func sectionShape(t *testing.T, row map[string]any) map[string]any {
@@ -227,6 +269,11 @@ func shapeOf(t *testing.T, row map[string]any) map[string]any {
 // deriveShape 与采集脚本里的 shape() 同构（__type__/__keys__/__items__/__n__/__first__）。
 func deriveShape(v any) any {
 	switch x := v.(type) {
+	case json.Number:
+		if strings.ContainsAny(x.String(), ".eE") {
+			return map[string]any{"__type__": "float", "__value__": x}
+		}
+		return map[string]any{"__type__": "int", "__value__": x}
 	case map[string]any:
 		keys := make([]any, 0, len(x))
 		items := make(map[string]any, len(x))
@@ -261,7 +308,7 @@ func testApp(t *testing.T, key string, now time.Time) (*App, string) {
 		ExtraPath: "/snap/bin", SiteURL: "https://muse.ai/", LoginWait: 60,
 		ProfileRoot: filepath.Join(base, "profiles"), APIKey: key}
 	cfg.EnsureDirs()
-	a := NewApp(cfg, store.New(cfg), engine.NewEngine(cfg, nil, nil), &sync.Mutex{})
+	a := NewApp(cfg, store.New(cfg), engine.NewEngine(cfg, nil, nil))
 	a.now = func() time.Time { return now }
 	return a, cfg.MediaDir()
 }
@@ -270,11 +317,11 @@ func do(a *App, row map[string]any) *httptest.ResponseRecorder {
 	rec := httptest.NewRecorder()
 	method, _ := row["method"].(string)
 	path, _ := row["path"].(string)
-	var body *strings.Reader
-	if raw, ok := row["raw_body"].(string); ok {
+	body := strings.NewReader("")
+	if raw, ok := row["request_raw"].(string); ok && raw != "" {
 		body = strings.NewReader(raw)
-	} else {
-		body = strings.NewReader("")
+	} else if rb, ok := row["request_body"].(map[string]any); ok {
+		body = strings.NewReader(pyval.Dumps(rb, false, false))
 	}
 	req := httptest.NewRequest(method, path, body)
 	switch auth, _ := row["auth"].(string); auth {
@@ -282,6 +329,9 @@ func do(a *App, row map[string]any) *httptest.ResponseRecorder {
 		req.Header.Set("Authorization", "Bearer definitely-not-the-key")
 	case "good":
 		req.Header.Set("Authorization", "Bearer cap-key")
+	}
+	if ct, ok := row["request_ctype"].(string); ok && ct != "" {
+		req.Header.Set("Content-Type", ct)
 	}
 	for k, v := range probeHeaders(row) {
 		req.Header.Set(k, v)
@@ -306,8 +356,10 @@ func probeHeaders(row map[string]any) map[string]string {
 // --- 比对小工具 ---
 
 func decode(b []byte) any {
+	dec := json.NewDecoder(bytes.NewReader(b))
+	dec.UseNumber()
 	var v any
-	if err := json.Unmarshal(b, &v); err != nil {
+	if err := dec.Decode(&v); err != nil {
 		return string(b)
 	}
 	return v
@@ -335,7 +387,7 @@ func num(v any) float64 {
 	return 0
 }
 
-func dropKey(v any, key string) {
+func dropBodyKey(v any, key string) {
 	if m, ok := v.(map[string]any); ok {
 		delete(m, key)
 	}
@@ -429,6 +481,9 @@ func sameShape(shape any, got any) bool {
 			return ok
 		case "int", "float":
 			_, ok := got.(float64)
+			if !ok {
+				_, ok = got.(json.Number)
+			}
 			return ok
 		case "bool":
 			_, ok := got.(bool)

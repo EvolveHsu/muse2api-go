@@ -185,7 +185,10 @@ for c in CASES:
         continue
     heads = {k.lower(): v for k, v in r.headers.items() if k.lower() not in DROP_HEADERS}
     row = {"method": c["method"], "path": c["path"], "auth": c["auth"],
-           "status": r.status_code, "headers": heads}
+           "status": r.status_code, "headers": heads,
+           # 回放要能重放同一个请求：把请求体与实际生效的 content-type 也记下来。
+           "request_body": c["body"], "request_raw": c["raw"],
+           "request_ctype": r.request.headers.get("Content-Type", "")}
     ct = (r.headers.get("content-type") or "").lower()
     if c["record"] == "status":
         # 只留状态码与头：路径穿越这类探针万一真的读到了线上文件，

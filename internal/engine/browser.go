@@ -539,3 +539,20 @@ func asString(v any) string {
 		return fmt.Sprint(v)
 	}
 }
+
+// LastHTTPRenew / SetLastHTTPRenew 暴露那张「上次 HTTP 续签时间」表。
+// Python 里 app.py 直接读写 engine._last_http_renew（跨模块访问私有属性），
+// Go 没有这种走法，只能给两个访问器 —— 语义还是那份：同一份数据、同一个 map。
+func (e *Engine) LastHTTPRenew(accountID string) float64 {
+	if e.lastHTTPRenew == nil {
+		return 0
+	}
+	return e.lastHTTPRenew[accountID]
+}
+
+func (e *Engine) SetLastHTTPRenew(accountID string, ts float64) {
+	if e.lastHTTPRenew == nil {
+		e.lastHTTPRenew = map[string]float64{}
+	}
+	e.lastHTTPRenew[accountID] = ts
+}

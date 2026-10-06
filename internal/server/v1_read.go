@@ -180,6 +180,7 @@ func (a *App) registerRoutes() {
 		}
 		return fileResponse(c, p, name, st), nil
 	})
+	a.registerV1()
 }
 
 var _ = time.Second

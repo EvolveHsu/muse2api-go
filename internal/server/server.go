@@ -69,19 +69,30 @@ type route struct {
 
 // App 持有 app.py 的模块级状态：store/engine 单例、两把锁、路由表。
 type App struct {
-	CFG     *config.Config
-	Store   *store.Store
-	Engine  *engine.Engine
-	genLock *sync.Mutex
+	CFG    *config.Config
+	Store  *store.Store
+	Engine *engine.Engine
+	// browser 对应 GEN_LOCK（全局串行），imgTaskLock 对应 IMAGE_TASK_LOCK（只管入队那一段）。
+	browser     *browserLock
+	imgTaskLock *sync.Mutex
 
 	routes []*route
 
-	// now 是时间接缝：契约测试要能把 healthz 的 time 固定下来。
-	now func() time.Time
+	// now 是墙钟（落盘时间戳），mono 是单调钟（deadline）。Python 也是这么混用的，
+	// 不「顺手统一」：前者会被系统校时拉动，后者不会 —— Go 的 time.Time 自带单调读数，
+	// 只要两端都取自 time.Now，Sub/Before 走的就是单调钟。
+	now  func() time.Time
+	mono func() time.Time
 }
 
-func NewApp(cfg *config.Config, st *store.Store, eng *engine.Engine, genLock *sync.Mutex) *App {
-	a := &App{CFG: cfg, Store: st, Engine: eng, genLock: genLock, now: time.Now}
+func NewApp(cfg *config.Config, st *store.Store, eng *engine.Engine) *App {
+	a := &App{
+		CFG: cfg, Store: st, Engine: eng,
+		browser:     newBrowserLock(),
+		imgTaskLock: &sync.Mutex{},
+		now:         time.Now,
+		mono:        time.Now,
+	}
 	a.registerRoutes()
 	return a
 }

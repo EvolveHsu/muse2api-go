@@ -445,7 +445,7 @@ func pos(v any) bool {
 // 键序 = 字段声明顺序，幂等哈希与任务落盘都会用到它。
 func dumpImage(r *ImageRequest) pyval.Obj {
 	return pyval.Obj{
-		{"prompt", r.Prompt}, {"model", r.Model}, {"n", numOr(r.N)},
+		{"prompt", r.Prompt}, {"model", r.Model}, {"n", numOrNull(r.N)},
 		{"size", ptrVal(r.Size)}, {"aspect_ratio", ptrVal(r.AspectRatio)},
 		{"response_format", r.ResponseFormat}, {"timeout", numPtr(r.Timeout)},
 		{"extra", ptrVal(r.Extra)}, {"image", r.Image}, {"images", anySlice(r.Images)},
@@ -506,7 +506,7 @@ func boolPtr(b *bool) any {
 	return *b
 }
 
-func numOr(n json.Number) any {
+func numOrNull(n json.Number) any {
 	if n.String() == "" {
 		return nil
 	}
