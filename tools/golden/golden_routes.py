@@ -72,6 +72,13 @@ case("media_missing", "GET", "/v1/media/muse2api-does-not-exist.png", "none")
 case("media_traversal", "GET", "/v1/media/..%2Faccounts.json", "none", record="status")
 case("media_dotdot_plain", "GET", "/v1/media/..%2f..%2fetc%2fpasswd", "none", record="status")
 case("media_utf8_name", "GET", "/v1/media/%E7%8C%AB.png", "none", record="status")
+# 反斜杠与「..」子串走的是 handler 里的 400 非法文件名；编码斜杠在路由层就 404。
+# Go 的 http.ServeMux 会把这类路径 301 到清理后的地址 —— 那是不一致，必须钉住。
+case("media_backslash", "GET", "/v1/media/a%5Cb.png", "none", record="status")
+case("media_backslash_traversal", "GET", "/v1/media/..%5C..%5Capp.py", "none", record="status")
+case("media_dots_only", "GET", "/v1/media/%2E%2E.png", "none", record="status")
+case("media_enc_slash_only", "GET", "/v1/media/%2F.png", "none", record="status")
+case("media_space_name", "GET", "/v1/media/a%20b.png", "none", record="status")
 case("task_missing", "GET", "/v1/images/tasks/nope", "good")
 case("video_missing", "GET", "/v1/videos/nope", "good")
 case("video_gen_missing", "GET", "/v1/videos/generations/nope", "good")
@@ -144,6 +151,15 @@ case("cors_options", "OPTIONS", "/v1/chat/completions", "none", headers={
     "Origin": "https://muse.ai", "Access-Control-Request-Method": "POST",
     "Access-Control-Request-Headers": "authorization,content-type"})
 
+# FileResponse 的 content-type / content-disposition 是这份契约里唯一「猜不出来」的部分
+# （mimetypes 表两边不一样），所以拿线上真实媒体文件各探一次，只记头与摘要。
+try:
+    _ml = requests.get(BASE + "/admin/media", headers=GOOD, timeout=25).json().get("media") or []
+    for _i, _m in enumerate(_ml[:4]):
+        case("media_real_%d" % _i, "GET", _m["url"], "none", record="blob")
+except Exception as exc:  # noqa: BLE001
+    fail.append("media_real probe: %s" % exc)
+
 out = {}
 FILES = {}
 fail = []
@@ -173,8 +189,13 @@ for c in CASES:
     ct = (r.headers.get("content-type") or "").lower()
     if c["record"] == "status":
         # 只留状态码与头：路径穿越这类探针万一真的读到了线上文件，
-        # 内容（账号 cookie 等）绝不能进金样本。
+        # 内容（账号 cookie 等）绝不能进金样本。400+ 的响应体是错误壳，安全且必要。
         row["served_bytes"] = len(r.content)
+        if r.status_code >= 400:
+            try:
+                row["body"] = redact(r.json())
+            except Exception:  # noqa: BLE001
+                row["body_text"] = r.text[:200]
     elif c["record"] == "blob" or "json" not in ct:
         row["blob_sha256"] = hashlib.sha256(r.content).hexdigest()
         row["blob_len"] = len(r.content)

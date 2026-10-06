@@ -10,7 +10,7 @@
     },
     "body": {
       "status": "ok",
-      "time": 1791264568
+      "time": 1791264862
     }
   },
   "readyz": {
@@ -124,7 +124,10 @@
       "content-type": "application/json",
       "vary": "Origin"
     },
-    "served_bytes": 22
+    "served_bytes": 22,
+    "body": {
+      "detail": "Not Found"
+    }
   },
   "media_dotdot_plain": {
     "method": "GET",
@@ -135,7 +138,10 @@
       "content-type": "application/json",
       "vary": "Origin"
     },
-    "served_bytes": 22
+    "served_bytes": 22,
+    "body": {
+      "detail": "Not Found"
+    }
   },
   "media_utf8_name": {
     "method": "GET",
@@ -146,7 +152,105 @@
       "content-type": "application/json",
       "vary": "Origin"
     },
-    "served_bytes": 88
+    "served_bytes": 88,
+    "body": {
+      "error": {
+        "message": "文件不存在",
+        "type": "not_found_error",
+        "param": null,
+        "code": 404
+      }
+    }
+  },
+  "media_backslash": {
+    "method": "GET",
+    "path": "/v1/media/a%5Cb.png",
+    "auth": "none",
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "served_bytes": 94,
+    "body": {
+      "error": {
+        "message": "非法文件名",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 400
+      }
+    }
+  },
+  "media_backslash_traversal": {
+    "method": "GET",
+    "path": "/v1/media/..%5C..%5Capp.py",
+    "auth": "none",
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "served_bytes": 94,
+    "body": {
+      "error": {
+        "message": "非法文件名",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 400
+      }
+    }
+  },
+  "media_dots_only": {
+    "method": "GET",
+    "path": "/v1/media/%2E%2E.png",
+    "auth": "none",
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "served_bytes": 94,
+    "body": {
+      "error": {
+        "message": "非法文件名",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 400
+      }
+    }
+  },
+  "media_enc_slash_only": {
+    "method": "GET",
+    "path": "/v1/media/%2F.png",
+    "auth": "none",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "served_bytes": 22,
+    "body": {
+      "detail": "Not Found"
+    }
+  },
+  "media_space_name": {
+    "method": "GET",
+    "path": "/v1/media/a%20b.png",
+    "auth": "none",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "served_bytes": 88,
+    "body": {
+      "error": {
+        "message": "文件不存在",
+        "type": "not_found_error",
+        "param": null,
+        "code": 404
+      }
+    }
   },
   "task_missing": {
     "method": "GET",
@@ -263,7 +367,7 @@
               },
               "expires_at": {
                 "__type__": "int",
-                "__value__": 1791436576
+                "__value__": 1791437489
               },
               "expiry_anchor": {
                 "__type__": "NoneType",
@@ -283,7 +387,7 @@
               },
               "last_keepalive": {
                 "__type__": "int",
-                "__value__": 1791263778
+                "__value__": 1791264693
               },
               "use_count": {
                 "__type__": "int",
@@ -299,11 +403,11 @@
               },
               "synced_at": {
                 "__type__": "int",
-                "__value__": 1791263778
+                "__value__": 1791264693
               },
               "checked_at": {
                 "__type__": "int",
-                "__value__": 1791263778
+                "__value__": 1791264693
               },
               "cookie_count": {
                 "__type__": "int",
@@ -487,7 +591,7 @@
               },
               "expires_at": {
                 "__type__": "int",
-                "__value__": 1791436576
+                "__value__": 1791437489
               },
               "expiry_anchor": {
                 "__type__": "NoneType",
@@ -507,7 +611,7 @@
               },
               "last_keepalive": {
                 "__type__": "int",
-                "__value__": 1791263778
+                "__value__": 1791264693
               },
               "use_count": {
                 "__type__": "int",
@@ -523,11 +627,11 @@
               },
               "synced_at": {
                 "__type__": "int",
-                "__value__": 1791263778
+                "__value__": 1791264693
               },
               "checked_at": {
                 "__type__": "int",
-                "__value__": 1791263778
+                "__value__": 1791264693
               },
               "cookie_count": {
                 "__type__": "int",
@@ -829,7 +933,7 @@
         },
         "last_run": {
           "__type__": "int",
-          "__value__": 1791263775
+          "__value__": 1791264688
         },
         "last_result": {
           "__type__": "object",
@@ -843,7 +947,7 @@
           "__items__": {
             "checked_at": {
               "__type__": "int",
-              "__value__": 1791263775
+              "__value__": 1791264688
             },
             "refreshed_count": {
               "__type__": "int",
@@ -891,7 +995,7 @@
                   },
                   "expires_at": {
                     "__type__": "int",
-                    "__value__": 1791436576
+                    "__value__": 1791437489
                   },
                   "quota": {
                     "__type__": "NoneType",
@@ -913,7 +1017,7 @@
         },
         "next_run": {
           "__type__": "int",
-          "__value__": 1791264675
+          "__value__": 1791265588
         }
       }
     }
@@ -1036,7 +1140,7 @@
         },
         "checked_at": {
           "__type__": "int",
-          "__value__": 1791264568
+          "__value__": 1791264799
         }
       }
     }
@@ -1159,7 +1263,7 @@
         },
         "checked_at": {
           "__type__": "int",
-          "__value__": 1791264568
+          "__value__": 1791264799
         }
       }
     }
@@ -1993,10 +2097,42 @@
     "blob_len": 2,
     "blob_head": "OK"
   },
+  "media_real_0": {
+    "method": "GET",
+    "path": "/v1/media/2fefc0ec0931492da3529cca7cdec6be.webp",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "application/octet-stream",
+      "accept-ranges": "bytes",
+      "last-modified": "Mon, 05 Oct 2026 14:58:23 GMT",
+      "etag": "\"588254098bf073860fddf38f34e314e8\"",
+      "vary": "Origin"
+    },
+    "blob_sha256": "35913b20bce7d0080095133ce08202d2fc767790ad4d0c79fa05d0cead8d64ca",
+    "blob_len": 115944,
+    "blob_head": ""
+  },
+  "media_real_1": {
+    "method": "GET",
+    "path": "/v1/media/.gitkeep",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "application/octet-stream",
+      "accept-ranges": "bytes",
+      "last-modified": "Sun, 04 Oct 2026 11:19:12 GMT",
+      "etag": "\"70424634ba813e962b1a00d211180f6c\"",
+      "vary": "Origin"
+    },
+    "blob_sha256": "9d9f2cc91d124e1c4a995d0c99dfa67fda7fa98b6b9ab972c18e6c36dd3de7d2",
+    "blob_len": 14,
+    "blob_head": ""
+  },
   "__meta__": {
     "port": 18610,
     "has_api_key": true,
-    "n_cases": 70,
+    "n_cases": 77,
     "fails": []
   }
 }
