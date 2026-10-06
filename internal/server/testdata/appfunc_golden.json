@@ -1,0 +1,1393 @@
+{
+  "resolve_model": [
+    [
+      "",
+      "muse-image",
+      "muse-spark"
+    ],
+    [
+      null,
+      "muse-image",
+      "muse-spark"
+    ],
+    [
+      "GPT-4",
+      "muse-spark",
+      "muse-spark"
+    ],
+    [
+      "gpt-4o-mini",
+      "muse-spark",
+      "muse-spark"
+    ],
+    [
+      "claude-3-5-sonnet-latest",
+      "muse-spark",
+      "muse-spark"
+    ],
+    [
+      "o3",
+      "muse-spark",
+      "muse-spark"
+    ],
+    [
+      "codex-mini-latest",
+      "muse-spark",
+      "muse-spark"
+    ],
+    [
+      "deepseek-reasoner",
+      "muse-spark",
+      "muse-spark"
+    ],
+    [
+      "gemini-2.5-flash",
+      "muse-spark",
+      "muse-spark"
+    ],
+    [
+      "koda",
+      "muse-spark",
+      "muse-spark"
+    ],
+    [
+      "muse-text",
+      "muse-spark",
+      "muse-spark"
+    ],
+    [
+      "MUSE-IMG",
+      "muse-image",
+      "muse-image"
+    ],
+    [
+      "dall-e-3",
+      "muse-image",
+      "muse-image"
+    ],
+    [
+      "flux",
+      "muse-image",
+      "muse-image"
+    ],
+    [
+      "sora",
+      "muse-video",
+      "muse-video"
+    ],
+    [
+      "sora-2",
+      "muse-video",
+      "muse-video"
+    ],
+    [
+      "veo-3",
+      "muse-video",
+      "muse-video"
+    ],
+    [
+      "kling",
+      "muse-video",
+      "muse-video"
+    ],
+    [
+      "muse-vid",
+      "muse-video",
+      "muse-video"
+    ],
+    [
+      "unknown-model",
+      "unknown-model",
+      "unknown-model"
+    ],
+    [
+      "  GPT-4O  ",
+      "muse-spark",
+      "muse-spark"
+    ],
+    [
+      "gpt-image-1",
+      "muse-image",
+      "muse-image"
+    ],
+    [
+      "midjourney",
+      "muse-image",
+      "muse-image"
+    ],
+    [
+      "runway",
+      "muse-video",
+      "muse-video"
+    ]
+  ],
+  "alias_count": 47,
+  "alias_keys_sample": [
+    "claude-3-5-sonnet",
+    "claude-3-5-sonnet-latest",
+    "claude-3-7-sonnet",
+    "claude-3-haiku",
+    "claude-3-opus",
+    "claude-opus-4"
+  ],
+  "build_image_prompt": [
+    [
+      {
+        "prompt": "  一只猫  "
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：一只猫",
+      {
+        "prompt": "  一只猫  ",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": null,
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "aspect_ratio": "9:16"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，【画面构图与比例要求】：严格 9:16 竖屏满屏画幅（9:16 vertical portrait aspect ratio，高大于宽的手机全屏竖版画面），绝对不要生成横屏，保持垂直构图",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": "9:16",
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "size": "720x1280"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，【画面构图与比例要求】：严格 9:16 竖屏满屏画幅（9:16 vertical portrait aspect ratio，高大于宽的手机全屏竖版画面），绝对不要生成横屏，保持垂直构图",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": "720x1280",
+        "aspect_ratio": null,
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "size": "portrait"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，【画面构图与比例要求】：严格 9:16 竖屏满屏画幅（9:16 vertical portrait aspect ratio，高大于宽的手机全屏竖版画面），绝对不要生成横屏，保持垂直构图",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": "portrait",
+        "aspect_ratio": null,
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "aspect_ratio": "竖屏"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，【画面构图与比例要求】：严格 9:16 竖屏满屏画幅（9:16 vertical portrait aspect ratio，高大于宽的手机全屏竖版画面），绝对不要生成横屏，保持垂直构图",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": "竖屏",
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "aspect_ratio": "16:9"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，【画面构图与比例要求】：16:9 宽屏横屏画幅（16:9 widescreen landscape aspect ratio）",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": "16:9",
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "size": "1920x1080"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，【画面构图与比例要求】：16:9 宽屏横屏画幅（16:9 widescreen landscape aspect ratio）",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": "1920x1080",
+        "aspect_ratio": null,
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "aspect_ratio": "1:1"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，【画面构图与比例要求】：1:1 正方形画幅（1:1 square aspect ratio）",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": "1:1",
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "size": "1024x1024"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，【画面构图与比例要求】：1:1 正方形画幅（1:1 square aspect ratio）",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": "1024x1024",
+        "aspect_ratio": null,
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "aspect_ratio": "4:3"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，【画面构图与比例要求】：4:3 比例画幅",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": "4:3",
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "aspect_ratio": "3:4"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，【画面构图与比例要求】：3:4 竖向画幅",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": "3:4",
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "aspect_ratio": "21:9"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，【画面构图与比例要求】：21:9 画面比例",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": "21:9",
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "size": "800x600"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，尺寸/比例：800x600",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": "800x600",
+        "aspect_ratio": null,
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "reference_image": "data:image/png;base64,AA=="
+      },
+      "基于我本次上传附带的参考图片进行生图/编辑：猫，【纯净画面要求】：彻底清除并去除参考图中的所有文字、水印、签名、角标及Logo标记（clean image without any watermark, text, or logo），输出绝对纯净无字画面",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": null,
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": "data:image/png;base64,AA==",
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "image": {
+          "url": "https://x/a.png"
+        }
+      },
+      "基于我本次上传附带的参考图片进行生图/编辑：猫，【纯净画面要求】：彻底清除并去除参考图中的所有文字、水印、签名、角标及Logo标记（clean image without any watermark, text, or logo），输出绝对纯净无字画面",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": null,
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": {
+          "url": "https://x/a.png"
+        },
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "images": [
+          {
+            "image_url": "https://x/a.png"
+          }
+        ]
+      },
+      "基于我本次上传附带的参考图片进行生图/编辑：猫，【纯净画面要求】：彻底清除并去除参考图中的所有文字、水印、签名、角标及Logo标记（clean image without any watermark, text, or logo），输出绝对纯净无字画面",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": null,
+        "response_format": "url",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": [
+          {
+            "image_url": "https://x/a.png"
+          }
+        ],
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "extra": "不要文字"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，不要文字",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": null,
+        "response_format": "url",
+        "timeout": null,
+        "extra": "不要文字",
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "aspect_ratio": "9:16",
+        "reference_image": "x",
+        "extra": "e"
+      },
+      "基于我本次上传附带的参考图片进行生图/编辑：猫，【画面构图与比例要求】：严格 9:16 竖屏满屏画幅（9:16 vertical portrait aspect ratio，高大于宽的手机全屏竖版画面），绝对不要生成横屏，保持垂直构图，【纯净画面要求】：彻底清除并去除参考图中的所有文字、水印、签名、角标及Logo标记（clean image without any watermark, text, or logo），输出绝对纯净无字画面，e",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": null,
+        "aspect_ratio": "9:16",
+        "response_format": "url",
+        "timeout": null,
+        "extra": "e",
+        "image": null,
+        "images": null,
+        "reference_image": "x",
+        "async": false
+      }
+    ],
+    [
+      {
+        "prompt": "猫",
+        "response_format": "b64_json",
+        "size": "1:1"
+      },
+      "全新文生图创作（当前未提供任何参考图，请勿查找历史相册或向用户索要原图，直接根据文字描述从零绘制生成一张全新图片）：猫，【画面构图与比例要求】：1:1 正方形画幅（1:1 square aspect ratio）",
+      {
+        "prompt": "猫",
+        "model": "muse-image",
+        "n": 1,
+        "size": "1:1",
+        "aspect_ratio": null,
+        "response_format": "b64_json",
+        "timeout": null,
+        "extra": null,
+        "image": null,
+        "images": null,
+        "reference_image": null,
+        "async": false
+      }
+    ]
+  ],
+  "build_video_prompt": [
+    [
+      {
+        "prompt": "海浪"
+      },
+      "全新文生视频创作（纯文本全新生成，严禁参考任何历史图片或上下文）：生成一个视频（时长严格为 6 秒）：海浪"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "duration": 10
+      },
+      "全新文生视频创作（纯文本全新生成，严禁参考任何历史图片或上下文）：生成一个视频（时长严格为 10 秒）：海浪"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "aspect_ratio": "9:16"
+      },
+      "全新文生视频创作（纯文本全新生成，严禁参考任何历史图片或上下文）：生成一个严格9:16竖屏手机满屏视频（9:16 vertical portrait video，720x1280，高大于宽的手机全屏竖版画面，严禁生成横屏或带有左右黑边，保持垂直构图，时长严格为 6 秒）：海浪"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "size": "1080x1920"
+      },
+      "全新文生视频创作（纯文本全新生成，严禁参考任何历史图片或上下文）：生成一个严格9:16竖屏手机满屏视频（9:16 vertical portrait video，720x1280，高大于宽的手机全屏竖版画面，严禁生成横屏或带有左右黑边，保持垂直构图，时长严格为 6 秒）：海浪"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "aspect_ratio": "16:9"
+      },
+      "全新文生视频创作（纯文本全新生成，严禁参考任何历史图片或上下文）：生成一个16:9横屏宽屏视频（16:9 widescreen landscape video，时长严格为 6 秒）：海浪"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "size": "1280x720"
+      },
+      "全新文生视频创作（纯文本全新生成，严禁参考任何历史图片或上下文）：生成一个16:9横屏宽屏视频（16:9 widescreen landscape video，时长严格为 6 秒）：海浪"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "aspect_ratio": "横屏"
+      },
+      "全新文生视频创作（纯文本全新生成，严禁参考任何历史图片或上下文）：生成一个16:9横屏宽屏视频（16:9 widescreen landscape video，时长严格为 6 秒）：海浪"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "reference_image": "data:image/png;base64,AA=="
+      },
+      "基于我本次上传的参考图片附件作为第一帧参考图（严禁使用历史图片或任何其他图像，必须严格以我当前刚刚上传并附带在此处的这张图片为起始帧）：生成动态图生视频（严格以附带的参考图为起始第一帧延续动作，时长严格为 6 秒）：海浪"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "image_url": {
+          "url": "https://x/a.png"
+        }
+      },
+      "基于我本次上传的参考图片附件作为第一帧参考图（严禁使用历史图片或任何其他图像，必须严格以我当前刚刚上传并附带在此处的这张图片为起始帧）：生成动态图生视频（严格以附带的参考图为起始第一帧延续动作，时长严格为 6 秒）：海浪"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "image": "https://x/a.png"
+      },
+      "基于我本次上传的参考图片附件作为第一帧参考图（严禁使用历史图片或任何其他图像，必须严格以我当前刚刚上传并附带在此处的这张图片为起始帧）：生成动态图生视频（严格以附带的参考图为起始第一帧延续动作，时长严格为 6 秒）：海浪"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "reference_image": "x",
+        "aspect_ratio": "9:16"
+      },
+      "基于我本次上传的参考图片附件作为第一帧参考图（严禁使用历史图片或任何其他图像，必须严格以我当前刚刚上传并附带在此处的这张图片为起始帧）：生成一个严格9:16竖屏手机满屏的动态图生视频（9:16 vertical portrait video，720x1280，高大于宽的手机全屏竖版画面，严格以附带的参考图为起始第一帧延续动作，严禁生成横屏或黑边，时长严格为 6 秒）：海浪"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "resolution": "1080p"
+      },
+      "全新文生视频创作（纯文本全新生成，严禁参考任何历史图片或上下文）：生成一个视频（时长严格为 6 秒）：海浪，画质规格：1080p"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "extra": "慢镜头"
+      },
+      "全新文生视频创作（纯文本全新生成，严禁参考任何历史图片或上下文）：生成一个视频（时长严格为 6 秒）：海浪，慢镜头"
+    ],
+    [
+      {
+        "prompt": "海浪",
+        "resolution": "4k",
+        "extra": "慢镜头",
+        "duration": 8
+      },
+      "全新文生视频创作（纯文本全新生成，严禁参考任何历史图片或上下文）：生成一个视频（时长严格为 8 秒）：海浪，画质规格：4k，慢镜头"
+    ]
+  ],
+  "content_text": [
+    [
+      "None",
+      ""
+    ],
+    [
+      "'纯文本'",
+      "纯文本"
+    ],
+    [
+      "[]",
+      ""
+    ],
+    [
+      "['a', 'b']",
+      "a\nb"
+    ],
+    [
+      "[{'type': 'text', 'text': 'T'}]",
+      "T"
+    ],
+    [
+      "[{'type': None, 'text': '无类型'}]",
+      "无类型"
+    ],
+    [
+      "[{'type': 'input_text', 'text': 'I'}]",
+      "I"
+    ],
+    [
+      "[{'type': 'output_text', 'text': 'O'}]",
+      "O"
+    ],
+    [
+      "[{'type': 'image_url', 'image_url': {'url': 'u'}}]",
+      "[图片]"
+    ],
+    [
+      "[{'type': 'text'}]",
+      ""
+    ],
+    [
+      "[{'nope': 1}]",
+      ""
+    ],
+    [
+      "[123]",
+      ""
+    ],
+    [
+      "[{'text': 5}]",
+      "5"
+    ],
+    [
+      "'不是列表的内容'",
+      "不是列表的内容"
+    ]
+  ],
+  "build_chat_prompt": [
+    [
+      [],
+      "",
+      0
+    ],
+    [
+      [
+        "user"
+      ],
+      "你好",
+      2
+    ],
+    [
+      [
+        "user"
+      ],
+      "你好",
+      2
+    ],
+    [
+      [
+        "system",
+        "user"
+      ],
+      "背景与任务设定：\n你是助手\n\n用户：\n你好",
+      21
+    ],
+    [
+      [
+        "developer",
+        "user"
+      ],
+      "背景与任务设定：\nD\n\n用户：\n你好",
+      18
+    ],
+    [
+      [
+        "user",
+        "assistant",
+        "user"
+      ],
+      "用户：\n一\n\n助手：\n二\n\n用户：\n三",
+      19
+    ],
+    [
+      [
+        "tool"
+      ],
+      "【工具执行结果】\n结果",
+      11
+    ],
+    [
+      [
+        "tool"
+      ],
+      "",
+      0
+    ],
+    [
+      [
+        "assistant"
+      ],
+      "助手：\n【请求调用工具】[{\"id\": \"c1\", \"type\": \"function\", \"function\": {\"name\": \"f\", \"arguments\": \"{}\"}}]",
+      92
+    ],
+    [
+      [
+        "assistant"
+      ],
+      "助手：\n【请求调用工具】[{\"id\": \"c1\"}]",
+      26
+    ],
+    [
+      [
+        "user"
+      ],
+      "多模态\n[图片]",
+      8
+    ],
+    [
+      [
+        "SYSTEM",
+        "user"
+      ],
+      "背景与任务设定：\n危险 standard-workspace-access 模式\n\n用户：\n跑一下",
+      49
+    ],
+    [
+      [
+        "system",
+        "system",
+        "user"
+      ],
+      "背景与任务设定：\nA\n\nB\n\n用户：\nU",
+      20
+    ],
+    [
+      [
+        "user"
+      ],
+      "",
+      0
+    ],
+    [
+      [
+        ""
+      ],
+      "用户：\n没角色",
+      7
+    ]
+  ],
+  "responses_messages": [
+    [
+      {},
+      [],
+      ""
+    ],
+    [
+      {
+        "input": "文本"
+      },
+      [
+        [
+          "user",
+          "文本"
+        ]
+      ],
+      "文本"
+    ],
+    [
+      {
+        "instructions": "指令",
+        "input": "文本"
+      },
+      [
+        [
+          "system",
+          "指令"
+        ],
+        [
+          "user",
+          "文本"
+        ]
+      ],
+      "背景与任务设定：\n指令\n\n用户：\n文本"
+    ],
+    [
+      {
+        "input": [
+          "a",
+          "b"
+        ]
+      },
+      [
+        [
+          "user",
+          "a"
+        ],
+        [
+          "user",
+          "b"
+        ]
+      ],
+      "用户：\na\n\n用户：\nb"
+    ],
+    [
+      {
+        "input": [
+          {
+            "role": "user",
+            "content": "R"
+          }
+        ]
+      },
+      [
+        [
+          "user",
+          "R"
+        ]
+      ],
+      "R"
+    ],
+    [
+      {
+        "input": [
+          {
+            "type": "input_text",
+            "text": "T"
+          }
+        ]
+      },
+      [
+        [
+          "user",
+          "T"
+        ]
+      ],
+      "T"
+    ],
+    [
+      {
+        "input": [
+          {
+            "type": "function_call_output",
+            "output": {
+              "a": 1
+            }
+          }
+        ]
+      },
+      [
+        [
+          "user",
+          "【工具执行结果】\n{'a': 1}"
+        ]
+      ],
+      "【工具执行结果】\n{'a': 1}"
+    ],
+    [
+      {
+        "input": [
+          {
+            "type": "function_call",
+            "name": "fn"
+          }
+        ]
+      },
+      [
+        [
+          "assistant",
+          "【请求调用工具】fn"
+        ]
+      ],
+      "助手：\n【请求调用工具】fn"
+    ],
+    [
+      {
+        "input": [
+          {
+            "type": "function_call"
+          }
+        ]
+      },
+      [
+        [
+          "assistant",
+          "【请求调用工具】"
+        ]
+      ],
+      "助手：\n【请求调用工具】"
+    ],
+    [
+      {
+        "input": [
+          123,
+          {
+            "nope": 1
+          },
+          "s"
+        ]
+      },
+      [
+        [
+          "user",
+          "s"
+        ]
+      ],
+      "s"
+    ],
+    [
+      {
+        "instructions": "",
+        "input": []
+      },
+      [],
+      ""
+    ]
+  ],
+  "parse_tool_calls": [
+    [
+      "",
+      null,
+      ""
+    ],
+    [
+      "纯文本没有工具",
+      null,
+      "纯文本没有工具"
+    ],
+    [
+      "```json\n{\"name\": \"get_weather\", \"arguments\": {\"city\": \"北京\"}}\n```",
+      "[{\"id\": \"<id>\", \"type\": \"function\", \"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"北京\\\"}\"}}]",
+      ""
+    ],
+    [
+      "```json\n{\"tool\": \"f\", \"args\": {\"a\": 1}}\n```",
+      "[{\"id\": \"<id>\", \"type\": \"function\", \"function\": {\"name\": \"f\", \"arguments\": \"{\\\"a\\\": 1}\"}}]",
+      ""
+    ],
+    [
+      "前文 ```json\n{\"name\":\"a\",\"arguments\":{\"x\":1}}\n``` 后文",
+      "[{\"id\": \"<id>\", \"type\": \"function\", \"function\": {\"name\": \"a\", \"arguments\": \"{\\\"x\\\": 1}\"}}]",
+      "前文  后文"
+    ],
+    [
+      "A ```json\n{\"name\":\"first\"}\n``` B ```json\n{\"name\":\"second\"}\n``` C",
+      "[{\"id\": \"<id>\", \"type\": \"function\", \"function\": {\"name\": \"second\", \"arguments\": \"{}\"}}]",
+      "A ```json\n{\"name\":\"first\"}\n``` B  C"
+    ],
+    [
+      "{\"name\": \"bare\", \"arguments\": {\"k\": \"v\"}}",
+      "[{\"id\": \"<id>\", \"type\": \"function\", \"function\": {\"name\": \"bare\", \"arguments\": \"{\\\"k\\\": \\\"v\\\"}\"}}]",
+      ""
+    ],
+    [
+      "json {\"name\": \"prefixed\"}",
+      "[{\"id\": \"<id>\", \"type\": \"function\", \"function\": {\"name\": \"prefixed\", \"arguments\": \"{}\"}}]",
+      ""
+    ],
+    [
+      "[{\"name\":\"a\",\"arguments\":{\"x\":1}},{\"name\":\"b\",\"arguments\":\"raw\"}]",
+      "[{\"id\": \"<id>\", \"type\": \"function\", \"function\": {\"name\": \"a\", \"arguments\": \"{\\\"x\\\": 1}\"}}, {\"id\": \"<id>\", \"type\": \"function\", \"function\": {\"name\": \"b\", \"arguments\": \"raw\"}}]",
+      ""
+    ],
+    [
+      "嵌入 {\"name\":\"in\",\"arguments\":{}} 文中",
+      "[{\"id\": \"<id>\", \"type\": \"function\", \"function\": {\"name\": \"in\", \"arguments\": \"{}\"}}]",
+      "嵌入  文中"
+    ],
+    [
+      "```json\n{\"not_a_tool\": 1}\n```",
+      null,
+      "```json\n{\"not_a_tool\": 1}\n```"
+    ],
+    [
+      "```json\n{oops}\n```",
+      null,
+      "```json\n{oops}\n```"
+    ],
+    [
+      "```json\n[{\"name\": null}]\n```",
+      null,
+      "```json\n[{\"name\": null}]\n```"
+    ],
+    [
+      "```json\n\"just a string\"\n```",
+      null,
+      "```json\n\"just a string\"\n```"
+    ],
+    [
+      "```JSON\n{\"name\":\"cap\"}\n```",
+      "[{\"id\": \"<id>\", \"type\": \"function\", \"function\": {\"name\": \"cap\", \"arguments\": \"{}\"}}]",
+      ""
+    ],
+    [
+      "```\n{\"name\":\"nofence\"}\n```",
+      "[{\"id\": \"<id>\", \"type\": \"function\", \"function\": {\"name\": \"nofence\", \"arguments\": \"{}\"}}]",
+      ""
+    ],
+    [
+      "{\"function\": {\"name\": \"nested\"}}",
+      null,
+      "{\"function\": {\"name\": \"nested\"}}"
+    ],
+    [
+      "{\"name\": \"numargs\", \"arguments\": 5}",
+      "[{\"id\": \"<id>\", \"type\": \"function\", \"function\": {\"name\": \"numargs\", \"arguments\": \"5\"}}]",
+      ""
+    ]
+  ],
+  "tools_prompt": [
+    [
+      "None",
+      ""
+    ],
+    [
+      "[]",
+      ""
+    ],
+    [
+      "[123]",
+      ""
+    ],
+    [
+      "[{'name': 'f'}]",
+      "你可以根据需要调用以下工具来协助用户完成任务。\n若需调用工具，请直接输出如下格式的 JSON 代码块（不要包含其他多余解释）：\n```json\n{\"name\": \"<工具名>\", \"arguments\": {<参数>}}\n```\n如果需要调用多个工具，请输出包含多个对象的 JSON 数组。\n如果无需调用工具，请直接用自然语言回答。\n\n可用工具列表：\n1. f\n   参数：\n      （无参数）\n"
+    ],
+    [
+      "[{'name': 'f', 'description': 'd', 'parameters': {'type': 'object', 'p",
+      "你可以根据需要调用以下工具来协助用户完成任务。\n若需调用工具，请直接输出如下格式的 JSON 代码块（不要包含其他多余解释）：\n```json\n{\"name\": \"<工具名>\", \"arguments\": {<参数>}}\n```\n如果需要调用多个工具，请输出包含多个对象的 JSON 数组。\n如果无需调用工具，请直接用自然语言回答。\n\n可用工具列表：\n1. f — d\n   参数：\n      - a (string, 必填) 参数A\n      - b (integer, 可选)\n      - c (any, 可选)\n"
+    ],
+    [
+      "[{'type': 'function', 'function': {'name': 'g', 'parameters': {'proper",
+      "你可以根据需要调用以下工具来协助用户完成任务。\n若需调用工具，请直接输出如下格式的 JSON 代码块（不要包含其他多余解释）：\n```json\n{\"name\": \"<工具名>\", \"arguments\": {<参数>}}\n```\n如果需要调用多个工具，请输出包含多个对象的 JSON 数组。\n如果无需调用工具，请直接用自然语言回答。\n\n可用工具列表：\n1. g\n   参数：\n      （无参数）\n"
+    ],
+    [
+      "[{'function': {'name': 'h', 'parameters': {'properties': {'z': {'descr",
+      "你可以根据需要调用以下工具来协助用户完成任务。\n若需调用工具，请直接输出如下格式的 JSON 代码块（不要包含其他多余解释）：\n```json\n{\"name\": \"<工具名>\", \"arguments\": {<参数>}}\n```\n如果需要调用多个工具，请输出包含多个对象的 JSON 数组。\n如果无需调用工具，请直接用自然语言回答。\n\n可用工具列表：\n1. h\n   参数：\n      - z (any, 可选) 只有描述\n"
+    ],
+    [
+      "[{'nope': 1}, {'name': ''}]",
+      ""
+    ]
+  ],
+  "sse": [
+    "data: {\"a\": 1, \"中文\": \"值\", \"n\": null}\n\n",
+    "data: {\"data\": [{\"x\": \"<>&\"}]}\n\n",
+    "data: {}\n\n"
+  ],
+  "chat_chunk": [
+    {
+      "id": "id1",
+      "object": "chat.completion.chunk",
+      "created": 1700000000,
+      "model": "muse-spark",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "role": "assistant"
+          },
+          "finish_reason": null
+        }
+      ]
+    },
+    {
+      "id": "id1",
+      "object": "chat.completion.chunk",
+      "created": 1700000000,
+      "model": "muse-spark",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "content": "hi"
+          },
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "id": "id1",
+      "object": "chat.completion.chunk",
+      "created": 1700000000,
+      "model": "muse-spark",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {},
+          "finish_reason": null
+        }
+      ]
+    }
+  ],
+  "chat_chunk_plain": "{\"id\": \"c\", \"object\": \"chat.completion.chunk\", \"created\": 1, \"model\": \"m\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"x\"}, \"finish_reason\": \"stop\"}]}",
+  "want_usage": [
+    [
+      null,
+      false
+    ],
+    [
+      {},
+      false
+    ],
+    [
+      {
+        "include_usage": true
+      },
+      true
+    ],
+    [
+      {
+        "include_usage": false
+      },
+      false
+    ],
+    [
+      {
+        "other": 1
+      },
+      false
+    ],
+    [
+      "字符串",
+      false
+    ],
+    [
+      [],
+      false
+    ]
+  ],
+  "pace_text": [
+    [
+      "",
+      []
+    ],
+    [
+      "a",
+      [
+        "a"
+      ]
+    ],
+    [
+      "abc",
+      [
+        "abc"
+      ]
+    ],
+    [
+      "abcd",
+      [
+        "ab",
+        "cd"
+      ]
+    ],
+    [
+      "一二三四五六七八九十",
+      [
+        "一二",
+        "三四",
+        "五六",
+        "七八",
+        "九十"
+      ]
+    ],
+    [
+      "abcdefghij",
+      [
+        "ab",
+        "cd",
+        "ef",
+        "gh",
+        "ij"
+      ]
+    ]
+  ],
+  "pace_text_chunked": [
+    [
+      "",
+      []
+    ],
+    [
+      "abcde",
+      [
+        "abc",
+        "de"
+      ]
+    ],
+    [
+      "一二三四五六",
+      [
+        "一二三",
+        "四五六"
+      ]
+    ]
+  ],
+  "pos": [
+    [
+      "None",
+      false
+    ],
+    [
+      "0",
+      false
+    ],
+    [
+      "1",
+      true
+    ],
+    [
+      "-1",
+      false
+    ],
+    [
+      "'5'",
+      true
+    ],
+    [
+      "'abc'",
+      false
+    ],
+    [
+      "1.9",
+      true
+    ],
+    [
+      "''",
+      false
+    ],
+    [
+      "True",
+      true
+    ]
+  ],
+  "media_url": [
+    "/v1/media/x.webp"
+  ],
+  "media_url_public": "https://public.example/v1/media/x.webp",
+  "media_url_public_slash": "https://public.example/v1/media/中文 名.webp",
+  "models_const": [
+    {
+      "id": "muse-spark",
+      "object": "model",
+      "owned_by": "muse",
+      "description": "Muse Spark —— 文本 / 代码对话（网页免费额度，支持流式）"
+    },
+    {
+      "id": "muse-image",
+      "object": "model",
+      "owned_by": "muse",
+      "description": "Muse Image —— 文生图 / 图像编辑（网页免费额度）"
+    },
+    {
+      "id": "muse-video",
+      "object": "model",
+      "owned_by": "muse",
+      "description": "Muse Video —— 文生视频 / 图生视频（网页免费额度）"
+    }
+  ],
+  "sse_headers": {
+    "Cache-Control": "no-cache, no-transform",
+    "X-Accel-Buffering": "no",
+    "Connection": "keep-alive"
+  },
+  "image_request_defaults": {
+    "prompt": "p",
+    "model": "muse-image",
+    "n": 1,
+    "size": null,
+    "aspect_ratio": null,
+    "response_format": "url",
+    "timeout": null,
+    "extra": null,
+    "image": null,
+    "images": null,
+    "reference_image": null,
+    "async": false
+  },
+  "video_request_defaults": {
+    "prompt": "p",
+    "model": "muse-video",
+    "duration": null,
+    "size": null,
+    "aspect_ratio": null,
+    "resolution": null,
+    "timeout": null,
+    "extra": null,
+    "image": null,
+    "image_url": null,
+    "reference_image": null
+  },
+  "chat_request_defaults": {
+    "model": "muse-spark",
+    "messages": [],
+    "stream": false,
+    "temperature": null,
+    "max_tokens": null,
+    "timeout": null,
+    "prompt": null,
+    "tools": null,
+    "tool_choice": null,
+    "response_format": null,
+    "stream_options": null
+  },
+  "responses_request_defaults": {
+    "model": "muse-spark",
+    "input": null,
+    "instructions": null,
+    "stream": false,
+    "max_output_tokens": null,
+    "timeout": null,
+    "tools": null,
+    "store": null
+  },
+  "chat_message_defaults": {
+    "role": "user",
+    "content": null,
+    "name": null,
+    "tool_call_id": null,
+    "tool_calls": null
+  },
+  "tool_protocol_head": "你可以根据需要调用以下工具来协助用户完成任务。\n若需调用工具，请直接输出如下格式的 JSON 代码块（不要包含其他多余解释）：\n```json\n{\"name\": \"<工具名>\", \"arguments\": {<参数>}}\n```\n如果需要调用多个工具，请输出包含多个对象的 JSON 数组。\n如果无需调用工具，请直接用自然语言回答。\n\n可用工具列表：\n"
+}

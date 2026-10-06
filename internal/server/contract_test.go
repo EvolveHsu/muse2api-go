@@ -325,8 +325,14 @@ func strMap(v any) map[string]string {
 }
 
 func num(v any) float64 {
-	f, _ := v.(float64)
-	return f
+	switch t := v.(type) {
+	case float64:
+		return t
+	case json.Number:
+		f, _ := t.Float64()
+		return f
+	}
+	return 0
 }
 
 func dropKey(v any, key string) {
