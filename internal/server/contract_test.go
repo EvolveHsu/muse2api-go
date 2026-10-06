@@ -51,7 +51,7 @@ func TestV1ReadOnlyContract(t *testing.T) {
 		}
 	}
 
-	cases := append(replayCases(), append(writeProbeCases(g), docProbeCases(g)...)...)
+	cases := append(replayCases(), append(append(writeProbeCases(g), docProbeCases(g)...), bodyProbeCases(g)...)...)
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			row := section(t, g, c.name)
@@ -68,6 +68,15 @@ func TestV1ReadOnlyContract(t *testing.T) {
 				}
 				got := decode(rec.Body.Bytes())
 				want := row["body"]
+				if want == nil && row["body_text"] != nil {
+					// 非 JSON 的错误响应（比如 bytes 校验错误把 /admin 的错误处理器自己炸了，
+					// 落到 Starlette 的 500 "Internal Server Error"）：金样本存的是正文前缀。
+					if bt, _ := row["body_text"].(string); bt != "" &&
+						!strings.HasPrefix(rec.Body.String(), bt) {
+						t.Errorf("正文不同: go=%q py 前缀=%q", rec.Body.String(), bt)
+					}
+					break
+				}
 				if want == nil && row["blob_len"] != nil {
 					// 非 JSON 响应（比如坏 JSON 打穿到 500 的那条）：金样本记的是摘要。
 					if intOf(row["blob_len"]) != rec.Body.Len() {
@@ -198,9 +207,14 @@ func TestGoldenCasesAllAccountedFor(t *testing.T) {
 	}
 	t.Logf("金样本 %d 条：已回放 %d，待实现 %d", total, replayedN, deferredN)
 	var unrecorded []string
-	for name := range docProbeModes {
-		if _, ok := g[name]; !ok {
-			unrecorded = append(unrecorded, name)
+	for m := range docProbeModes {
+		if _, ok := g[m]; !ok {
+			unrecorded = append(unrecorded, m)
+		}
+	}
+	for m := range bodyProbeModes {
+		if _, ok := g[m]; !ok {
+			unrecorded = append(unrecorded, m)
 		}
 	}
 	if len(unrecorded) > 0 {
@@ -220,6 +234,9 @@ func replayedSet(g map[string]any) map[string]bool {
 		replayed[c.name] = true
 	}
 	for _, c := range docProbeCases(g) {
+		replayed[c.name] = true
+	}
+	for _, c := range bodyProbeCases(g) {
 		replayed[c.name] = true
 	}
 	return replayed
@@ -599,6 +616,54 @@ func writeProbeCases(g map[string]any) []replayCase {
 		if done[k] {
 			out = append(out, replayCase{k, "body", nil})
 		}
+	}
+	return out
+}
+
+// bodyProbeModes 是 2026-10-06 补录的那批「非对象 / 坏 JSON / Content-Type 不对 / 空 body」用例。
+// 它们全部卡在 FastAPI 的 body 校验层，handler 一次都没进，所以对线上零副作用；
+// 补这批是因为 Go 原先把这些一律当「读不出请求体」走成 500，而回放里根本没有覆盖到它们。
+var bodyProbeModes = map[string]string{
+	"gen_body_list":       "body",
+	"gen_body_scalar":     "body",
+	"chat_body_list":      "body",
+	"gen_noctype_empty":   "body",
+	"gen_badjson_ctype":   "body",
+	"gen_badjson_0":       "body",
+	"gen_badjson_1":       "body",
+	"gen_badjson_2":       "body",
+	"gen_badjson_3":       "body",
+	"gen_badjson_4":       "body",
+	"gen_badjson_5":       "body",
+	"gen_badjson_6":       "body",
+	"gen_bad_escape":      "body",
+	"gen_bad_control":     "body",
+	"gen_bad_uni":         "body",
+	"gen_ctype_0":         "body",
+	"gen_ctype_1":         "body",
+	"gen_ctype_2":         "body",
+	"gen_ctype_3":         "body",
+	"gen_ctype_4":         "body",
+	"gen_empty_body_json": "body",
+	"gen_empty_body_none": "body",
+	"accounts_body_list":  "body",
+	"accounts_body_str":   "body",
+	"accounts_empty":      "body",
+	"accounts_empty_body": "body",
+	"accounts_noctype":    "body",
+}
+
+func bodyProbeCases(g map[string]any) []replayCase {
+	var names []string
+	for k := range bodyProbeModes {
+		if _, ok := g[k]; ok {
+			names = append(names, k)
+		}
+	}
+	sort.Strings(names)
+	out := make([]replayCase, 0, len(names))
+	for _, k := range names {
+		out = append(out, replayCase{k, bodyProbeModes[k], nil})
 	}
 	return out
 }

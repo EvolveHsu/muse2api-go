@@ -194,22 +194,13 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	a.writeRouterError(w, http.StatusNotFound, "Not Found", nil)
 }
 
-// methodAllowed：Starlette 给带 GET 的路由自动加上 HEAD，所以 HEAD 是整匹配；
-// 响应体由 Go 的服务端按 HEAD 语义丢掉，和 uvicorn 一样只出头。
-func methodAllowed(routeMethod, method string) bool {
-	if routeMethod == method {
-		return true
-	}
-	return routeMethod == http.MethodGet && method == http.MethodHead
-}
+// methodAllowed：FastAPI 的 APIRoute 只把自己声明的那一个方法放进 methods，
+// **不像** Starlette 的 Route 那样给 GET 自动补 HEAD —— 线上 `HEAD /v1/models` 实测是
+// 405 + `allow: GET`（金样本 head_models 钉着），所以这里就是严格相等。
+func methodAllowed(routeMethod, method string) bool { return routeMethod == method }
 
 // allowedMethods 对应 405 里的 `", ".join(methods)`。
-func allowedMethods(routeMethod string) string {
-	if routeMethod == http.MethodGet {
-		return "GET, HEAD"
-	}
-	return routeMethod
-}
+func allowedMethods(routeMethod string) string { return routeMethod }
 
 // redirectSlash 是 Starlette 的 redirect_slashes：只有「整条路由表都没沾上」时才会走到这里，
 // Location 用 scope 里的 path（已解码）+ query 拼绝对 URL，再按 Python quote 的那串 safe 集重新转义。

@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"io"
+	"math"
 	"net/http"
 	"os"
 	"os/exec"
@@ -40,6 +41,41 @@ type keepaliveState struct {
 	LastRun    any
 	LastResult any
 	NextRun    any
+}
+
+// parseVersion 对应 1.5.4 的 _parse_v：`tuple(int(x) for x in re.findall(r"\d+", v))`。
+// 只有数字段参与比较，所以 "v1.5.4-beta2" 是 (1,5,4,2)，空串是 ()。
+func parseVersion(v string) []int64 {
+	var out []int64
+	for i := 0; i < len(v); {
+		if v[i] < '0' || v[i] > '9' {
+			i++
+			continue
+		}
+		j := i
+		for j < len(v) && v[j] >= '0' && v[j] <= '9' {
+			j++
+		}
+		n, err := strconv.ParseInt(v[i:j], 10, 64)
+		if err != nil {
+			// Python 的 int() 任意精度，Go 溢出就退回十进制逐位比大小时用不上；
+			// 版本号不可能长到这个量级，按最大值处理保持比较单调。
+			n = math.MaxInt64
+		}
+		out = append(out, n)
+		i = j
+	}
+	return out
+}
+
+// versionGT 是 Python 的元组 `>`：逐位比，全部相等时长的算大（() < (0,) < (1,) < (1,5)）。
+func versionGT(a, b []int64) bool {
+	for i := 0; i < len(a) && i < len(b); i++ {
+		if a[i] != b[i] {
+			return a[i] > b[i]
+		}
+	}
+	return len(a) > len(b)
 }
 
 func (a *App) checkUpdate(c *reqCtx) (any, error) {
@@ -141,11 +177,13 @@ func (a *App) checkUpdate(c *reqCtx) (any, error) {
 		_ = os.WriteFile(shaFile, []byte(remoteSHA), 0o600)
 	}
 
+	// 1.5.4 改过的判定：SHA 两边都在时**只看 SHA**（不再因为版本串不同而误报有更新），
+	// 只有拿不到成对 SHA 时才比版本号，而且比的是「远端元组 > 本地元组」，不是 !=。
 	hasUpdate := false
-	if remoteSHA != "" && localSHA != "" && remoteSHA != localSHA {
-		hasUpdate = true
-	} else if remoteVersion != "" && localVersion != "" && remoteVersion != localVersion {
-		hasUpdate = true
+	if remoteSHA != "" && localSHA != "" {
+		hasUpdate = remoteSHA != localSHA
+	} else if remoteVersion != "" && localVersion != "" {
+		hasUpdate = versionGT(parseVersion(remoteVersion), parseVersion(localVersion))
 	}
 
 	data := pyval.Obj{
@@ -164,6 +202,9 @@ func (a *App) checkUpdate(c *reqCtx) (any, error) {
 
 // upgradeManual / repoPushManual 是偏离清单第 4 条的落地点：不做在线升级、不推仓库。
 func (a *App) upgradeManual(c *reqCtx) (any, error) {
+	if _, err := decodeBodyWithDefault(c.R); err != nil {
+		return nil, err
+	}
 	status, _ := a.checkUpdate(c)
 	return pyval.Obj{
 		{"ok", false}, {"via", "manual"},
@@ -173,6 +214,11 @@ func (a *App) upgradeManual(c *reqCtx) (any, error) {
 }
 
 func (a *App) repoPushManual(c *reqCtx) (any, error) {
+	// Python 的签名是 `payload: dict = Body(default={})`：body 校验照做（[] / 坏 JSON /
+	// 非 JSON Content-Type 都各有结局），只是这份实现用不上里面的字段。
+	if _, err := decodeBodyWithDefault(c.R); err != nil {
+		return nil, err
+	}
 	return pyval.Obj{
 		{"ok", false}, {"committed", false},
 		{"message", "Go 版是单二进制部署，不向 GitHub 回推代码；需要改代码请改 Python 源仓库或 Go 源码"},

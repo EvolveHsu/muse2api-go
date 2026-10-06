@@ -16,6 +16,14 @@ import (
 	"muse2api-go/internal/webui"
 )
 
+// pendingDocPaths 是「代码已经对齐 1.5.4、内嵌的 openapi.json 还是 1.5.3 录的」那几条。
+// 38465 升到 1.5.4 之后重录一次文档，这张表就该清空 —— 测试会检查它是否还有残留，
+// 不允许它悄悄长成一个逃生口。
+var pendingDocPaths = map[string]bool{
+	"POST /admin/media/delete":   true,
+	"DELETE /admin/media/{name}": true,
+}
+
 // docsAutoRoutes 是 FastAPI 装配时白挂出来的四条：它们不出现在自己生成的 openapi.json 里
 // （include_in_schema=False），所以路由表对账要把它们单独列出来。
 var docsAutoRoutes = map[string]bool{
@@ -64,7 +72,7 @@ func TestRouteTableMatchesOpenAPIDoc(t *testing.T) {
 	}
 	var extra []string
 	for k := range mine {
-		if !docsAutoRoutes[k] && !inDoc(doc.Paths, k) {
+		if !docsAutoRoutes[k] && !pendingDocPaths[k] && !inDoc(doc.Paths, k) {
 			extra = append(extra, k)
 		}
 	}
@@ -72,8 +80,14 @@ func TestRouteTableMatchesOpenAPIDoc(t *testing.T) {
 	if len(extra) > 0 {
 		t.Errorf("Go 多出线上文档之外的路由：%v（若确实新增，请同步 docsAutoRoutes 并重录文档）", extra)
 	}
-	if len(mine) != countDoc(doc.Paths)+len(docsAutoRoutes) {
-		t.Errorf("路由条数对不上：go=%d 文档=%d+自动%d", len(mine), countDoc(doc.Paths), len(docsAutoRoutes))
+	for k := range pendingDocPaths {
+		if inDoc(doc.Paths, k) {
+			t.Errorf("%s 已经出现在文档里了，把 pendingDocPaths 里的这条删掉", k)
+		}
+	}
+	if len(mine) != countDoc(doc.Paths)+len(docsAutoRoutes)+len(pendingDocPaths) {
+		t.Errorf("路由条数对不上：go=%d 文档=%d+自动%d+待重录%d",
+			len(mine), countDoc(doc.Paths), len(docsAutoRoutes), len(pendingDocPaths))
 	}
 }
 
@@ -158,26 +172,19 @@ func mustAtoi(s string) int {
 	return n
 }
 
-// TestHeadMatchesGetRoutes：Starlette 给带 GET 的路由自动加上 HEAD，
-// 所以 HEAD 是整匹配（200），不是 405。
-func TestHeadMatchesGetRoutes(t *testing.T) {
+// TestHeadIsNotMatched：Starlette 的 Route 会给 GET 自动补 HEAD，**FastAPI 的 APIRoute 不补**。
+// 线上 `HEAD /v1/models` 实测 405 + `allow: GET`（金样本 head_models 钉着）。
+// 这条是「读 starlette 源码推断」被「真机 oracle」纠正的现场记录，别改回 200。
+func TestHeadIsNotMatched(t *testing.T) {
 	a, _ := testApp(t, "cap-key", time.Unix(1700000000, 0))
 	for _, p := range []string{"/healthz", "/v1/models", "/docs", "/openapi.json", "/admin/status"} {
-		rec := get(a, p, "cap-key")
-		if rec.Code != 200 {
-			t.Fatalf("GET %s go=%d", p, rec.Code)
+		rec := doMethod(a, http.MethodHead, p, "cap-key")
+		if rec.Code != 405 {
+			t.Errorf("HEAD %s go=%d，线上是 405", p, rec.Code)
 		}
-		recH := doMethod(a, http.MethodHead, p, "cap-key")
-		if recH.Code != 200 {
-			t.Errorf("HEAD %s go=%d，应同 GET 一样 200", p, recH.Code)
+		if got := rec.Body.String(); got != `{"detail":"Method Not Allowed"}` {
+			t.Errorf("HEAD %s body=%s", p, got)
 		}
-		if got, want := recH.Header().Get("content-type"), rec.Header().Get("content-type"); got != want {
-			t.Errorf("HEAD %s content-type go=%q py=%q", p, got, want)
-		}
-	}
-	// POST-only 的路由没有 HEAD：仍是 405。
-	if rec := doMethod(a, http.MethodHead, "/v1/images/generations", "cap-key"); rec.Code != 405 {
-		t.Errorf("HEAD /v1/images/generations go=%d，应 405", rec.Code)
 	}
 }
 
@@ -186,9 +193,10 @@ func TestHeadMatchesGetRoutes(t *testing.T) {
 func TestMethodNotAllowedAllow(t *testing.T) {
 	a, _ := testApp(t, "cap-key", time.Unix(1700000000, 0))
 	for _, c := range []struct{ method, path, allow string }{
-		{"POST", "/v1/models", "GET, HEAD"},
+		{"POST", "/v1/models", "GET"},
+		{"HEAD", "/v1/models", "GET"},
 		{"GET", "/v1/images/generations", "POST"},
-		{"DELETE", "/docs", "GET, HEAD"},
+		{"DELETE", "/docs", "GET"},
 	} {
 		rec := doMethod(a, c.method, c.path, "cap-key")
 		if rec.Code != 405 {

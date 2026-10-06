@@ -36,6 +36,10 @@ func (a *App) registerAdmin() {
 	a.add("DELETE", "/admin/tasks/{tid}", true, a.delTask)
 	a.add("POST", "/admin/tasks/clear", true, a.clearTasks)
 	a.add("GET", "/admin/media", true, a.adminMedia)
+	// 1.5.4 新增的两条媒体删除路由。声明顺序照 Python：批量删在前、单删在后，
+	// 于是 DELETE /admin/media/delete 里 "delete" 会被当成文件名（与线上同样的偏匹配规则）。
+	a.add("POST", "/admin/media/delete", true, a.deleteMedia)
+	a.add("DELETE", "/admin/media/{name}", true, a.deleteSingleMedia)
 	a.add("GET", "/admin/cookie-helper", false, a.cookieHelper)
 	a.add("GET", "/admin/extension", false, a.extensionZip)
 	a.add("GET", "/admin/extension/files", false, a.extensionFiles)
@@ -447,6 +451,71 @@ func (a *App) adminMedia(c *reqCtx) (any, error) {
 			{"bytes", it.bytes}, {"mtime", it.mtime}, {"kind", it.kind}})
 	}
 	return pyval.Obj{{"media", out}, {"count", len(out)}}, nil
+}
+
+// deleteMedia 对应 1.5.4 的 delete_media()：批量删媒体文件，逐个做穿越校验。
+//
+// 几个容易抄错的地方：
+//   - `names` 给成字符串要当成单个名字（Python 先 isinstance(str) 再判 list）；
+//   - 名字不存在时**既不计数也不报错**（Python 用 os.path.isfile 静默跳过），
+//     所以「全都不存在」的合法响应是 {"removed":0,"errors":[]}；
+//   - errors 即使是空也得是 []（不是 null），面板按数组渲染。
+//   - 非法名字的提示是 f"非法文件名: {name}" —— name 是 JSON 里的任何值，
+//     所以走 Python 的 str()：123 → "123"、True → "True"、null → "None"、对象 → repr。
+func (a *App) deleteMedia(c *reqCtx) (any, error) {
+	payload, err := decodeBodyWithDefault(c.R)
+	if err != nil {
+		return nil, err
+	}
+	var names []any
+	switch t := payload["names"].(type) {
+	case nil:
+		// 没给 names 就是空数组（Python 的 payload.get("names", [])）
+	case string:
+		names = []any{t}
+	case []any:
+		names = t
+	default:
+		return nil, httpError(400, "names 必须是文件名数组")
+	}
+	d := a.CFG.MediaDir()
+	removed := 0
+	errors := []any{}
+	for _, raw := range names {
+		name, ok := raw.(string)
+		if !ok || strings.ContainsAny(name, "/\\") || strings.Contains(name, "..") {
+			errors = append(errors, "非法文件名: "+pyval.Str(raw))
+			continue
+		}
+		p := filepath.Join(d, name)
+		if st, serr := os.Stat(p); serr != nil || !st.Mode().IsRegular() {
+			continue // os.path.isfile 为假：静默跳过，不报错也不计数
+		}
+		if err := os.Remove(p); err != nil {
+			errors = append(errors, name+": "+err.Error())
+			continue
+		}
+		removed++
+	}
+	return pyval.Obj{{"removed", removed}, {"errors", errors}}, nil
+}
+
+// deleteSingleMedia 对应 1.5.4 的 delete_single_media()：单个删，走 detail 错误壳。
+func (a *App) deleteSingleMedia(c *reqCtx) (any, error) {
+	name := c.Args["name"]
+	if strings.ContainsAny(name, "/\\") || strings.Contains(name, "..") {
+		return nil, httpError(400, "非法文件名")
+	}
+	p := filepath.Join(a.CFG.MediaDir(), name)
+	if st, err := os.Stat(p); err != nil || !st.Mode().IsRegular() {
+		return nil, httpError(404, "文件不存在")
+	}
+	if err := os.Remove(p); err != nil {
+		// DEVIATION: OSError 的文本两边不同（Python 是 "[Errno 13] Permission denied: '…'"，
+		// Go 是 "permission denied"）；状态码与前缀「删除失败: 」一致。
+		return nil, httpError(500, "删除失败: "+err.Error())
+	}
+	return pyval.Obj{{"status", "ok"}, {"deleted", name}}, nil
 }
 
 // --- 静态页面与取 cookie 的产物 ---

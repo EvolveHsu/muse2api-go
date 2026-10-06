@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 // Str 复刻 Python 的 str(value)：字符串原样，None/True/False 用 Python 拼写，
@@ -64,14 +65,41 @@ func Repr(v any) string {
 // Str2 是最后一层兜底：不认识的 Go 类型（理论上到不了）退化成 Go 自己的写法。
 func Str2(v any) string { return fmt.Sprintf("%v", v) }
 
+// pyReprString 是 Python 的 repr(str)。三条容易漏的规则：
+//   - 引号默认单引号，但**内容里有单引号且没有双引号**时改用双引号
+//     （`Expecting ':' delimiter` 这类带引号的英文文案正走这条分支，gen_badjson_0 钉着它）；
+//   - \t \n \r 用具名转义，其余 <0x20 与 0x7F 用 \xNN；
+//   - 不可打印的非 ASCII 用 \uXXXX，增补平面用 \UXXXXXXXX。
 func pyReprString(s string) string {
-	q := strings.ReplaceAll(s, `\`, `\\`)
-	q = strings.ReplaceAll(q, `'`, `\'`)
-	if strings.Contains(q, "\n") || strings.Contains(q, "\t") || strings.Contains(q, "\r") {
-		// Python 的 repr 会把控制字符写成转义序列。
-		q = strings.ReplaceAll(q, "\n", `\n`)
-		q = strings.ReplaceAll(q, "\t", `\t`)
-		q = strings.ReplaceAll(q, "\r", `\r`)
+	quote := byte('\'')
+	if strings.ContainsRune(s, '\'') && !strings.ContainsRune(s, '"') {
+		quote = '"'
 	}
-	return "'" + q + "'"
+	var sb strings.Builder
+	sb.WriteByte(quote)
+	for _, r := range s {
+		switch {
+		case r == rune(quote) || r == '\\':
+			sb.WriteByte('\\')
+			sb.WriteRune(r)
+		case r == '\t':
+			sb.WriteString(`\t`)
+		case r == '\n':
+			sb.WriteString(`\n`)
+		case r == '\r':
+			sb.WriteString(`\r`)
+		case r < 0x20 || r == 0x7f:
+			fmt.Fprintf(&sb, `\x%02x`, r)
+		case r >= 0x80 && !unicode.IsPrint(r):
+			if r <= 0xFFFF {
+				fmt.Fprintf(&sb, `\u%04x`, r)
+			} else {
+				fmt.Fprintf(&sb, `\U%08x`, r)
+			}
+		default:
+			sb.WriteRune(r)
+		}
+	}
+	sb.WriteByte(quote)
+	return sb.String()
 }

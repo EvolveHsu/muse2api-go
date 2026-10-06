@@ -13,7 +13,7 @@
     "request_ctype": "",
     "body": {
       "status": "ok",
-      "time": 1791276050
+      "time": 1791292066
     }
   },
   "readyz": {
@@ -421,7 +421,7 @@
               },
               "expires_at": {
                 "__type__": "int",
-                "__value__": 1791448412
+                "__value__": 1791464785
               },
               "expiry_anchor": {
                 "__type__": "NoneType",
@@ -441,7 +441,7 @@
               },
               "last_keepalive": {
                 "__type__": "int",
-                "__value__": 1791275613
+                "__value__": 1791291987
               },
               "use_count": {
                 "__type__": "int",
@@ -457,11 +457,11 @@
               },
               "synced_at": {
                 "__type__": "int",
-                "__value__": 1791275613
+                "__value__": 1791291987
               },
               "checked_at": {
                 "__type__": "int",
-                "__value__": 1791275613
+                "__value__": 1791291987
               },
               "cookie_count": {
                 "__type__": "int",
@@ -648,7 +648,7 @@
               },
               "expires_at": {
                 "__type__": "int",
-                "__value__": 1791448412
+                "__value__": 1791464785
               },
               "expiry_anchor": {
                 "__type__": "NoneType",
@@ -668,7 +668,7 @@
               },
               "last_keepalive": {
                 "__type__": "int",
-                "__value__": 1791275613
+                "__value__": 1791291987
               },
               "use_count": {
                 "__type__": "int",
@@ -684,11 +684,11 @@
               },
               "synced_at": {
                 "__type__": "int",
-                "__value__": 1791275613
+                "__value__": 1791291987
               },
               "checked_at": {
                 "__type__": "int",
-                "__value__": 1791275613
+                "__value__": 1791291987
               },
               "cookie_count": {
                 "__type__": "int",
@@ -1017,7 +1017,7 @@
         },
         "last_run": {
           "__type__": "int",
-          "__value__": 1791275610
+          "__value__": 1791291983
         },
         "last_result": {
           "__type__": "object",
@@ -1031,7 +1031,7 @@
           "__items__": {
             "checked_at": {
               "__type__": "int",
-              "__value__": 1791275610
+              "__value__": 1791291983
             },
             "refreshed_count": {
               "__type__": "int",
@@ -1079,7 +1079,7 @@
                   },
                   "expires_at": {
                     "__type__": "int",
-                    "__value__": 1791448412
+                    "__value__": 1791464785
                   },
                   "quota": {
                     "__type__": "NoneType",
@@ -1122,7 +1122,7 @@
         },
         "next_run": {
           "__type__": "int",
-          "__value__": 1791276510
+          "__value__": 1791292883
         }
       }
     }
@@ -1173,7 +1173,7 @@
         },
         "remote_version": {
           "__type__": "str",
-          "__value__": "1.5.3"
+          "__value__": "1.5.4"
         },
         "local_sha": {
           "__type__": "str",
@@ -1189,30 +1189,30 @@
         },
         "remote_sha": {
           "__type__": "str",
-          "__value__": "2374061"
+          "__value__": "42ee039"
         },
         "remote_msg": {
           "__type__": "str",
-          "__value__": "docs: add djs-91 and toby-bridges to contributors & clean te"
+          "__value__": "fix(update): 修复远端与本地 SHA 相同仍误报有新更新的判定逻辑"
         },
         "remote_time": {
           "__type__": "str",
-          "__value__": "2026-10-04T07:38:54Z"
+          "__value__": "2026-10-06T09:59:40Z"
         },
         "has_update": {
           "__type__": "bool",
-          "__value__": false
+          "__value__": true
         },
         "up_to_date": {
           "__type__": "bool",
-          "__value__": true
+          "__value__": false
         },
         "highlights": {
           "__type__": "array",
           "__n__": 3,
           "__first__": {
             "__type__": "str",
-            "__value__": "修复 HTTP 403、网络超时被误判为 Cookie 失效；保留上次已确认的账号状态"
+            "__value__": "媒体库新增文件批量选择、一键全选与按需删除功能，有效释放 VPS 磁盘存储空间"
           }
         },
         "recent_commits": {
@@ -1229,26 +1229,26 @@
             "__items__": {
               "sha": {
                 "__type__": "str",
-                "__value__": "2374061"
+                "__value__": "42ee039"
               },
               "message": {
                 "__type__": "str",
-                "__value__": "docs: add djs-91 and toby-bridges to contributors & clean te"
+                "__value__": "fix(update): 修复远端与本地 SHA 相同仍误报有新更新的判定逻辑"
               },
               "date": {
                 "__type__": "str",
-                "__value__": "2026-10-04T07:38:54Z"
+                "__value__": "2026-10-06T09:59:40Z"
               },
               "url": {
                 "__type__": "str",
-                "__value__": "https://github.com/czg86389-hub/muse2api/commit/23740617ddee"
+                "__value__": "https://github.com/czg86389-hub/muse2api/commit/42ee0393bb40"
               }
             }
           }
         },
         "checked_at": {
           "__type__": "int",
-          "__value__": 1791276050
+          "__value__": 1791291977
         }
       }
     }
@@ -1299,7 +1299,7 @@
         },
         "remote_version": {
           "__type__": "str",
-          "__value__": "1.5.3"
+          "__value__": "1.5.4"
         },
         "local_sha": {
           "__type__": "str",
@@ -1315,30 +1315,30 @@
         },
         "remote_sha": {
           "__type__": "str",
-          "__value__": "2374061"
+          "__value__": "42ee039"
         },
         "remote_msg": {
           "__type__": "str",
-          "__value__": "docs: add djs-91 and toby-bridges to contributors & clean te"
+          "__value__": "fix(update): 修复远端与本地 SHA 相同仍误报有新更新的判定逻辑"
         },
         "remote_time": {
           "__type__": "str",
-          "__value__": "2026-10-04T07:38:54Z"
+          "__value__": "2026-10-06T09:59:40Z"
         },
         "has_update": {
           "__type__": "bool",
-          "__value__": false
+          "__value__": true
         },
         "up_to_date": {
           "__type__": "bool",
-          "__value__": true
+          "__value__": false
         },
         "highlights": {
           "__type__": "array",
           "__n__": 3,
           "__first__": {
             "__type__": "str",
-            "__value__": "修复 HTTP 403、网络超时被误判为 Cookie 失效；保留上次已确认的账号状态"
+            "__value__": "媒体库新增文件批量选择、一键全选与按需删除功能，有效释放 VPS 磁盘存储空间"
           }
         },
         "recent_commits": {
@@ -1355,26 +1355,26 @@
             "__items__": {
               "sha": {
                 "__type__": "str",
-                "__value__": "2374061"
+                "__value__": "42ee039"
               },
               "message": {
                 "__type__": "str",
-                "__value__": "docs: add djs-91 and toby-bridges to contributors & clean te"
+                "__value__": "fix(update): 修复远端与本地 SHA 相同仍误报有新更新的判定逻辑"
               },
               "date": {
                 "__type__": "str",
-                "__value__": "2026-10-04T07:38:54Z"
+                "__value__": "2026-10-06T09:59:40Z"
               },
               "url": {
                 "__type__": "str",
-                "__value__": "https://github.com/czg86389-hub/muse2api/commit/23740617ddee"
+                "__value__": "https://github.com/czg86389-hub/muse2api/commit/42ee0393bb40"
               }
             }
           }
         },
         "checked_at": {
           "__type__": "int",
-          "__value__": 1791276050
+          "__value__": 1791291977
         }
       }
     }
@@ -1633,6 +1633,102 @@
           "__value__": "缺少 Authorization: Bearer <key>"
         }
       }
+    }
+  },
+  "redoc": {
+    "method": "GET",
+    "path": "/redoc",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "text/html; charset=utf-8",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": null,
+    "request_ctype": "",
+    "blob_sha256": "45330655d23c1dfcc8c6e193237f651c4f22b4199ffa201b07e3a19bc08a8cae",
+    "blob_len": 889,
+    "blob_head": "\n    <!DOCTYPE html>\n    <html>\n    <head>\n    <title>muse2api - ReDoc</title>\n    <!-- needed for adaptive design -->\n    <meta charset=\"utf-8\"/>\n    <meta name=\"viewport\" content=\"width=device-width"
+  },
+  "oauth2_redirect": {
+    "method": "GET",
+    "path": "/docs/oauth2-redirect",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "text/html; charset=utf-8",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": null,
+    "request_ctype": "",
+    "blob_sha256": "f45d60bb9f054b1712b3f9e60547eb9e1d523afd6472a4137b89eb503b37f058",
+    "blob_len": 3012,
+    "blob_head": "\n    <!doctype html>\n    <html lang=\"en-US\">\n    <head>\n        <title>Swagger UI: OAuth2 Redirect</title>\n    </head>\n    <body>\n    <script>\n        'use strict';\n        function run () {\n         "
+  },
+  "head_models": {
+    "method": "HEAD",
+    "path": "/v1/models",
+    "auth": "good",
+    "status": 405,
+    "headers": {
+      "allow": "GET",
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": null,
+    "request_ctype": "",
+    "body_text": ""
+  },
+  "slash_redirect_models": {
+    "method": "GET",
+    "path": "/v1/models/?x=1",
+    "auth": "good",
+    "status": 307,
+    "headers": {
+      "location": "http://127.0.0.1:18610/v1/models?x=1",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": null,
+    "request_ctype": "",
+    "blob_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "blob_len": 0,
+    "blob_head": ""
+  },
+  "slash_redirect_admin": {
+    "method": "GET",
+    "path": "/admin/",
+    "auth": "none",
+    "status": 307,
+    "headers": {
+      "location": "http://127.0.0.1:18610/admin",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": null,
+    "request_ctype": "",
+    "blob_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "blob_len": 0,
+    "blob_head": ""
+  },
+  "method_not_allowed_gen": {
+    "method": "GET",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 405,
+    "headers": {
+      "allow": "POST",
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": null,
+    "request_ctype": "",
+    "body": {
+      "detail": "Method Not Allowed"
     }
   },
   "images_gen_noauth": {
@@ -2049,6 +2145,574 @@
       }
     }
   },
+  "gen_body_list": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[]",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'model_attributes_type', 'loc': ('body',), 'msg': 'Input should be a valid dictionary or object to extract fields from', 'input': []}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_body_scalar": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "123",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'model_attributes_type', 'loc': ('body',), 'msg': 'Input should be a valid dictionary or object to extract fields from', 'input': 123}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "chat_body_list": {
+    "method": "POST",
+    "path": "/v1/chat/completions",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[]",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'model_attributes_type', 'loc': ('body',), 'msg': 'Input should be a valid dictionary or object to extract fields from', 'input': []}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "accounts_body_list": {
+    "method": "POST",
+    "path": "/admin/accounts",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[]",
+    "request_ctype": "application/json",
+    "body": {
+      "detail": [
+        {
+          "type": "model_attributes_type",
+          "loc": [
+            "body"
+          ],
+          "msg": "Input should be a valid dictionary or object to extract fields from",
+          "input": []
+        }
+      ]
+    }
+  },
+  "accounts_body_str": {
+    "method": "POST",
+    "path": "/admin/accounts",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "\"abc\"",
+    "request_ctype": "application/json",
+    "body": {
+      "detail": [
+        {
+          "type": "model_attributes_type",
+          "loc": [
+            "body"
+          ],
+          "msg": "Input should be a valid dictionary or object to extract fields from",
+          "input": "abc"
+        }
+      ]
+    }
+  },
+  "gen_noctype_empty": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "{}",
+    "request_ctype": "",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'model_attributes_type', 'loc': ('body',), 'msg': 'Input should be a valid dictionary or object to extract fields from', 'input': b'{}'}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_badjson_ctype": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "{坏 json",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'json_invalid', 'loc': ('body', 1), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Expecting property name enclosed in double quotes'}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_badjson_0": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "{\"a\"}",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'json_invalid', 'loc': ('body', 4), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': \"Expecting ':' delimiter\"}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_badjson_1": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "{\"a\":}",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'json_invalid', 'loc': ('body', 5), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Expecting value'}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_badjson_2": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[1 2]",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'json_invalid', 'loc': ('body', 3), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': \"Expecting ',' delimiter\"}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_badjson_3": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "{\"a\": 1, }",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'json_invalid', 'loc': ('body', 9), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Expecting property name enclosed in double quotes'}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_badjson_4": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[\"abc",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'json_invalid', 'loc': ('body', 1), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Unterminated string starting at'}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_badjson_5": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "{} []",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'json_invalid', 'loc': ('body', 3), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Extra data'}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_badjson_6": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": " ",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'json_invalid', 'loc': ('body', 1), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Expecting value'}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_bad_escape": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "{\"a\": \"b\\q\"}",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'json_invalid', 'loc': ('body', 8), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Invalid \\\\escape'}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_bad_control": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "{\"a\": \"b\u0007c\"}",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'json_invalid', 'loc': ('body', 8), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Invalid control character at'}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_bad_uni": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "{\"a\": \"x\\u12g\"}",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'json_invalid', 'loc': ('body', 9), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Invalid \\\\uXXXX escape'}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "accounts_empty": {
+    "method": "POST",
+    "path": "/admin/accounts",
+    "auth": "good",
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "{}",
+    "request_ctype": "application/json",
+    "body": {
+      "detail": "未解析到任何 cookie，请检查格式"
+    }
+  },
+  "accounts_noctype": {
+    "method": "POST",
+    "path": "/admin/accounts",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": null,
+    "request_raw": "{}",
+    "request_ctype": "",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "gen_ctype_0": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[]",
+    "request_ctype": "application/json; charset=utf-8",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'model_attributes_type', 'loc': ('body',), 'msg': 'Input should be a valid dictionary or object to extract fields from', 'input': []}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_ctype_1": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[]",
+    "request_ctype": "application/vnd.api+json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'model_attributes_type', 'loc': ('body',), 'msg': 'Input should be a valid dictionary or object to extract fields from', 'input': []}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_ctype_2": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[]",
+    "request_ctype": "text/plain",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'model_attributes_type', 'loc': ('body',), 'msg': 'Input should be a valid dictionary or object to extract fields from', 'input': b'[]'}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_ctype_3": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[]",
+    "request_ctype": "APPLICATION/JSON",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'model_attributes_type', 'loc': ('body',), 'msg': 'Input should be a valid dictionary or object to extract fields from', 'input': []}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_ctype_4": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[]",
+    "request_ctype": "application/x-www-form-urlencoded",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'model_attributes_type', 'loc': ('body',), 'msg': 'Input should be a valid dictionary or object to extract fields from', 'input': b'[]'}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_empty_body_json": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "",
+    "request_ctype": "application/json",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'missing', 'loc': ('body',), 'msg': 'Field required', 'input': None}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "gen_empty_body_none": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "",
+    "request_ctype": "",
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'missing', 'loc': ('body',), 'msg': 'Field required', 'input': None}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "accounts_empty_body": {
+    "method": "POST",
+    "path": "/admin/accounts",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "",
+    "request_ctype": "application/json",
+    "body": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body"
+          ],
+          "msg": "Field required",
+          "input": null
+        }
+      ]
+    }
+  },
   "write_post_admin_accounts": {
     "method": "POST",
     "path": "/admin/accounts",
@@ -2405,7 +3069,7 @@
   "__meta__": {
     "port": 18610,
     "has_api_key": true,
-    "n_cases": 77,
+    "n_cases": 110,
     "fails": []
   }
 }

@@ -122,7 +122,10 @@ func (a *App) imagesEdits(c *reqCtx) (any, error) {
 			ref = v
 		}
 	} else {
-		body, err := decodeBody(c.R)
+		// 这个路由的签名是 `request: Request`，FastAPI 不做 body 校验，handler 里自己
+		// await request.json() —— 所以坏 JSON 与非对象 body 都是未捕获异常（500），
+		// 不走 decodeBody 那套 422。
+		body, err := manualJSONBody(c.R)
 		if err != nil {
 			return nil, err
 		}

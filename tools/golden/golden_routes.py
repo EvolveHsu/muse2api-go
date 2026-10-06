@@ -142,6 +142,73 @@ case("edits_badjson", "POST", "/v1/images/edits", "good", raw="{坏 json",
 case("edits_noauth", "POST", "/v1/images/edits", "bad", raw="{}",
      headers={"Content-Type": "application/json"})
 
+# ---------------- 非对象 body：全部卡在 pydantic，handler 一次都不进 ----------------
+# 这批补的是 2026-10-06 发现的一个空白：Go 的 decodeBody 把 `[]` / `123` / 坏 JSON /
+# 没有 Content-Type 的 body 一律当「读不出请求体」，走成 500；线上实测分别是：
+#   合法但不是对象 → 422 model_attributes_type（input 是那个值）
+#   坏 JSON         → 422 json_invalid（loc 带字符偏移，ctx.error 是 CPython 的措辞）
+#   Content-Type 不是 JSON 或缺失 → body 保持 **bytes**，同样 model_attributes_type，
+#     但 input 是 b'...'：/v1 那边进 repr 字符串所以还是 422，/admin 那边因为 bytes
+#     没法 JSON 序列化，整个错误处理器自己炸了 → 500。
+# 判定规则取自 fastapi/routing.py 的 get_request_handler：media type 的 maintype 必须是
+# application，且 subtype 是 json 或以 +json 结尾；空 body 则连这条路都不走（报 missing）。
+case("gen_body_list", "POST", "/v1/images/generations", "good", raw="[]",
+     headers={"Content-Type": "application/json"})
+case("gen_body_scalar", "POST", "/v1/images/generations", "good", raw="123",
+     headers={"Content-Type": "application/json"})
+case("chat_body_list", "POST", "/v1/chat/completions", "good", raw="[]",
+     headers={"Content-Type": "application/json"})
+# 空账号池下 add_account 的 body 校验也在 handler 之前，`[]` 不会走到写库那一步。
+case("accounts_body_list", "POST", "/admin/accounts", "good", raw="[]",
+     headers={"Content-Type": "application/json"})
+case("accounts_body_str", "POST", "/admin/accounts", "good", raw='"abc"',
+     headers={"Content-Type": "application/json"})
+# 坏在这里只会是 415 或 422，两种都在进 handler 之前，不会起浏览器、不会花额度。
+case("gen_noctype_empty", "POST", "/v1/images/generations", "good", raw="{}")
+# 坏 JSON + Content-Type: application/json —— typed body 由 FastAPI 自己 json.loads，
+# 实测报的是 **422 json_invalid**（loc 带字符偏移、ctx.error 是 CPython 原文），不是 400；
+# 而 /v1/images/edits 那种 handler 里手工 await request.json() 的才是 500（edits_badjson 钉着）。
+case("gen_badjson_ctype", "POST", "/v1/images/generations", "good", raw="{坏 json",
+     headers={"Content-Type": "application/json"})
+
+# 一组坏 JSON：七种失败点各不相同 —— 键后缺冒号 / 值位非法 / 元素间缺逗号 / 逗号后直接收尾 /
+# 字符串没闭合 / 尾随内容 / 整份只有空白。够把 Go 侧那个手工扫描器的分支全覆盖上。
+for _i, _bad in enumerate(['{"a"}', '{"a":}', '[1 2]', '{"a": 1, }', '["abc', '{} []', ' ']):
+    case("gen_badjson_%d" % _i, "POST", "/v1/images/generations", "good", raw=_bad,
+         headers={"Content-Type": "application/json"})
+
+# 字符串内部的两种坏法：非法转义与裸控制字符。措辞与位置都由 C 扫描器决定，猜不出来，只能录。
+# （\a 在 JSON 里是合法转义，所以第二条用的是真正的 BEL 字节。）
+case("gen_bad_escape", "POST", "/v1/images/generations", "good", raw=r'{"a": "b\q"}',
+     headers={"Content-Type": "application/json"})
+case("gen_bad_control", "POST", "/v1/images/generations", "good", raw='{"a": "b\x07c"}',
+     headers={"Content-Type": "application/json"})
+# \u 后面不足四位十六进制：C 扫描器的另一句措辞。
+case("gen_bad_uni", "POST", "/v1/images/generations", "good", raw=r'{"a": "x\u12g"}',
+     headers={"Content-Type": "application/json"})
+# {} 会通过 body 校验、真的进 handler：add_account 在没有 cookie 时直接 400「未解析到任何 cookie」，
+# 既不写库也不起浏览器 —— 用它钉「合法对象 body 是被接受的」这一半。
+case("accounts_empty", "POST", "/admin/accounts", "good", raw="{}",
+     headers={"Content-Type": "application/json"})
+# 同一个 {} 换成不给 Content-Type：看 detail 列表那种形式里 bytes 型 input 怎么序列化。
+case("accounts_noctype", "POST", "/admin/accounts", "good", raw="{}")
+
+# 哪些 Content-Type 会被当成 JSON body？统一拿 `[]` 问：
+# 当成 JSON → input 是 []；不当成 → input 是 b'[]'（bytes 那条分支，/v1 里进 repr 字符串，
+# /admin 里因无法 JSON 序列化而 500）。两种都不会进 handler，零副作用。
+for _i, _ct in enumerate(["application/json; charset=utf-8", "application/vnd.api+json",
+                          "text/plain", "APPLICATION/JSON", "application/x-www-form-urlencoded"]):
+    case("gen_ctype_%d" % _i, "POST", "/v1/images/generations", "good", raw="[]",
+         headers={"Content-Type": _ct})
+
+# 零字节 body：FastAPI 的 `if body_bytes:` 让空 body 根本不走 JSON 分支，
+# 于是必填 body 报的是 missing（不是 model_attributes_type）。三种组合都录下来。
+case("gen_empty_body_json", "POST", "/v1/images/generations", "good", raw="",
+     headers={"Content-Type": "application/json"})
+case("gen_empty_body_none", "POST", "/v1/images/generations", "good", raw="")
+case("accounts_empty_body", "POST", "/admin/accounts", "good", raw="",
+     headers={"Content-Type": "application/json"})
+
 # 写接口一律只用坏 token 探 401（handler 绝不会执行）
 for m, p in [("POST", "/admin/accounts"), ("PATCH", "/admin/accounts/capnope"),
              ("DELETE", "/admin/accounts/capnope"), ("POST", "/admin/apikey/rotate"),

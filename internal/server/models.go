@@ -24,14 +24,7 @@ func wantAny(body map[string]any, field string) any {
 }
 
 func (a *App) validationFailed(r *http.Request, errs []vErr) error {
-	if strings.HasPrefix(r.URL.Path, "/v1/") {
-		return httpError(422, "请求参数校验失败："+validationRepr(errs))
-	}
-	list := make([]detailEntry, 0, len(errs))
-	for _, e := range errs {
-		list = append(list, e.detail())
-	}
-	return httpError(422, list)
+	return validationErrorFor(r.URL.Path, errs)
 }
 
 // requiredStr：类型是 str 且没默认值 —— 缺字段算 missing，传 null 算 string_type。
