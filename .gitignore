@@ -1,0 +1,4 @@
+.reference/
+build/
+*.exe
+.qoder*
