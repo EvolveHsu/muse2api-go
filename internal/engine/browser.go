@@ -42,6 +42,11 @@ type Engine struct {
 	New  SessionFactory
 	// Launch 是进程启动注入点；nil 时用真实的 exec.Command。
 	Launch Launcher
+	// Fetch 是参考图下载注入点；nil 时用 liveFetch。
+	Fetch fetchURL
+	// EnsurePageFn 是"取到热页面"这一步的注入点：Go 没有 monkeypatch，
+	// 而金样本录制时这一步是被打桩跳过的。nil 时用真实的 EnsurePage。
+	EnsurePageFn func(cookies map[string]string, expires map[string]int, accountID string) (Session, error)
 
 	proc          Process
 	browser       Session
@@ -488,6 +493,14 @@ func (e *Engine) EnsurePage(cookies map[string]string, expires map[string]int, a
 			"请用浏览器扩展重新导入 cookie"}
 	}
 	return nil, &ErrGeneration{Msg: "muse.ai 页面加载超时（未出现聊天输入框），请检查服务器网络后重试；未确认会话失效"}
+}
+
+// ensurePage 走注入点（测试用），默认就是真实的 EnsurePage。
+func (e *Engine) ensurePage(cookies map[string]string, expires map[string]int, accountID string) (Session, error) {
+	if e.EnsurePageFn != nil {
+		return e.EnsurePageFn(cookies, expires, accountID)
+	}
+	return e.EnsurePage(cookies, expires, accountID)
 }
 
 // Refresh 对应 refresh()。

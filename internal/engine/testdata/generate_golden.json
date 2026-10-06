@@ -1,1123 +1,3631 @@
 {
- "sections": {
-  "attachments_valid": {
-   "ret": [
-    {
-     "tid": "hatch-chat-attachment-presentation-image",
-     "src": "https://x/a.png",
-     "w": 10,
-     "h": 20
+  "sections": {
+    "attachments_valid": {
+      "ret": [
+        {
+          "tid": "hatch-chat-attachment-presentation-image",
+          "src": "https://x/a.png",
+          "w": 10,
+          "h": 20
+        }
+      ],
+      "log": [
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"src\": \"https://x/a.png\", \"w\": 10, \"h\": 20}]",
+          false
+        ]
+      ]
+    },
+    "attachments_badjson": {
+      "ret": [],
+      "log": [
+        [
+          "js",
+          0,
+          false,
+          "{坏 json",
+          false
+        ]
+      ]
+    },
+    "attachments_raise": {
+      "ret": [],
+      "log": [
+        [
+          "js",
+          0,
+          false,
+          null,
+          true
+        ]
+      ]
+    },
+    "send_clicked": {
+      "ret": "clicked",
+      "log": [
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":100,\"y\":200}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 100,
+            "y": 200,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 100,
+            "y": 200,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          3,
+          false,
+          7,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ]
+      ]
+    },
+    "send_enter_fallback": {
+      "ret": "enter-sent",
+      "log": [
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":1,\"y\":2}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 1,
+            "y": 2,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 1,
+            "y": 2,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          3,
+          false,
+          5,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Enter",
+            "code": "Enter",
+            "windowsVirtualKeyCode": 13,
+            "nativeVirtualKeyCode": 13,
+            "modifiers": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "char",
+            "key": "Enter",
+            "code": "Enter",
+            "windowsVirtualKeyCode": 13,
+            "nativeVirtualKeyCode": 13,
+            "modifiers": 1,
+            "text": "\r",
+            "unmodifiedText": "\r"
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Enter",
+            "code": "Enter",
+            "windowsVirtualKeyCode": 13,
+            "nativeVirtualKeyCode": 13,
+            "modifiers": 1
+          }
+        ],
+        [
+          "js",
+          5,
+          false,
+          1,
+          false
+        ]
+      ]
+    },
+    "send_enter_raise": {
+      "ret": "no-button",
+      "log": [
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":1,\"y\":2}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 1,
+            "y": 2,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 1,
+            "y": 2,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          3,
+          false,
+          5,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "no-button",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "disabled",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Enter",
+            "code": "Enter",
+            "windowsVirtualKeyCode": 13,
+            "nativeVirtualKeyCode": 13,
+            "modifiers": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "char",
+            "key": "Enter",
+            "code": "Enter",
+            "windowsVirtualKeyCode": 13,
+            "nativeVirtualKeyCode": 13,
+            "modifiers": 1,
+            "text": "\r",
+            "unmodifiedText": "\r"
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Enter",
+            "code": "Enter",
+            "windowsVirtualKeyCode": 13,
+            "nativeVirtualKeyCode": 13,
+            "modifiers": 1
+          }
+        ],
+        [
+          "js",
+          5,
+          false,
+          null,
+          true
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Enter",
+            "code": "Enter",
+            "windowsVirtualKeyCode": 13,
+            "nativeVirtualKeyCode": 13,
+            "modifiers": 0
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "char",
+            "key": "Enter",
+            "code": "Enter",
+            "windowsVirtualKeyCode": 13,
+            "nativeVirtualKeyCode": 13,
+            "modifiers": 0,
+            "text": "\r",
+            "unmodifiedText": "\r"
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Enter",
+            "code": "Enter",
+            "windowsVirtualKeyCode": 13,
+            "nativeVirtualKeyCode": 13,
+            "modifiers": 0
+          }
+        ],
+        [
+          "js",
+          5,
+          false,
+          null,
+          true
+        ]
+      ]
+    },
+    "send_no_rect": {
+      "err": "MuseGenerationError:找不到聊天输入框",
+      "log": [
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          null,
+          false
+        ]
+      ]
+    },
+    "send_insert_text": {
+      "ret": "clicked",
+      "log": [
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":9,\"y\":9}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 9,
+            "y": 9,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 9,
+            "y": 9,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          6,
+          false,
+          0,
+          false
+        ],
+        [
+          "send",
+          "Input.insertText",
+          {
+            "text": "hello"
+          }
+        ],
+        [
+          "js",
+          6,
+          false,
+          5,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ]
+      ]
+    },
+    "send_cjk_200": {
+      "ret": "clicked",
+      "log": [
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":9,\"y\":9}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 9,
+            "y": 9,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 9,
+            "y": 9,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          7,
+          false,
+          0,
+          false
+        ],
+        [
+          "send",
+          "Input.insertText",
+          {
+            "text": "猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫"
+          }
+        ],
+        [
+          "js",
+          7,
+          false,
+          5,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ]
+      ]
+    },
+    "send_cjk_600": {
+      "ret": "clicked",
+      "log": [
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":9,\"y\":9}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 9,
+            "y": 9,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 9,
+            "y": 9,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          8,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ]
+      ]
+    },
+    "poll_chat": {
+      "ret": [
+        3,
+        "你好",
+        true
+      ],
+      "log": [
+        [
+          "js",
+          9,
+          false,
+          "{\"cnt\": 3, \"txt\": \"\\u4f60\\u597d\", \"stop\": true}",
+          false
+        ]
+      ]
+    },
+    "agent_count": {
+      "ret": 7,
+      "log": [
+        [
+          "js",
+          10,
+          false,
+          "7",
+          false
+        ]
+      ]
+    },
+    "user_count_none": {
+      "ret": 0,
+      "log": [
+        [
+          "js",
+          11,
+          false,
+          null,
+          false
+        ]
+      ]
+    },
+    "wait_att_immediate": {
+      "ret": {
+        "tid": "hatch-chat-attachment-presentation-image",
+        "hasVideo": false,
+        "src": "https://x/a.png",
+        "vSrc": "",
+        "iSrc": "https://x/a.png",
+        "w": 512,
+        "h": 512
+      },
+      "log": [
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ]
+      ],
+      "timeout": 30
+    },
+    "wait_att_video_stable": {
+      "ret": {
+        "tid": "hatch-chat-attachment-presentation-video",
+        "hasVideo": true,
+        "src": "https://x/a.mp4",
+        "vSrc": "https://x/a.mp4",
+        "iSrc": "",
+        "w": 0,
+        "h": 0
+      },
+      "log": [
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": true, \"src\": \"https://x/a.mp4\", \"vSrc\": \"https://x/a.mp4\", \"iSrc\": \"\", \"w\": 0, \"h\": 0}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"x\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": true, \"src\": \"https://x/a.mp4\", \"vSrc\": \"https://x/a.mp4\", \"iSrc\": \"\", \"w\": 0, \"h\": 0}]",
+          false
+        ]
+      ],
+      "timeout": 30
+    },
+    "wait_att_credits": {
+      "err": "MuseGenerationError:账号额度不足",
+      "log": [
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u597d\", \"stop\": false, \"tail\": \"out of credits\"}",
+          false
+        ]
+      ],
+      "timeout": 30
+    },
+    "wait_att_textonly": {
+      "err": "MuseGenerationError:模型未生成媒体，仅返回文本: 我不能生成",
+      "log": [
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"\\u6211\\u4e0d\\u80fd\\u751f\\u6210\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ]
+      ],
+      "timeout": 60
+    },
+    "wait_att_media_report": {
+      "ret": {
+        "tid": "hatch-chat-attachment-presentation-image",
+        "hasVideo": false,
+        "src": "https://x/a.png",
+        "vSrc": "",
+        "iSrc": "https://x/a.png",
+        "w": 512,
+        "h": 512
+      },
+      "log": [
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"verified generated artifact webp\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"verified generated artifact webp\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 2, \"txt\": \"verified generated artifact webp\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ]
+      ],
+      "timeout": 30
+    },
+    "wait_att_baseline_excluded": {
+      "ret": null,
+      "log": [
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/same\", \"vSrc\": \"\", \"iSrc\": \"\", \"w\": 9, \"h\": 9}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"a\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/same\", \"vSrc\": \"\", \"iSrc\": \"\", \"w\": 9, \"h\": 9}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"a\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/same\", \"vSrc\": \"\", \"iSrc\": \"\", \"w\": 9, \"h\": 9}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"a\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/same\", \"vSrc\": \"\", \"iSrc\": \"\", \"w\": 9, \"h\": 9}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"a\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/same\", \"vSrc\": \"\", \"iSrc\": \"\", \"w\": 9, \"h\": 9}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"a\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/same\", \"vSrc\": \"\", \"iSrc\": \"\", \"w\": 9, \"h\": 9}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"a\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ]
+      ],
+      "timeout": 3
+    },
+    "extract_ok": {
+      "bytes_b64": "AAFiaW5hcnk=",
+      "mime": "image/webp",
+      "url": "https://x/a",
+      "log": [
+        [
+          "js",
+          14,
+          true,
+          "{\"ok\": true, \"mime\": \"image/webp\", \"size\": 8, \"url\": \"https://x/a\", \"b64\": \"AAFiaW5hcnk=\"}",
+          false
+        ]
+      ]
+    },
+    "extract_fail": {
+      "err": "MuseGenerationError:未能取回生成结果: media-http-404",
+      "log": [
+        [
+          "js",
+          14,
+          true,
+          "{\"ok\": false, \"err\": \"media-http-404\"}",
+          false
+        ],
+        [
+          "js",
+          14,
+          true,
+          "{\"ok\": false, \"err\": \"media-http-404\"}",
+          false
+        ],
+        [
+          "js",
+          14,
+          true,
+          "{\"ok\": false, \"err\": \"media-http-404\"}",
+          false
+        ],
+        [
+          "js",
+          14,
+          true,
+          "{\"ok\": false, \"err\": \"media-http-404\"}",
+          false
+        ]
+      ],
+      "js_calls": 4
+    },
+    "chat_stream": {
+      "deltas": [
+        "你",
+        "好"
+      ],
+      "log": [
+        [
+          "js",
+          15,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          9,
+          false,
+          "{\"cnt\": 0, \"txt\": \"\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":5,\"y\":5}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 5,
+            "y": 5,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 5,
+            "y": 5,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          16,
+          false,
+          2,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ],
+        [
+          "js",
+          9,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u4f60\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          9,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u4f60\\u597d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          9,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u4f60\\u597d\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          9,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u4f60\\u597d\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          9,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u4f60\\u597d\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ]
+      ],
+      "timeout": 30
+    },
+    "chat_stream_connecting": {
+      "err": "MuseGenerationError:云端 VM 连接超时 (Still sending)",
+      "n_state": 235,
+      "n_tail": 1,
+      "n_total": 243,
+      "head_log": [
+        [
+          "js",
+          15,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          9,
+          false,
+          "{\"cnt\": 0, \"txt\": \"\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":5,\"y\":5}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 5,
+            "y": 5,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 5,
+            "y": 5,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          16,
+          false,
+          2,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ],
+        [
+          "js",
+          9,
+          false,
+          "{\"cnt\": 0, \"txt\": \"\", \"stop\": false, \"tail\": \"\"}",
+          false
+        ]
+      ],
+      "timeout": 30
+    },
+    "generate_blob": {
+      "calls": [
+        [
+          "atts"
+        ],
+        [
+          "send",
+          "画猫"
+        ],
+        [
+          "wait_timeout",
+          60
+        ],
+        [
+          "extract",
+          "https://x/a.png"
+        ]
+      ],
+      "kind": "image",
+      "via": "blob",
+      "ext": ".png",
+      "size": 4,
+      "w": 8,
+      "h": 8,
+      "ret_keys": [
+        "attachment",
+        "ext",
+        "filename",
+        "h",
+        "kind",
+        "mime",
+        "path",
+        "size",
+        "via",
+        "w"
+      ],
+      "name_shape": [
+        "BAD",
+        "2225d01638694acfa05335a2601241ae.png"
+      ]
+    },
+    "generate_download_fallback": {
+      "via": "download",
+      "ext": ".mp4",
+      "kind": "video",
+      "size": 6,
+      "ret_keys": [
+        "attachment",
+        "ext",
+        "filename",
+        "h",
+        "kind",
+        "mime",
+        "path",
+        "size",
+        "via",
+        "w"
+      ]
+    },
+    "generate_no_attachment": {
+      "err": "MuseGenerationError:等待生成超时，未出现新的生成结果"
+    },
+    "generate_lost_file": {
+      "err": "MuseGenerationError:已生成但未能取回文件"
+    },
+    "quota": {
+      "ret": {
+        "raw": "Free plan\nWeekly limit resets on Sep 30\n1% used\nAdditional tokens\nNever expires\n0% used (2B tokens left)",
+        "plan": "Free plan",
+        "weekly_reset": "Sep 30",
+        "weekly_used_pct": 1,
+        "extra_used_pct": 0,
+        "extra_left": "2B tokens left",
+        "extra_expires": "never",
+        "found": true
+      },
+      "log": [
+        [
+          "js",
+          19,
+          false,
+          "{\"x\":10,\"y\":20}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          20,
+          false,
+          "{\"x\":30,\"y\":40}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 30,
+            "y": 40,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 30,
+            "y": 40,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          21,
+          false,
+          "Free plan\nWeekly limit resets on Sep 30\n1% used\nAdditional tokens\nNever expires\n0% used (2B tokens left)",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ]
+      ],
+      "sends": [
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 30,
+            "y": 40,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 30,
+            "y": 40,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ]
+      ]
+    },
+    "quota_no_button": {
+      "err": "MuseGenerationError:找不到 Settings 按钮",
+      "log": [
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ]
+      ]
+    },
+    "quota_no_menu": {
+      "err": "MuseGenerationError:Settings 菜单未弹出",
+      "log": [
+        [
+          "js",
+          19,
+          false,
+          "{\"x\":10,\"y\":20}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ]
+      ]
+    },
+    "quota_no_text": {
+      "ret": {
+        "raw": "",
+        "found": false
+      },
+      "log": [
+        [
+          "js",
+          19,
+          false,
+          "{\"x\":10,\"y\":20}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          20,
+          false,
+          "{\"x\":30,\"y\":40}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 30,
+            "y": 40,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 30,
+            "y": 40,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ]
+      ]
+    },
+    "clear_attachments": {
+      "log": [
+        [
+          "js",
+          22,
+          false,
+          2,
+          false
+        ]
+      ]
+    },
+    "attach_image_ok": {
+      "log": [
+        [
+          "js",
+          22,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          23,
+          false,
+          "{\"ok\": true}",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "remove",
+          false
+        ]
+      ]
+    },
+    "attach_image_notok": {
+      "err": "MuseGenerationError:附加参考图失败，已停止生成",
+      "log": [
+        [
+          "js",
+          22,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          23,
+          false,
+          "{\"ok\": false, \"err\": \"no-file-input\"}",
+          false
+        ]
+      ]
+    },
+    "attach_image_unconfirmed": {
+      "err": "MuseGenerationError:参考图上传未确认，已停止生成",
+      "log": [
+        [
+          "js",
+          22,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          23,
+          false,
+          "{\"ok\": true}",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "",
+          false
+        ]
+      ]
+    },
+    "attach_image_nob64": {
+      "err": "MuseGenerationError:参考图读取失败，已停止生成",
+      "log": []
+    },
+    "dl_none": {
+      "ret": null,
+      "log": [
+        [
+          "js",
+          25,
+          false,
+          "none",
+          false
+        ]
+      ]
+    },
+    "dl_ok": {
+      "ret": "<DL>/new2.png",
+      "log": [
+        [
+          "js",
+          25,
+          false,
+          "ok",
+          false
+        ]
+      ],
+      "timeout": 6
+    },
+    "debug_dump": {
+      "content": "{\"atts\":[],\"buttons\":[\"发送\"],\"tail\":\"hi\"}",
+      "log": [
+        [
+          "js",
+          18,
+          false,
+          "{\"atts\":[],\"buttons\":[\"发送\"],\"tail\":\"hi\"}",
+          false
+        ]
+      ]
+    },
+    "debug_dump_raise": {
+      "exists": false,
+      "log": [
+        [
+          "js",
+          18,
+          false,
+          null,
+          true
+        ]
+      ]
+    },
+    "generate_full_image": {
+      "log": [
+        [
+          "js",
+          26,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          22,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          10,
+          false,
+          "0",
+          false
+        ],
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":10,\"y\":20}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          27,
+          false,
+          3,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          28,
+          true,
+          "{\"ok\": true, \"mime\": \"image/webp\", \"size\": 8, \"url\": \"https://x/a\", \"b64\": \"AAFiaW5hcnk=\"}",
+          false
+        ]
+      ],
+      "via": "blob",
+      "ext": ".webp",
+      "kind": "image",
+      "size": 8,
+      "mime": "image/webp",
+      "w": 512,
+      "h": 512,
+      "attachment": "hatch-chat-attachment-presentation-image",
+      "ret_keys": [
+        "attachment",
+        "ext",
+        "filename",
+        "h",
+        "kind",
+        "mime",
+        "path",
+        "size",
+        "via",
+        "w"
+      ],
+      "name_len": 37,
+      "name_tail": "webp",
+      "in_media_dir": true,
+      "bytes_b64": "AAFiaW5hcnk=",
+      "timeout": 60
+    },
+    "generate_full_image_ref": {
+      "log": [
+        [
+          "js",
+          26,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          22,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          23,
+          false,
+          "{\"ok\": true}",
+          false
+        ],
+        [
+          "js",
+          24,
+          false,
+          "remove",
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          10,
+          false,
+          "0",
+          false
+        ],
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":10,\"y\":20}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          27,
+          false,
+          3,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          28,
+          true,
+          "{\"ok\": true, \"mime\": \"image/webp\", \"size\": 8, \"url\": \"https://x/a\", \"b64\": \"AAFiaW5hcnk=\"}",
+          false
+        ]
+      ],
+      "via": "blob",
+      "ext": ".webp",
+      "kind": "image",
+      "size": 8,
+      "attachment": "hatch-chat-attachment-presentation-image",
+      "ret_keys": [
+        "attachment",
+        "ext",
+        "filename",
+        "h",
+        "kind",
+        "mime",
+        "path",
+        "size",
+        "via",
+        "w"
+      ],
+      "timeout": 60
+    },
+    "generate_full_download_fallback": {
+      "log": [
+        [
+          "js",
+          26,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          22,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          10,
+          false,
+          "0",
+          false
+        ],
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":10,\"y\":20}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          27,
+          false,
+          3,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          28,
+          true,
+          "{\"ok\": false, \"err\": \"media-http-404\"}",
+          false
+        ],
+        [
+          "js",
+          28,
+          true,
+          "{\"ok\": false, \"err\": \"media-http-404\"}",
+          false
+        ],
+        [
+          "js",
+          28,
+          true,
+          "{\"ok\": false, \"err\": \"media-http-404\"}",
+          false
+        ],
+        [
+          "js",
+          28,
+          true,
+          "{\"ok\": false, \"err\": \"media-http-404\"}",
+          false
+        ],
+        [
+          "js",
+          18,
+          false,
+          "{}",
+          false
+        ],
+        [
+          "js",
+          29,
+          false,
+          "ok",
+          false
+        ]
+      ],
+      "via": "download",
+      "ext": ".png",
+      "kind": "image",
+      "size": 8,
+      "mime": "",
+      "w": 512,
+      "h": 512,
+      "attachment": "hatch-chat-attachment-presentation-image",
+      "ret_keys": [
+        "attachment",
+        "ext",
+        "filename",
+        "h",
+        "kind",
+        "mime",
+        "path",
+        "size",
+        "via",
+        "w"
+      ],
+      "name_len": 36,
+      "name_tail": ".png",
+      "bytes_b64": "UE5HQllURVM=",
+      "timeout": 60
+    },
+    "generate_timeout": {
+      "err": "MuseGenerationError:等待生成超时，未出现新的生成结果",
+      "log": [
+        [
+          "js",
+          26,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          22,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          10,
+          false,
+          "0",
+          false
+        ],
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":10,\"y\":20}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          27,
+          false,
+          3,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          18,
+          false,
+          "{}",
+          false
+        ]
+      ],
+      "dump_file": true,
+      "timeout": 3
+    },
+    "__fallbacks__": {
+      "focus": 7,
+      "scroll": 30,
+      "dump": 2
     }
-   ],
-   "log": [
-    [
-     "js",
-     0,
-     false,
-     "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"src\": \"https://x/a.png\", \"w\": 10, \"h\": 20}]",
-     false
-    ]
-   ]
   },
-  "attachments_badjson": {
-   "ret": [],
-   "log": [
-    [
-     "js",
-     0,
-     false,
-     "{坏 json",
-     false
-    ]
-   ]
-  },
-  "attachments_raise": {
-   "ret": [],
-   "log": [
-    [
-     "js",
-     0,
-     false,
-     null,
-     true
-    ]
-   ]
-  },
-  "send_clicked": {
-   "ret": "clicked",
-   "log": [
-    [
-     "js",
-     1,
-     false,
-     "{\"x\":100,\"y\":200}",
-     false
-    ],
-    [
-     "send",
-     "Input.dispatchMouseEvent",
-     {
-      "type": "mousePressed",
-      "x": 100,
-      "y": 200,
-      "button": "left",
-      "clickCount": 1
-     }
-    ],
-    [
-     "send",
-     "Input.dispatchMouseEvent",
-     {
-      "type": "mouseReleased",
-      "x": 100,
-      "y": 200,
-      "button": "left",
-      "clickCount": 1
-     }
-    ],
-    [
-     "js",
-     2,
-     false,
-     7,
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "clicked",
-     false
-    ]
-   ]
-  },
-  "send_enter_fallback": {
-   "ret": "no-button",
-   "log": [
-    [
-     "js",
-     1,
-     false,
-     "{\"x\":1,\"y\":2}",
-     false
-    ],
-    [
-     "send",
-     "Input.dispatchMouseEvent",
-     {
-      "type": "mousePressed",
-      "x": 1,
-      "y": 2,
-      "button": "left",
-      "clickCount": 1
-     }
-    ],
-    [
-     "send",
-     "Input.dispatchMouseEvent",
-     {
-      "type": "mouseReleased",
-      "x": 1,
-      "y": 2,
-      "button": "left",
-      "clickCount": 1
-     }
-    ],
-    [
-     "js",
-     2,
-     false,
-     5,
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "disabled",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "js",
-     3,
-     false,
-     "no-button",
-     false
-    ],
-    [
-     "send",
-     "Input.dispatchKeyEvent",
-     {
-      "type": "keyDown",
-      "key": "Enter",
-      "code": "Enter",
-      "windowsVirtualKeyCode": 13,
-      "nativeVirtualKeyCode": 13,
-      "modifiers": 1
-     }
-    ],
-    [
-     "send",
-     "Input.dispatchKeyEvent",
-     {
-      "type": "char",
-      "key": "Enter",
-      "code": "Enter",
-      "windowsVirtualKeyCode": 13,
-      "nativeVirtualKeyCode": 13,
-      "modifiers": 1,
-      "text": "\r",
-      "unmodifiedText": "\r"
-     }
-    ],
-    [
-     "send",
-     "Input.dispatchKeyEvent",
-     {
-      "type": "keyUp",
-      "key": "Enter",
-      "code": "Enter",
-      "windowsVirtualKeyCode": 13,
-      "nativeVirtualKeyCode": 13,
-      "modifiers": 1
-     }
-    ],
-    [
-     "send",
-     "Input.dispatchKeyEvent",
-     {
-      "type": "keyDown",
-      "key": "Enter",
-      "code": "Enter",
-      "windowsVirtualKeyCode": 13,
-      "nativeVirtualKeyCode": 13,
-      "modifiers": 0
-     }
-    ],
-    [
-     "send",
-     "Input.dispatchKeyEvent",
-     {
-      "type": "char",
-      "key": "Enter",
-      "code": "Enter",
-      "windowsVirtualKeyCode": 13,
-      "nativeVirtualKeyCode": 13,
-      "modifiers": 0,
-      "text": "\r",
-      "unmodifiedText": "\r"
-     }
-    ],
-    [
-     "send",
-     "Input.dispatchKeyEvent",
-     {
-      "type": "keyUp",
-      "key": "Enter",
-      "code": "Enter",
-      "windowsVirtualKeyCode": 13,
-      "nativeVirtualKeyCode": 13,
-      "modifiers": 0
-     }
-    ]
-   ]
-  },
-  "send_no_rect": {
-   "err": "MuseGenerationError:找不到聊天输入框",
-   "log": [
-    [
-     "js",
-     1,
-     false,
-     null,
-     false
-    ]
-   ]
-  },
-  "poll_chat": {
-   "ret": [
-    3,
-    "你好",
-    true
-   ],
-   "log": [
-    [
-     "js",
-     4,
-     false,
-     "{\"cnt\": 3, \"txt\": \"\\u4f60\\u597d\", \"stop\": true}",
-     false
-    ]
-   ]
-  },
-  "agent_count": {
-   "ret": 7,
-   "log": [
-    [
-     "js",
-     5,
-     false,
-     "7",
-     false
-    ]
-   ]
-  },
-  "user_count_none": {
-   "ret": 0,
-   "log": [
-    [
-     "js",
-     6,
-     false,
-     null,
-     false
-    ]
-   ]
-  },
-  "wait_att_immediate": {
-   "ret": {
-    "tid": "hatch-chat-attachment-presentation-image",
-    "hasVideo": false,
-    "src": "https://x/a.png",
-    "vSrc": "",
-    "iSrc": "https://x/a.png",
-    "w": 512,
-    "h": 512
-   },
-   "log": [
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
-     false
-    ]
-   ]
-  },
-  "wait_att_video_stable": {
-   "ret": {
-    "tid": "hatch-chat-attachment-presentation-video",
-    "hasVideo": true,
-    "src": "https://x/a.mp4",
-    "vSrc": "https://x/a.mp4",
-    "iSrc": "",
-    "w": 0,
-    "h": 0
-   },
-   "log": [
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": true, \"src\": \"https://x/a.mp4\", \"vSrc\": \"https://x/a.mp4\", \"iSrc\": \"\", \"w\": 0, \"h\": 0}]",
-     false
-    ],
-    [
-     "js",
-     8,
-     false,
-     "{\"cnt\": 1, \"txt\": \"x\", \"stop\": true, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": true, \"src\": \"https://x/a.mp4\", \"vSrc\": \"https://x/a.mp4\", \"iSrc\": \"\", \"w\": 0, \"h\": 0}]",
-     false
-    ]
-   ]
-  },
-  "wait_att_credits": {
-   "err": "MuseGenerationError:账号额度不足",
-   "log": [
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[]",
-     false
-    ],
-    [
-     "js",
-     8,
-     false,
-     "{\"cnt\": 1, \"txt\": \"\\u597d\", \"stop\": false, \"tail\": \"out of credits\"}",
-     false
-    ]
-   ]
-  },
-  "wait_att_textonly": {
-   "err": "MuseGenerationError:模型未生成媒体，仅返回文本: 我不能生成"
-  },
-  "wait_att_media_report": {
-   "ret": {
-    "tid": "hatch-chat-attachment-presentation-image",
-    "hasVideo": false,
-    "src": "https://x/a.png",
-    "vSrc": "",
-    "iSrc": "https://x/a.png",
-    "w": 512,
-    "h": 512
-   },
-   "log": [
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[]",
-     false
-    ],
-    [
-     "js",
-     8,
-     false,
-     "{\"cnt\": 2, \"txt\": \"verified generated artifact webp\", \"stop\": true, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[]",
-     false
-    ],
-    [
-     "js",
-     8,
-     false,
-     "{\"cnt\": 2, \"txt\": \"verified generated artifact webp\", \"stop\": true, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[]",
-     false
-    ],
-    [
-     "js",
-     8,
-     false,
-     "{\"cnt\": 2, \"txt\": \"verified generated artifact webp\", \"stop\": true, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
-     false
-    ]
-   ]
-  },
-  "wait_att_baseline_excluded": {
-   "ret": null,
-   "log": [
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/same\", \"vSrc\": \"\", \"iSrc\": \"\", \"w\": 9, \"h\": 9}]",
-     false
-    ],
-    [
-     "js",
-     8,
-     false,
-     "{\"cnt\": 1, \"txt\": \"a\", \"stop\": true, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/same\", \"vSrc\": \"\", \"iSrc\": \"\", \"w\": 9, \"h\": 9}]",
-     false
-    ],
-    [
-     "js",
-     8,
-     false,
-     "{\"cnt\": 1, \"txt\": \"a\", \"stop\": true, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/same\", \"vSrc\": \"\", \"iSrc\": \"\", \"w\": 9, \"h\": 9}]",
-     false
-    ],
-    [
-     "js",
-     8,
-     false,
-     "{\"cnt\": 1, \"txt\": \"a\", \"stop\": true, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/same\", \"vSrc\": \"\", \"iSrc\": \"\", \"w\": 9, \"h\": 9}]",
-     false
-    ],
-    [
-     "js",
-     8,
-     false,
-     "{\"cnt\": 1, \"txt\": \"a\", \"stop\": true, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/same\", \"vSrc\": \"\", \"iSrc\": \"\", \"w\": 9, \"h\": 9}]",
-     false
-    ],
-    [
-     "js",
-     8,
-     false,
-     "{\"cnt\": 1, \"txt\": \"a\", \"stop\": true, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     7,
-     false,
-     1,
-     false
-    ],
-    [
-     "js",
-     0,
-     false,
-     "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/same\", \"vSrc\": \"\", \"iSrc\": \"\", \"w\": 9, \"h\": 9}]",
-     false
-    ],
-    [
-     "js",
-     8,
-     false,
-     "{\"cnt\": 1, \"txt\": \"a\", \"stop\": true, \"tail\": \"\"}",
-     false
-    ]
-   ]
-  },
-  "extract_ok": {
-   "bytes_b64": "AAFiaW5hcnk=",
-   "mime": "image/webp",
-   "url": "https://x/a",
-   "log": [
-    [
-     "js",
-     9,
-     true,
-     "{\"ok\": true, \"mime\": \"image/webp\", \"size\": 8, \"url\": \"https://x/a\", \"b64\": \"AAFiaW5hcnk=\"}",
-     false
-    ]
-   ]
-  },
-  "extract_fail": {
-   "err": "MuseGenerationError:未能取回生成结果: media-http-404",
-   "log": [
-    [
-     "js",
-     9,
-     true,
-     "{\"ok\": false, \"err\": \"media-http-404\"}",
-     false
-    ],
-    [
-     "js",
-     9,
-     true,
-     "{\"ok\": false, \"err\": \"media-http-404\"}",
-     false
-    ],
-    [
-     "js",
-     9,
-     true,
-     "{\"ok\": false, \"err\": \"media-http-404\"}",
-     false
-    ],
-    [
-     "js",
-     9,
-     true,
-     "{\"ok\": false, \"err\": \"media-http-404\"}",
-     false
-    ]
-   ],
-   "js_calls": 4
-  },
-  "chat_stream": {
-   "deltas": [
-    "你",
-    "好"
-   ],
-   "log": [
-    [
-     "js",
-     4,
-     false,
-     "{\"cnt\": 0, \"txt\": \"\", \"stop\": false, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     4,
-     false,
-     "{\"cnt\": 1, \"txt\": \"\\u4f60\", \"stop\": true, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     4,
-     false,
-     "{\"cnt\": 1, \"txt\": \"\\u4f60\\u597d\", \"stop\": true, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     4,
-     false,
-     "{\"cnt\": 1, \"txt\": \"\\u4f60\\u597d\", \"stop\": false, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     4,
-     false,
-     "{\"cnt\": 1, \"txt\": \"\\u4f60\\u597d\", \"stop\": false, \"tail\": \"\"}",
-     false
-    ],
-    [
-     "js",
-     4,
-     false,
-     "{\"cnt\": 1, \"txt\": \"\\u4f60\\u597d\", \"stop\": false, \"tail\": \"\"}",
-     false
-    ]
-   ]
-  },
-  "chat_stream_connecting": {
-   "err": "MuseGenerationError:云端 VM 连接超时 (Still sending)",
-   "tail_calls": null
-  },
-  "generate_blob": {
-   "calls": [
-    [
-     "atts"
-    ],
-    [
-     "send",
-     "画猫"
-    ],
-    [
-     "wait_timeout",
-     60
-    ],
-    [
-     "extract",
-     "https://x/a.png"
-    ]
-   ],
-   "kind": "image",
-   "via": "blob",
-   "ext": ".png",
-   "size": 4,
-   "w": 8,
-   "h": 8,
-   "ret_keys": [
-    "attachment",
-    "ext",
-    "filename",
-    "h",
-    "kind",
-    "mime",
-    "path",
-    "size",
-    "via",
-    "w"
-   ],
-   "name_shape": [
-    "BAD",
-    "1e972d2f45b54e85b5f72194a0f042c5.png"
-   ]
-  },
-  "generate_download_fallback": {
-   "via": "download",
-   "ext": ".mp4",
-   "kind": "video",
-   "size": 6,
-   "ret_keys": [
-    "attachment",
-    "ext",
-    "filename",
-    "h",
-    "kind",
-    "mime",
-    "path",
-    "size",
-    "via",
-    "w"
-   ]
-  },
-  "generate_no_attachment": {
-   "err": "MuseGenerationError:等待生成超时，未出现新的生成结果"
-  },
-  "generate_lost_file": {
-   "err": null
-  },
-  "quota": {
-   "ret": {
-    "raw": "Free plan\nWeekly limit resets on Sep 30\n1% used\nAdditional tokens\nNever expires\n0% used (2B tokens left)",
-    "plan": "Free plan",
-    "weekly_reset": "Sep 30",
-    "weekly_used_pct": 1,
-    "extra_used_pct": 0,
-    "extra_left": "2B tokens left",
-    "extra_expires": "never",
-    "found": true
-   },
-   "sends": [
-    [
-     "send",
-     "Input.dispatchMouseEvent",
-     {
-      "type": "mousePressed",
-      "x": 10,
-      "y": 20,
-      "button": "left",
-      "clickCount": 1
-     }
-    ],
-    [
-     "send",
-     "Input.dispatchMouseEvent",
-     {
-      "type": "mouseReleased",
-      "x": 10,
-      "y": 20,
-      "button": "left",
-      "clickCount": 1
-     }
-    ],
-    [
-     "send",
-     "Input.dispatchMouseEvent",
-     {
-      "type": "mousePressed",
-      "x": 30,
-      "y": 40,
-      "button": "left",
-      "clickCount": 1
-     }
-    ],
-    [
-     "send",
-     "Input.dispatchMouseEvent",
-     {
-      "type": "mouseReleased",
-      "x": 30,
-      "y": 40,
-      "button": "left",
-      "clickCount": 1
-     }
-    ],
-    [
-     "send",
-     "Input.dispatchKeyEvent",
-     {
-      "type": "keyDown",
-      "key": "Escape",
-      "code": "Escape",
-      "windowsVirtualKeyCode": 27,
-      "nativeVirtualKeyCode": 27
-     }
-    ],
-    [
-     "send",
-     "Input.dispatchKeyEvent",
-     {
-      "type": "keyUp",
-      "key": "Escape",
-      "code": "Escape",
-      "windowsVirtualKeyCode": 27,
-      "nativeVirtualKeyCode": 27
-     }
-    ]
-   ]
-  },
-  "__fallbacks__": {
-   "scroll": 30,
-   "dump": 2
-  }
- },
- "exprs": [
-  "(function(){var list = []; var seen = new Set();function addEl(el, tid){  if(!el || seen.has(el)) return;  seen.add(el);  if(el.closest('form, [class*=chat-user-bubble], [class*=\"group/msg\"]')) return;  var v = el.querySelector('video') || (el.tagName === 'VIDEO' ? el : null);  var img = el.querySelector('img') || (el.tagName === 'IMG' ? el : null);  var isVid = (tid || '').includes('video') || !!v;  var primary = isVid ? (v || img) : (img || v);  var src = primary ? (primary.currentSrc || primary.src || '') : '';  if(src && !seen.has(src)){    seen.add(src);    list.push({      tid: tid || el.getAttribute('data-testid') || (isVid ? 'video' : 'image'),      hasVideo: !!v,      hasImg: !!img,      src: src,      vSrc: v ? (v.currentSrc || v.src || '') : '',      iSrc: img ? (img.currentSrc || img.src || '') : '',      w: primary ? (primary.videoWidth || primary.naturalWidth || 0) : 0,      h: primary ? (primary.videoHeight || primary.naturalHeight || 0) : 0    });  }}document.querySelectorAll('[data-testid^=\"hatch-chat-attachment-presentation-\"]').forEach(function(a){ addEl(a, a.getAttribute('data-testid')); });document.querySelectorAll('div[class*=\"hatch-agent-bubble-bg\"] img, div[class*=\"hatch-agent-bubble-bg\"] video').forEach(function(m){  var s = m.currentSrc || m.src || '';  if(s && !s.includes('avatar') && !s.includes('emoji')) addEl(m.parentElement || m, 'agent-media');});return JSON.stringify(list);})()",
-  "(function(){var t=document.querySelector('textarea');if(!t)return null;var r=t.getBoundingClientRect();return JSON.stringify({x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2)});})()",
-  "(function(t){var ta=document.querySelector('textarea');if(!ta) return 0;ta.focus();var s=Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set;s.call(ta,t);ta.dispatchEvent(new Event('input',{bubbles:true}));ta.dispatchEvent(new Event('change',{bubbles:true}));return (ta.value||'').length;})(\"\\u4f60\\u597d\")",
-  "(function(){var b=[...document.querySelectorAll('button,[role=button]')].filter(function(x){return x.offsetParent!==null;}).find(function(x){return /发送|send/i.test(x.getAttribute('aria-label')||'')||/发送|send/i.test(x.getAttribute('data-testid')||'')||/send/i.test(x.innerText||'');});if(!b)return 'no-button';if(b.disabled)return 'disabled';b.click();return 'clicked';})()",
-  "(function(){var els=[...document.querySelectorAll('*')].filter(function(e){var s=getComputedStyle(e);return (s.overflowY==='auto'||s.overflowY==='scroll')&&e.scrollHeight>e.clientHeight+100;});els.sort(function(a,b){return b.scrollHeight-a.scrollHeight;});if(els[0])els[0].scrollTop=els[0].scrollHeight;var scope=document.querySelector('main,[class*=\"chat-scroll\"],[class*=\"hatch-chat-scroll\"]')||document.body;var bs=[].slice.call(scope.querySelectorAll('div[class*=\"hatch-chat-groupable-bubble\"]')).filter(function(b){return /hatch-agent-bubble-bg/.test(b.className||'');});var nonEmpty=bs.filter(function(b){return ((b.innerText||'').trim().length)>0;});var txt=nonEmpty.length?(nonEmpty[nonEmpty.length-1].innerText||'').trim():'';var stop=!!(document.querySelector('[data-testid=\"hatch-composer-stop-button\"]')||document.querySelector('button[aria-label*=\"Stop\" i]')||document.querySelector('button[aria-label*=\"停止\"]'));return JSON.stringify({cnt:nonEmpty.length,total:bs.length,txt:txt,stop:stop});})()",
-  "(function(){var bs=[].slice.call(document.querySelectorAll('div[class*=\"hatch-chat-groupable-bubble\"]'));var n=0;for(var i=0;i<bs.length;i++){if(/hatch-agent-bubble-bg/.test(bs[i].className||''))n++;}return String(n);})()",
-  "(function(){var bs=[].slice.call(document.querySelectorAll('div[class*=\"hatch-chat-groupable-bubble\"]'));var n=0;for(var i=0;i<bs.length;i++){if(/chat-user-bubble/.test(bs[i].className||''))n++;}return String(n);})()",
-  "(function(){var els=[...document.querySelectorAll('*')].filter(function(e){var s=getComputedStyle(e);return (s.overflowY==='auto'||s.overflowY==='scroll')&&e.scrollHeight>e.clientHeight+100;});els.sort(function(a,b){return b.scrollHeight-a.scrollHeight;});if(els[0])els[0].scrollTop=els[0].scrollHeight;var s=document.scrollingElement||document.body;s.scrollTop=s.scrollHeight;var el=document.querySelector('textarea');if(el)el.scrollIntoView({block:'end'});return 1;})()",
-  "(function(){\n                    var bs=[].slice.call(document.querySelectorAll('div[class*=\"hatch-chat-groupable-bubble\"]'))\n                        .filter(function(b){return /hatch-agent-bubble-bg/.test(b.className||'');});\n                    var lastTxt = bs.length ? (bs[bs.length-1].innerText||'').trim() : '';\n                    var hasStop = !!(document.querySelector('[data-testid=\"hatch-composer-stop-button\"]')\n                        || document.querySelector('button[aria-label*=\"Stop\" i]')\n                        || document.querySelector('button[aria-label*=\"停止\"]'));\n                    var tail = document.body ? (document.body.innerText||'').slice(-700) : '';\n                    return JSON.stringify({cnt: bs.length, txt: lastTxt, stop: hasStop, tail: tail});\n                })()",
-  "\n    (async function(src, expect){\n      try{\n        var u = src;\n        if(!u) return JSON.stringify({ok:false,err:'no-media-src'});\n        var r = await fetch(u);\n        if(!r.ok) return JSON.stringify({ok:false,err:'media-http-'+r.status});\n        var b = await r.blob();\n        var ab = await b.arrayBuffer();\n        var bytes = new Uint8Array(ab);\n        var s = '';\n        for(var i=0; i<bytes.length; i+=65536){\n          s += String.fromCharCode.apply(null, bytes.subarray(i, i+65536));\n        }\n        return JSON.stringify({ok:true, mime:b.type||'', size:b.size, url:u, b64:btoa(s)});\n      }catch(e){\n        return JSON.stringify({ok:false, err:String(e)});\n      }\n    })(\"https://x/a\", \"image\")\n    ",
-  "document.body.innerText.slice(-500)",
-  "JSON.stringify({atts:[...document.querySelectorAll('[data-testid^=\"hatch-chat-attachment-presentation-\"]')].map(function(a){var m=a.querySelector('img,video');return {tid:a.getAttribute('data-testid'),src:m?(m.currentSrc||m.src||'').slice(0,60):''};}),buttons:[...document.querySelectorAll('button,[role=button]')].filter(b=>b.offsetParent!==null).map(b=>b.getAttribute('aria-label')||b.innerText.trim().slice(0,20)).filter(Boolean).slice(-40),tail:document.body.innerText.slice(-500)})",
-  "(function(){var sel=\"button[aria-label=\\\"Settings\\\"]\";var b=[...document.querySelectorAll(sel)].filter(function(x){return x.offsetParent!==null;})[0];if(!b)return null;var r=b.getBoundingClientRect();return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});})()",
-  "(function(){var els=[...document.querySelectorAll('div,span,li,[role=menuitem],button')].filter(function(e){return e.offsetParent!==null&&(e.textContent||'').trim()==='Settings'&&e.getAttribute('aria-label')!=='Settings'&&e.children.length<=3;});if(!els.length)return null;var el=els[els.length-1];var r=el.getBoundingClientRect();return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});})()",
-  "(function(){var d=document.querySelector('[role=dialog],[aria-modal=true]');return d?(d.innerText||''):'';})()"
- ]
+  "exprs": [
+    "(function(){var list = []; var seen = new Set();function addEl(el, tid){  if(!el || seen.has(el)) return;  seen.add(el);  if(el.closest('form, [class*=chat-user-bubble], [class*=\"group/msg\"]')) return;  var v = el.querySelector('video') || (el.tagName === 'VIDEO' ? el : null);  var img = el.querySelector('img') || (el.tagName === 'IMG' ? el : null);  var isVid = (tid || '').includes('video') || !!v;  var primary = isVid ? (v || img) : (img || v);  var src = primary ? (primary.currentSrc || primary.src || '') : '';  if(src && !seen.has(src)){    seen.add(src);    list.push({      tid: tid || el.getAttribute('data-testid') || (isVid ? 'video' : 'image'),      hasVideo: !!v,      hasImg: !!img,      src: src,      vSrc: v ? (v.currentSrc || v.src || '') : '',      iSrc: img ? (img.currentSrc || img.src || '') : '',      w: primary ? (primary.videoWidth || primary.naturalWidth || 0) : 0,      h: primary ? (primary.videoHeight || primary.naturalHeight || 0) : 0    });  }}document.querySelectorAll('[data-testid^=\"hatch-chat-attachment-presentation-\"]').forEach(function(a){ addEl(a, a.getAttribute('data-testid')); });document.querySelectorAll('div[class*=\"hatch-agent-bubble-bg\"] img, div[class*=\"hatch-agent-bubble-bg\"] video').forEach(function(m){  var s = m.currentSrc || m.src || '';  if(s && !s.includes('avatar') && !s.includes('emoji')) addEl(m.parentElement || m, 'agent-media');});return JSON.stringify(list);})()",
+    "(function(){\n                var ta = document.querySelector('textarea');\n                if (ta) {\n                    ta.scrollIntoView({block: 'center', inline: 'nearest'});\n                    ta.focus();\n                }\n            })()",
+    "(function(){var t=document.querySelector('textarea');if(!t)return null;var r=t.getBoundingClientRect();return JSON.stringify({x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2)});})()",
+    "(function(t){var ta=document.querySelector('textarea');if(!ta) return 0;ta.focus();var s=Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set;s.call(ta,t);ta.dispatchEvent(new Event('input',{bubbles:true}));ta.dispatchEvent(new Event('change',{bubbles:true}));return (ta.value||'').length;})(\"\\u4f60\\u597d\")",
+    "(function(){var b=[...document.querySelectorAll('button,[role=button]')].filter(function(x){return x.offsetParent!==null;}).find(function(x){return /发送|send/i.test(x.getAttribute('aria-label')||'')||/发送|send/i.test(x.getAttribute('data-testid')||'')||/send/i.test(x.innerText||'');});if(!b)return 'no-button';if(b.disabled)return 'disabled';b.click();return 'clicked';})()",
+    "!(document.querySelector('textarea')||{value:''}).value",
+    "(function(t){var ta=document.querySelector('textarea');if(!ta) return 0;ta.focus();var s=Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set;s.call(ta,t);ta.dispatchEvent(new Event('input',{bubbles:true}));ta.dispatchEvent(new Event('change',{bubbles:true}));return (ta.value||'').length;})(\"hello\")",
+    "(function(t){var ta=document.querySelector('textarea');if(!ta) return 0;ta.focus();var s=Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set;s.call(ta,t);ta.dispatchEvent(new Event('input',{bubbles:true}));ta.dispatchEvent(new Event('change',{bubbles:true}));return (ta.value||'').length;})(\"\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\")",
+    "(function(t){var ta=document.querySelector('textarea');if(!ta) return 0;ta.focus();var s=Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set;s.call(ta,t);ta.dispatchEvent(new Event('input',{bubbles:true}));ta.dispatchEvent(new Event('change',{bubbles:true}));return (ta.value||'').length;})(\"\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\\u732b\")",
+    "(function(){var els=[...document.querySelectorAll('*')].filter(function(e){var s=getComputedStyle(e);return (s.overflowY==='auto'||s.overflowY==='scroll')&&e.scrollHeight>e.clientHeight+100;});els.sort(function(a,b){return b.scrollHeight-a.scrollHeight;});if(els[0])els[0].scrollTop=els[0].scrollHeight;var scope=document.querySelector('main,[class*=\"chat-scroll\"],[class*=\"hatch-chat-scroll\"]')||document.body;var bs=[].slice.call(scope.querySelectorAll('div[class*=\"hatch-chat-groupable-bubble\"]')).filter(function(b){return /hatch-agent-bubble-bg/.test(b.className||'');});var nonEmpty=bs.filter(function(b){return ((b.innerText||'').trim().length)>0;});var txt=nonEmpty.length?(nonEmpty[nonEmpty.length-1].innerText||'').trim():'';var stop=!!(document.querySelector('[data-testid=\"hatch-composer-stop-button\"]')||document.querySelector('button[aria-label*=\"Stop\" i]')||document.querySelector('button[aria-label*=\"停止\"]'));return JSON.stringify({cnt:nonEmpty.length,total:bs.length,txt:txt,stop:stop});})()",
+    "(function(){var bs=[].slice.call(document.querySelectorAll('div[class*=\"hatch-chat-groupable-bubble\"]'));var n=0;for(var i=0;i<bs.length;i++){if(/hatch-agent-bubble-bg/.test(bs[i].className||''))n++;}return String(n);})()",
+    "(function(){var bs=[].slice.call(document.querySelectorAll('div[class*=\"hatch-chat-groupable-bubble\"]'));var n=0;for(var i=0;i<bs.length;i++){if(/chat-user-bubble/.test(bs[i].className||''))n++;}return String(n);})()",
+    "(function(){var els=[...document.querySelectorAll('*')].filter(function(e){var s=getComputedStyle(e);return (s.overflowY==='auto'||s.overflowY==='scroll')&&e.scrollHeight>e.clientHeight+100;});els.sort(function(a,b){return b.scrollHeight-a.scrollHeight;});if(els[0])els[0].scrollTop=els[0].scrollHeight;var s=document.scrollingElement||document.body;s.scrollTop=s.scrollHeight;var el=document.querySelector('textarea');if(el)el.scrollIntoView({block:'end'});return 1;})()",
+    "(function(){\n                    var bs=[].slice.call(document.querySelectorAll('div[class*=\"hatch-chat-groupable-bubble\"]'))\n                        .filter(function(b){return /hatch-agent-bubble-bg/.test(b.className||'');});\n                    var lastTxt = bs.length ? (bs[bs.length-1].innerText||'').trim() : '';\n                    var hasStop = !!(document.querySelector('[data-testid=\"hatch-composer-stop-button\"]')\n                        || document.querySelector('button[aria-label*=\"Stop\" i]')\n                        || document.querySelector('button[aria-label*=\"停止\"]'));\n                    var tail = document.body ? (document.body.innerText||'').slice(-700) : '';\n                    return JSON.stringify({cnt: bs.length, txt: lastTxt, stop: hasStop, tail: tail});\n                })()",
+    "\n    (async function(src, expect){\n      try{\n        var u = src;\n        if(!u) return JSON.stringify({ok:false,err:'no-media-src'});\n        var r = await fetch(u);\n        if(!r.ok) return JSON.stringify({ok:false,err:'media-http-'+r.status});\n        var b = await r.blob();\n        var ab = await b.arrayBuffer();\n        var bytes = new Uint8Array(ab);\n        var s = '';\n        for(var i=0; i<bytes.length; i+=65536){\n          s += String.fromCharCode.apply(null, bytes.subarray(i, i+65536));\n        }\n        return JSON.stringify({ok:true, mime:b.type||'', size:b.size, url:u, b64:btoa(s)});\n      }catch(e){\n        return JSON.stringify({ok:false, err:String(e)});\n      }\n    })(\"https://x/a\", \"image\")\n    ",
+    "(function(forChat){\n                var d = document.querySelector('[role=\"dialog\"]');\n                if (d) {\n                    var b = d.querySelector('button[aria-label*=\"close\" i], button');\n                    if (b) b.click();\n                }\n                var scope = document.querySelector('main,[class*=\"chat-scroll\"],[class*=\"hatch-chat-scroll\"]') || document.body;\n                var bubbleCount = scope ? scope.querySelectorAll('div[class*=\"hatch-chat-groupable-bubble\"]').length : 0;\n                var hasAtts = document.querySelectorAll('[data-testid^=\"hatch-chat-attachment-presentation-\"]').length > 0;\n                var hasStop = !!(document.querySelector('[data-testid=\"hatch-composer-stop-button\"]')\n                    || document.querySelector('button[aria-label*=\"Stop\" i]')\n                    || document.querySelector('button[aria-label*=\"停止\"]'));\n                var bodyTxt = document.body ? (document.body.innerText || '') : '';\n                var hasStuck = bodyTxt.indexOf('Still sending') !== -1 || bodyTxt.indexOf('Connecting...') !== -1;\n                if (hasStop || hasStuck || hasAtts) return true;\n                if (forChat) {\n                    return bubbleCount >= 24;\n                }\n                return (window.location.pathname !== '/thread/new') || bubbleCount > 0;\n            })(true)",
+    "(function(t){var ta=document.querySelector('textarea');if(!ta) return 0;ta.focus();var s=Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set;s.call(ta,t);ta.dispatchEvent(new Event('input',{bubbles:true}));ta.dispatchEvent(new Event('change',{bubbles:true}));return (ta.value||'').length;})(\"hi\")",
+    "document.body.innerText.slice(-500)",
+    "JSON.stringify({atts:[...document.querySelectorAll('[data-testid^=\"hatch-chat-attachment-presentation-\"]')].map(function(a){var m=a.querySelector('img,video');return {tid:a.getAttribute('data-testid'),src:m?(m.currentSrc||m.src||'').slice(0,60):''};}),buttons:[...document.querySelectorAll('button,[role=button]')].filter(b=>b.offsetParent!==null).map(b=>b.getAttribute('aria-label')||b.innerText.trim().slice(0,20)).filter(Boolean).slice(-40),tail:document.body.innerText.slice(-500)})",
+    "(function(){var sel=\"button[aria-label=\\\"Settings\\\"]\";var b=[...document.querySelectorAll(sel)].filter(function(x){return x.offsetParent!==null;})[0];if(!b)return null;var r=b.getBoundingClientRect();return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});})()",
+    "(function(){var els=[...document.querySelectorAll('div,span,li,[role=menuitem],button')].filter(function(e){return e.offsetParent!==null&&(e.textContent||'').trim()==='Settings'&&e.getAttribute('aria-label')!=='Settings'&&e.children.length<=3;});if(!els.length)return null;var el=els[els.length-1];var r=el.getBoundingClientRect();return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});})()",
+    "(function(){var d=document.querySelector('[role=dialog],[aria-modal=true]');return d?(d.innerText||''):'';})()",
+    "(function(){var btns=Array.from(document.querySelectorAll('button[aria-label]')).filter(function(b){var al=b.getAttribute('aria-label')||'';return /remove\\s*attachment|移除附件|删除附件|移除|删除/i.test(al);});btns.forEach(function(b){b.click();});Array.from(document.querySelectorAll('input[type=\"file\"]')).forEach(function(inp){inp.value='';});return btns.length;})()",
+    "\n        (function(b64, mime) {\n            try {\n                var byteChars = atob(b64);\n                var byteNumbers = new Array(byteChars.length);\n                for (var i = 0; i < byteChars.length; i++) {\n                    byteNumbers[i] = byteChars.charCodeAt(i);\n                }\n                var byteArray = new Uint8Array(byteNumbers);\n                var blob = new Blob([byteArray], {type: mime});\n                var ext = mime.split('/')[1] || 'png';\n                if (ext === 'jpeg') ext = 'jpg';\n                var file = new File([blob], 'reference_image.' + ext, {type: mime});\n                // 现网 composer 里可能有多个 file input；优先取位于 composer 内的那个\n                var inputs = Array.from(document.querySelectorAll('input[type=\"file\"]'));\n                if (!inputs.length) return JSON.stringify({ok: false, err: 'no-file-input'});\n                var ov = document.querySelector('[data-testid=\"hatch-composer-placeholder-overlay\"]');\n                var composer = ov ? ov.closest('form') : null;\n                var input = null;\n                if (composer) {\n                    input = inputs.find(function(x){ return composer.contains(x); }) || null;\n                }\n                if (!input) {\n                    // 退而求其次：取不在对话气泡里的那个 input\n                    input = inputs.find(function(x){\n                        return !x.closest('[class*=chat-user-bubble], [class*=\"group/msg\"]');\n                    }) || inputs[0];\n                }\n                // 有些版本 accept 为空，补上 image/* 让页面接受本次 File\n                if (!input.getAttribute('accept')) input.setAttribute('accept', 'image/*');\n                var dt = new DataTransfer();\n                dt.items.add(file);\n                input.files = dt.files;\n                input.dispatchEvent(new Event('change', {bubbles: true}));\n                input.dispatchEvent(new Event('input', {bubbles: true}));\n                return JSON.stringify({ok: true});\n            } catch(e) {\n                return JSON.stringify({ok: false, err: String(e)});\n            }\n        })(\"iVBORw0KGgo=\", \"image/png\")\n        ",
+    "(function(){\n                var btns = Array.from(document.querySelectorAll('button[aria-label]'));\n                var hasRemove = btns.some(function(b){\n                    return /remove\\s*attachment|移除附件|删除附件/i.test(b.getAttribute('aria-label') || '');\n                });\n                if (hasRemove) return 'remove';\n                // 兜底：composer 内出现附件缩略图（img/video）\n                var ov = document.querySelector('[data-testid=\"hatch-composer-placeholder-overlay\"]');\n                var composer = ov ? (ov.closest('form') || ov.parentElement.parentElement.parentElement) : null;\n                if (composer) {\n                    var media = composer.querySelectorAll('img, video');\n                    if (media.length > 0) return 'thumb';\n                }\n                return '';\n                })()",
+    "(function(src){\n            var media=[...document.querySelectorAll('img,video')]\n                .find(m=>(m.currentSrc||m.src||'')===src);\n            var node=media && media.closest('[data-testid^=\"hatch-chat-attachment-presentation-\"]');\n            if(!node) return 'none';\n            node=node.closest('[class*=\"group/widget-presentation\"]')||node;\n            var b=[...node.querySelectorAll('button,[role=button]')]\n                .find(x=>/下载|保存|download/i.test(x.getAttribute('aria-label')||''));\n            if(!b) return 'none';\n            b.click();return 'ok';\n        })(\"https://x/a\")",
+    "(function(forChat){\n                var d = document.querySelector('[role=\"dialog\"]');\n                if (d) {\n                    var b = d.querySelector('button[aria-label*=\"close\" i], button');\n                    if (b) b.click();\n                }\n                var scope = document.querySelector('main,[class*=\"chat-scroll\"],[class*=\"hatch-chat-scroll\"]') || document.body;\n                var bubbleCount = scope ? scope.querySelectorAll('div[class*=\"hatch-chat-groupable-bubble\"]').length : 0;\n                var hasAtts = document.querySelectorAll('[data-testid^=\"hatch-chat-attachment-presentation-\"]').length > 0;\n                var hasStop = !!(document.querySelector('[data-testid=\"hatch-composer-stop-button\"]')\n                    || document.querySelector('button[aria-label*=\"Stop\" i]')\n                    || document.querySelector('button[aria-label*=\"停止\"]'));\n                var bodyTxt = document.body ? (document.body.innerText || '') : '';\n                var hasStuck = bodyTxt.indexOf('Still sending') !== -1 || bodyTxt.indexOf('Connecting...') !== -1;\n                if (hasStop || hasStuck || hasAtts) return true;\n                if (forChat) {\n                    return bubbleCount >= 24;\n                }\n                return (window.location.pathname !== '/thread/new') || bubbleCount > 0;\n            })(false)",
+    "(function(t){var ta=document.querySelector('textarea');if(!ta) return 0;ta.focus();var s=Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set;s.call(ta,t);ta.dispatchEvent(new Event('input',{bubbles:true}));ta.dispatchEvent(new Event('change',{bubbles:true}));return (ta.value||'').length;})(\"\\u753b\\u732b\")",
+    "\n    (async function(src, expect){\n      try{\n        var u = src;\n        if(!u) return JSON.stringify({ok:false,err:'no-media-src'});\n        var r = await fetch(u);\n        if(!r.ok) return JSON.stringify({ok:false,err:'media-http-'+r.status});\n        var b = await r.blob();\n        var ab = await b.arrayBuffer();\n        var bytes = new Uint8Array(ab);\n        var s = '';\n        for(var i=0; i<bytes.length; i+=65536){\n          s += String.fromCharCode.apply(null, bytes.subarray(i, i+65536));\n        }\n        return JSON.stringify({ok:true, mime:b.type||'', size:b.size, url:u, b64:btoa(s)});\n      }catch(e){\n        return JSON.stringify({ok:false, err:String(e)});\n      }\n    })(\"https://x/a.png\", \"image\")\n    ",
+    "(function(src){\n            var media=[...document.querySelectorAll('img,video')]\n                .find(m=>(m.currentSrc||m.src||'')===src);\n            var node=media && media.closest('[data-testid^=\"hatch-chat-attachment-presentation-\"]');\n            if(!node) return 'none';\n            node=node.closest('[class*=\"group/widget-presentation\"]')||node;\n            var b=[...node.querySelectorAll('button,[role=button]')]\n                .find(x=>/下载|保存|download/i.test(x.getAttribute('aria-label')||''));\n            if(!b) return 'none';\n            b.click();return 'ok';\n        })(\"https://x/a.png\")"
+  ]
 }
