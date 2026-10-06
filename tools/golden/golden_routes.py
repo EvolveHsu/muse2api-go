@@ -170,6 +170,20 @@ case("edits_badjson", "POST", "/v1/images/edits", "good", raw="{坏 json",
 case("edits_noauth", "POST", "/v1/images/edits", "bad", raw="{}",
      headers={"Content-Type": "application/json"})
 
+# edits 的另一半：handler 自己 `req_obj = ImageRequest(**挑出来的字段)`，pydantic 在那一刻抛
+# ValidationError —— 它不在 FastAPI 的校验层里，所以不是 422 而是未捕获异常（500），
+# 且发生在 _run_generation 之前：浏览器不会起、额度不会花。
+# Go 早前完全不校验这批字段，合法形态会一路走进生成，所以必须逐字段钉住。
+for _i, (_k, _v) in enumerate([
+        ("prompt", 5), ("model", 5), ("size", 5), ("aspect_ratio", 5), ("response_format", 5),
+        ("timeout", 999), ("timeout", 0), ("timeout", -5), ("timeout", "abc"), ("timeout", 2.5),
+        ("reference_image", 5), ("image", {"url": 5}), ("image_url", 5), ("image", {"b64_json": 5}),
+        # "5" 能被 pydantic 收进模型，但 handler 传给 _run_generation 的是**原始值**
+        # （`gen_timeout = timeout or CFG.image_timeout` 里的 timeout 是局部变量，不是 req_obj 的字段），
+        # 于是 max(1, "5") 在 _run_generation 的第一行就 TypeError —— 仍然进不了浏览器。
+        ("timeout", "5"), ("timeout", []), ("timeout", {})]):
+    case("edits_model_%02d_%s" % (_i, _k), "POST", "/v1/images/edits", "good", {_k: _v})
+
 # ---------------- 非对象 body：全部卡在 pydantic，handler 一次都不进 ----------------
 # 这批补的是 2026-10-06 发现的一个空白：Go 的 decodeBody 把 `[]` / `123` / 坏 JSON /
 # 没有 Content-Type 的 body 一律当「读不出请求体」，走成 500；线上实测分别是：
