@@ -406,7 +406,9 @@ func jsonString(s string) string {
 			b.WriteString(`\t`)
 		case r < 0x20:
 			fmt.Fprintf(&b, `\u%04x`, r)
-		case r < 0x80:
+		case r <= 0x7E:
+			// CPython 的判据是 ESCAPE_ASCII = ([\\"]|[^\ -~])，
+			// 所以「空格~波浪号」原样，0x7F（DEL）要转义。
 			b.WriteRune(r)
 		case r > 0xFFFF:
 			r1 := 0xD800 + ((r - 0x10000) >> 10)

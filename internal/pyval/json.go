@@ -143,6 +143,10 @@ func writeString(b *strings.Builder, s string, ascii bool) {
 			case !ascii:
 				// ensure_ascii=False：非 ASCII 原样写出（UTF-8）。
 				b.WriteRune(r)
+			case r <= 0x7E:
+				// ensure_ascii=True 的判据是 CPython 的 ESCAPE_ASCII = ([\\"]|[^\ -~])：
+				// 「空格 ~ 波浪号」之间的一律原样，之外的才转义 —— 所以 0x7F（DEL）也要转。
+				b.WriteRune(r)
 			case r <= 0xFFFF:
 				fmt.Fprintf(b, `\u%04x`, r)
 			default:

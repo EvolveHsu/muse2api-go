@@ -51,7 +51,7 @@ func TestV1ReadOnlyContract(t *testing.T) {
 		}
 	}
 
-	cases := append(replayCases(), writeProbeCases(g)...)
+	cases := append(replayCases(), append(writeProbeCases(g), docProbeCases(g)...)...)
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			row := section(t, g, c.name)
@@ -111,6 +111,24 @@ func TestV1ReadOnlyContract(t *testing.T) {
 				if ct := rec.Header().Get("content-type"); ct != wantHead["content-type"] {
 					t.Errorf("content-type go=%q py=%q", ct, wantHead["content-type"])
 				}
+			case "redirect":
+				// 307 的 Location 是绝对地址，主机名跟着请求走，所以只比「 authority 之后」的那截。
+				if got := locationTail(rec.Header().Get("location")); got != locationTail(wantHead["location"]) {
+					t.Errorf("307 location go=%q py=%q（尾部 %q vs %q）",
+						rec.Header().Get("location"), wantHead["location"],
+						got, locationTail(wantHead["location"]))
+				}
+			case "headonly":
+				if ct := rec.Header().Get("content-type"); ct != wantHead["content-type"] {
+					t.Errorf("content-type go=%q py=%q", ct, wantHead["content-type"])
+				}
+			case "bodyallow":
+				if !jsonEquiv(row["body"], decode(rec.Body.Bytes())) {
+					t.Errorf("响应体不同\n py=%v\n go=%s", row["body"], rec.Body.String())
+				}
+				if got := rec.Header().Get("allow"); got != wantHead["allow"] {
+					t.Errorf("allow go=%q py=%q", got, wantHead["allow"])
+				}
 			case "head":
 				for k, want := range wantHead {
 					if k == "etag" || k == "last-modified" {
@@ -141,10 +159,7 @@ func TestGoldenCasesAllAccountedFor(t *testing.T) {
 	g := loadRoutesGolden(t)
 	replayed := replayedSet(g)
 
-	deferred := map[string]string{
-		"openapi": "D3：内嵌 /openapi.json 静态文件",
-		"docs":    "D3：内嵌 /docs",
-	}
+	deferred := map[string]string{}
 	var missing []string
 	replayedN, deferredN, total := 0, 0, 0
 	for name, raw := range g {
@@ -182,6 +197,16 @@ func TestGoldenCasesAllAccountedFor(t *testing.T) {
 			total, replayedN, deferredN, replayedN+deferredN)
 	}
 	t.Logf("金样本 %d 条：已回放 %d，待实现 %d", total, replayedN, deferredN)
+	var unrecorded []string
+	for name := range docProbeModes {
+		if _, ok := g[name]; !ok {
+			unrecorded = append(unrecorded, name)
+		}
+	}
+	if len(unrecorded) > 0 {
+		sort.Strings(unrecorded)
+		t.Logf("这几条 Go 已实现、录制脚本也已排进去，但线上还没录过（下次 NAS 复录后自动进回放表）：%v", unrecorded)
+	}
 }
 
 // replayedSet 是「哪些金样本用例真的被回放了」的唯一出处：
@@ -192,6 +217,9 @@ func replayedSet(g map[string]any) map[string]bool {
 		replayed[c.name] = true
 	}
 	for _, c := range writeProbeCases(g) {
+		replayed[c.name] = true
+	}
+	for _, c := range docProbeCases(g) {
 		replayed[c.name] = true
 	}
 	return replayed
@@ -531,6 +559,7 @@ func replayCases() []replayCase {
 		{"update_check", "shallow", nil}, {"repo_status", "shallow", nil},
 		{"cookie_helper", "blob", nil}, {"cookie_helper_dl", "blob", nil},
 		{"index", "blob", nil}, {"admin_page", "blob", nil},
+		{"openapi", "blob", nil}, {"docs", "blob", nil},
 		{"extension", "head", nil}, {"anon_admin", "shape", nil}}
 }
 
@@ -574,8 +603,49 @@ func writeProbeCases(g map[string]any) []replayCase {
 	return out
 }
 
-// shapeKeys 只取顶层键集合：线上态数据（账号数、任务列表、GitHub 检测结果）
-// 没法逐值比，但字段集合必须齐 —— 面板就是按这些键渲染的。
+// docProbeModes 是 D3 那几条「路由器边角」的回放方式。
+// 录制脚本（tools/golden/golden_routes.py）已经把它们排进去了，但线上要等下一次
+// NAS 复录才会出这几段，所以这里只回收已经存在的用例；台账会把「实现了但还没录」点名出来。
+var docProbeModes = map[string]string{
+	"redoc":                  "blob",
+	"oauth2_redirect":        "blob",
+	"head_models":            "headonly",
+	"slash_redirect_models":  "redirect",
+	"slash_redirect_admin":   "redirect",
+	"method_not_allowed_gen": "bodyallow",
+}
+
+func docProbeCases(g map[string]any) []replayCase {
+	var names []string
+	for k := range docProbeModes {
+		if _, ok := g[k]; ok {
+			names = append(names, k)
+		}
+	}
+	sort.Strings(names)
+	out := make([]replayCase, 0, len(names))
+	for _, k := range names {
+		out = append(out, replayCase{k, docProbeModes[k], nil})
+	}
+	return out
+}
+
+// locationTail 取绝对 URL 里 authority 之后的部分（含查询串）。
+func locationTail(loc string) string {
+	i := strings.Index(loc, "://")
+	if i < 0 {
+		return loc
+	}
+	rest := loc[i+3:]
+	for j := 0; j < len(rest); j++ {
+		if rest[j] == '/' || rest[j] == '?' {
+			return rest[j:]
+		}
+	}
+	return ""
+}
+
+// shapeKeys 只取顶层键集合：线上态数据（账号数、任务列表、GitHub 检测结果）// 没法逐值比，但字段集合必须齐 —— 面板就是按这些键渲染的。
 func shapeKeys(t *testing.T, row map[string]any) []string {
 	t.Helper()
 	s, _ := row["body_shape"].(map[string]any)

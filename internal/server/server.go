@@ -4,6 +4,7 @@ package server
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"sync"
@@ -110,9 +111,12 @@ func NewApp(cfg *config.Config, st *store.Store, eng *engine.Engine) *App {
 // pat 支持 {name} 形式的单段通配，语义与 Starlette 的 [^/]+ 一致：
 // 一个参数只吃一段，段里出现（解码后的）'/' 就算整条路径不匹配 → 404，
 // 这跟 Python 对 /v1/media/..%2Faccounts.json 的行为逐字对齐。
+//
+// 不 Trim 斜杠：Starlette 编译出来的是 ^/admin$ 这种整串匹配，
+// 所以 /admin/ 是不匹配的（它走 redirect_slashes 变 307），不能顺手当 /admin 用。
 func parsePattern(p string) []segment {
 	var out []segment
-	for _, s := range strings.Split(strings.Trim(p, "/"), "/") {
+	for _, s := range strings.Split(p, "/") {
 		if strings.HasPrefix(s, "{") && strings.HasSuffix(s, "}") {
 			out = append(out, segment{lit: s[1 : len(s)-1], param: true})
 			continue
@@ -128,7 +132,7 @@ func (a *App) add(method, pattern string, auth bool, h handlerFunc) {
 }
 
 func matchPath(segs []segment, path string) (map[string]string, bool) {
-	parts := strings.Split(strings.Trim(path, "/"), "/")
+	parts := strings.Split(path, "/")
 	if len(parts) != len(segs) {
 		return nil, false
 	}
@@ -151,37 +155,133 @@ func matchPath(segs []segment, path string) (map[string]string, bool) {
 // ServeHTTP 复刻 FastAPI 的分派顺序：先 CORS，再路由匹配（404/405 由路由器给出，
 // 走的是 Starlette 默认处理器 —— 未匹配的 /v1 路径**不会**套上 OpenAI 错误壳，
 // 金样本 media_enc_slash_only / v1_unmatched 就是把这条钉住），最后才轮到鉴权依赖。
+//
+// 匹配顺序照 fastapi/routing.py::Router.app：整匹配 → 首个「路径对但方法不对」的偏匹配（405 + Allow）
+// → redirect_slashes（补/去尾斜杠后能匹配就 307）→ 404。
 func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	applyCORS(w, r)
 	if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
 		preflight(w, r)
 		return
 	}
-	var methodMismatch bool
+	method := strings.ToUpper(r.Method)
+	var partial *route
 	for _, rt := range a.routes {
 		args, ok := matchPath(rt.segs, r.URL.Path)
 		if !ok {
 			continue
 		}
-		if strings.ToUpper(r.Method) != rt.method {
-			methodMismatch = true
+		if !methodAllowed(rt.method, method) {
+			if partial == nil {
+				partial = rt // Starlette 也只记第一个偏匹配
+			}
 			continue
 		}
 		a.dispatch(w, r, rt, args)
 		return
 	}
-	if methodMismatch {
-		a.writeRouterError(w, http.StatusMethodNotAllowed, "Method Not Allowed")
+	if partial != nil {
+		a.writeRouterError(w, http.StatusMethodNotAllowed, "Method Not Allowed",
+			map[string]string{"allow": allowedMethods(partial.method)})
 		return
 	}
-	a.writeRouterError(w, http.StatusNotFound, "Not Found")
+	if loc, ok := a.redirectSlash(r); ok {
+		// RedirectResponse：307，只有 location 头，正文空。
+		w.Header().Set("location", loc)
+		w.WriteHeader(http.StatusTemporaryRedirect)
+		return
+	}
+	a.writeRouterError(w, http.StatusNotFound, "Not Found", nil)
+}
+
+// methodAllowed：Starlette 给带 GET 的路由自动加上 HEAD，所以 HEAD 是整匹配；
+// 响应体由 Go 的服务端按 HEAD 语义丢掉，和 uvicorn 一样只出头。
+func methodAllowed(routeMethod, method string) bool {
+	if routeMethod == method {
+		return true
+	}
+	return routeMethod == http.MethodGet && method == http.MethodHead
+}
+
+// allowedMethods 对应 405 里的 `", ".join(methods)`。
+func allowedMethods(routeMethod string) string {
+	if routeMethod == http.MethodGet {
+		return "GET, HEAD"
+	}
+	return routeMethod
+}
+
+// redirectSlash 是 Starlette 的 redirect_slashes：只有「整条路由表都没沾上」时才会走到这里，
+// Location 用 scope 里的 path（已解码）+ query 拼绝对 URL，再按 Python quote 的那串 safe 集重新转义。
+func (a *App) redirectSlash(r *http.Request) (string, bool) {
+	if r.URL.Path == "/" {
+		return "", false
+	}
+	target := r.URL.Path
+	if strings.HasSuffix(target, "/") {
+		target = strings.TrimRight(target, "/")
+	} else {
+		target += "/"
+	}
+	matched := false
+	for _, rt := range a.routes {
+		if _, ok := matchPath(rt.segs, target); ok {
+			matched = true
+			break
+		}
+	}
+	if !matched {
+		return "", false
+	}
+	u := requestScheme(r) + "://" + r.Host + target
+	if r.URL.RawQuery != "" {
+		u += "?" + r.URL.RawQuery
+	}
+	return pyQuote(u, `:/%#?=@[]!$&'()*+,;`), true
+}
+
+func requestScheme(r *http.Request) string {
+	// uvicorn 默认开着 ProxyHeadersMiddleware，但它只认 X-Forwarded-Proto 的第一个值、
+	// 且只接受 http/https —— 别的写法一律当没这头。
+	if v := r.Header.Get("X-Forwarded-Proto"); v != "" {
+		first := strings.ToLower(strings.TrimSpace(strings.Split(v, ",")[0]))
+		if first == "https" || first == "http" {
+			return first
+		}
+	}
+	if r.TLS != nil {
+		return "https"
+	}
+	return "http"
+}
+
+// pyQuote 对应 urllib.parse.quote(s, safe=...)：字母数字与 _.~- 永远不编码，
+// safe 里的字符原样，其余按 UTF-8 逐字节 %XX（大写十六进制）。
+func pyQuote(s, safe string) string {
+	var b strings.Builder
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		switch {
+		case c >= 'a' && c <= 'z', c >= 'A' && c <= 'Z', c >= '0' && c <= '9',
+			c == '_' || c == '.' || c == '-' || c == '~', strings.IndexByte(safe, c) >= 0:
+			b.WriteByte(c)
+		default:
+			fmt.Fprintf(&b, "%%%02X", c)
+		}
+	}
+	return b.String()
 }
 
 // writeRouterError：路由自身的 404/405 出自 Starlette 的默认异常处理，
 // 它**不看路径前缀** —— 即便请求的是 /v1/xxx 这种没注册上的地址，回的还是 {"detail":...}
 // 而不是 OpenAI 错误壳。金样本 media_enc_slash_only / v1_unmatched 就是把这条钉住的
 // （handler 里主动 raise 的 404 才会套壳，见 media_missing）。
-func (a *App) writeRouterError(w http.ResponseWriter, status int, detail string) {
+// 405 由 APIRoute.handle 里 `raise HTTPException(405, headers={"Allow": ...})` 抛出，
+// 所以它比 404 多一个 Allow 头。
+func (a *App) writeRouterError(w http.ResponseWriter, status int, detail string, headers map[string]string) {
+	for k, v := range headers {
+		w.Header().Set(k, v)
+	}
 	jsonOut(w, status, map[string]any{"detail": detail})
 }
 

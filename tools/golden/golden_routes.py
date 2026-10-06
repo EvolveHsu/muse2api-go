@@ -103,6 +103,19 @@ case("v1_unmatched", "GET", "/v1/nope", "good")
 case("admin_unmatched", "GET", "/admin/nope", "good")
 case("anon_admin", "GET", "/admin/status", "none", record="shape")
 
+# ---------------- 路由器自身的边角（2026-10-06 D3 之后新增，等下次复录补上） ----------------
+# 这几条都不是业务接口，而是 FastAPI/Starlette 的对外行为，Go 侧一并复刻了：
+#   /redoc 与 /docs/oauth2-redirect 是 app 装配时白挂的另两条自动路由；
+#   HEAD 由 Starlette 自动加进 GET 路由的 methods；
+#   尾斜杠补/削后能匹配就 307（redirect_slashes），Location 是绝对地址、含查询串；
+#   路径命中但方法不对 → 405，且带 Allow 头（APIRoute.handle 抛的 HTTPException 带 headers）。
+case("redoc", "GET", "/redoc", "none", record="blob")
+case("oauth2_redirect", "GET", "/docs/oauth2-redirect", "none", record="blob")
+case("head_models", "HEAD", "/v1/models", "good")
+case("slash_redirect_models", "GET", "/v1/models/?x=1", "good")
+case("slash_redirect_admin", "GET", "/admin/", "none")
+case("method_not_allowed_gen", "GET", "/v1/images/generations", "good")
+
 # ---------------- 参数校验与鉴权（都在进 handler 前被拒） ----------------
 case("images_gen_noauth", "POST", "/v1/images/generations", "none", {"prompt": "x"})
 case("images_gen_bad", "POST", "/v1/images/generations", "bad", {"prompt": "x"})

@@ -182,6 +182,7 @@ func (a *App) registerRoutes() {
 	})
 	a.registerV1()
 	a.registerAdmin()
+	a.registerDocs()
 }
 
 var _ = time.Second
