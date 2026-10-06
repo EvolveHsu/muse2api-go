@@ -347,8 +347,7 @@ res = e.generate({"a": "1"}, "画猫", expect="image", timeout=60)
 out["generate_blob"] = {"calls": calls, "kind": res["kind"], "via": res["via"], "ext": res["ext"],
                         "size": res["size"], "w": res["w"], "h": res["h"],
                         "ret_keys": sorted(res.keys()),
-                        "name_shape": ["<hex32>", res["name"][-4:]] if len(res["filename"]) == 37
-                        else ["BAD", res["filename"]]}
+                        "name_len": len(res["filename"]), "name_tail": res["filename"][-4:]}
 
 e, p = fresh({})
 e.ensure_page = lambda *a, **k: p

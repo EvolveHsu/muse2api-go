@@ -7,6 +7,25 @@
 //   若 import 'ssh2' 失败，脚本会打印安装指引然后退出。
 import fs from 'node:fs';
 import path from 'node:path';
+import { createRequire } from 'node:module';
+
+// ssh2 是临时装在 .remote/ 下的（那目录不入库），从仓库根按默认规则解析不到，
+// 所以显式列几个候选 node_modules；全都没有就给出安装指引。
+async function loadSSH2() {
+  const req = createRequire(path.join(process.cwd(), 'noop.js'));
+  try {
+    return await import('ssh2');
+  } catch { /* 换绝对路径找 */ }
+  for (const base of ['.remote', '.', '..']) {
+    const dir = path.resolve(base, 'node_modules', 'ssh2');
+    if (fs.existsSync(dir)) return req(dir);
+  }
+  console.error([
+    '找不到 ssh2 模块。一次性安装（用完记得卸载）：',
+    '  mkdir -p .remote && cd .remote && npm i ssh2',
+  ].join('\n'));
+  process.exit(1);
+}
 
 const [scriptName, outPath] = process.argv.slice(2);
 if (!scriptName || !outPath) {
@@ -19,18 +38,7 @@ if (!PW) {
   process.exit(2);
 }
 
-let Client;
-try {
-  ({ Client } = await import('ssh2'));
-} catch {
-  console.error([
-    '找不到 ssh2 模块。一次性安装（用完记得卸载）：',
-    '  mkdir .tmp/sshrun && cd .tmp/sshrun && npm i ssh2',
-    '  cd ../..  && NAS_PW=*** node --experimental-vm-modules ... ',
-    '或直接：把本脚本拷进 .tmp/sshrun 里跑，那里能解析到 node_modules。',
-  ].join('\n'));
-  process.exit(1);
-}
+const { Client } = await loadSSH2();
 
 const SRC = path.join('tools', 'golden', scriptName.endsWith('.py') ? scriptName : scriptName + '.py');
 const b64 = fs.readFileSync(SRC).toString('base64');
