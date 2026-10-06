@@ -345,6 +345,46 @@ func countSend(p *replayPage, method string) int {
 	return n
 }
 
+// pollRule 是 golden_generate.py 里 RULES 那三条评论的 Go 侧镜像（顺序也一致：
+// 先 scroll 再 atts 再 state）。特征对不上时计数会变成 0，用例就红，不会静默放过。
+func pollRule(expr string) string {
+	switch {
+	case strings.Contains(expr, "b.scrollHeight-a.scrollHeight"):
+		return "scroll"
+	case strings.Contains(expr, "seen.add"):
+		return "atts"
+	case strings.Contains(expr, "slice(-700)"):
+		return "state"
+	}
+	return ""
+}
+
+// comparePollCounts 把金样本记的 n_scroll / n_atts / n_state 和虚拟时钟累加值
+// 一条条对回去。长轮询用例的「第几轮才接受」就靠这组数字钉住。
+func comparePollCounts(t *testing.T, sec map[string]any, page *replayPage, vc *vclock) {
+	t.Helper()
+	for _, c := range []struct {
+		rule string
+		key  string
+	}{
+		{"scroll", "n_scroll"}, {"atts", "n_atts"}, {"state", "n_state"},
+	} {
+		v, has := sec[c.key]
+		if !has {
+			continue
+		}
+		if got := page.counts[c.rule]; got != intOf(v) {
+			t.Errorf("%s 调用次数不同: py=%d go=%d", c.key, intOf(v), got)
+		}
+	}
+	if v, has := sec["secs"]; has {
+		// 直接比 bit：两边的 sleep 都是同一个 float64 逐次累加，差一位就是累加顺序变了。
+		if got := vc.secs - 1700000000.0; got != v.(float64) {
+			t.Errorf("虚拟时钟累加相位不同: py=%.17g go=%.17g", v.(float64), got)
+		}
+	}
+}
+
 // TestWaitAttachmentReplay 是最有价值的一组：附件挑选打分、视频兜底宽限期、
 // 额度不足、纯文本拒答、媒体报告不误判、基线 src 排除，全部按 Python 的调用序列回放。
 // timeout 从金样本里读 —— 那是调用方传进去的，两边不一样循环次数就不可能一致。
@@ -362,12 +402,16 @@ func TestWaitAttachmentReplay(t *testing.T) {
 		{name: "wait_att_media_report", expect: "image"},
 		{name: "wait_att_baseline_excluded", expect: "image",
 			baseline: map[string]bool{"https://x/same": true}},
+		// 视频宽限期：第 27 轮才放行静帧；timeout 只有 10s 时必须一无所获。
+		{name: "wait_att_video_grace_fallback", expect: "video"},
+		{name: "wait_att_video_grace_not_yet", expect: "video"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			sec := g.section(t, c.name)
 			page := newReplay(t, g, sec)
-			e, _ := engineWith(t, page)
+			page.count = pollRule
+			e, vc := engineWith(t, page)
 			att, found, err := e.WaitAttachment("", intOf(sec["timeout"]), c.expect,
 				nil, 0, 0, nil, c.baseline)
 			if want, ok := errText(sec["err"]); ok {
@@ -393,8 +437,25 @@ func TestWaitAttachmentReplay(t *testing.T) {
 					}
 				}
 			}
+			comparePollCounts(t, sec, page, vc)
 			page.assertDrained(c.name)
 		})
+	}
+}
+
+// TestNegativeTimeoutMeansImmediateTimeout 钉住「负数超时不做钳位」：
+// Python 的 generate() 里那个 240 只是形参默认值，路由一律显式传 timeout，
+// 所以 client 传 -1 时 deadline 落在过去，循环一次都不跑 —— Go 早前把它钳回 240，等于偷偷多跑 4 分钟。
+func TestNegativeTimeoutMeansImmediateTimeout(t *testing.T) {
+	g := loadGenGolden(t)
+	page := newReplay(t, g, g.section(t, "wait_att_immediate"))
+	e, _ := engineWith(t, page)
+	att, found, err := e.WaitAttachment("", -1, "image", nil, 0, 0, nil, nil)
+	if err != nil || found {
+		t.Fatalf("负数超时应立刻返回「没有附件」，Go 给了 found=%v err=%v %+v", found, err, att)
+	}
+	if page.jsN != 0 {
+		t.Errorf("循环一次都不该跑，Go 发了 %d 条 JS", page.jsN)
 	}
 }
 
@@ -729,20 +790,29 @@ func TestGenerateFullReplay(t *testing.T) {
 	g := loadGenGolden(t)
 	cases := []struct {
 		name    string
+		expect  string
+		prompt  string
 		ref     string
 		timeout int
 		dlFile  bool
 	}{
-		{"generate_full_image", "", 60, false},
-		{"generate_full_image_ref", "data:image/png;base64,iVBORw0KGgo=", 60, false},
-		{"generate_full_download_fallback", "", 60, true},
-		{"generate_timeout", "", 3, false},
+		{"generate_full_image", "image", "画猫", "", 60, false},
+		{"generate_full_image_ref", "image", "画猫", "data:image/png;base64,iVBORw0KGgo=", 60, false},
+		{"generate_full_download_fallback", "image", "画猫", "", 60, true},
+		{"generate_timeout", "image", "画猫", "", 3, false},
+		// 视频三条分支：真出视频 / 只有封面静帧（线上「2 秒视频」的实际结局）/
+		// mime 与 URL 都认不出时由 expect 兜底，外加宽限期没到就必须放弃的那条。
+		{"generate_full_video", "video", "红球弹起", "", 60, false},
+		{"generate_full_video_ext_from_expect", "video", "红球弹起", "", 60, false},
+		{"generate_full_video_poster_only", "video", "红球弹起", "", 60, false},
+		{"generate_full_video_gives_up", "video", "红球弹起", "", 10, false},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			sec := g.section(t, c.name)
 			page := newReplay(t, g, sec)
-			e, _ := engineWith(t, page)
+			page.count = pollRule
+			e, vc := engineWith(t, page)
 			mustDirs(t, e)
 			if c.dlFile {
 				// 金样本里点下载按钮的那次 JS 调用会在 downloads 里落下 shot.png；
@@ -764,8 +834,9 @@ func TestGenerateFullReplay(t *testing.T) {
 				}
 			}
 			e.EnsurePageFn = func(map[string]string, map[string]int, string) (Session, error) { return page, nil }
-			res, err := e.Generate(map[string]string{"a": "1"}, "画猫", "image",
+			res, err := e.Generate(map[string]string{"a": "1"}, c.prompt, c.expect,
 				c.timeout, nil, "", nil, c.ref, nil)
+			comparePollCounts(t, sec, page, vc)
 			if want, ok := errText(sec["err"]); ok {
 				if err == nil || err.Error() != want {
 					t.Fatalf("错误不同:\n py=%q\n go=%v", want, err)

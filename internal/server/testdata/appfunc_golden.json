@@ -1327,6 +1327,38 @@
       "description": "Muse Video —— 文生视频 / 图生视频（网页免费额度）"
     }
   ],
+  "timeout_or": [
+    [
+      null,
+      600,
+      600
+    ],
+    [
+      0,
+      600,
+      600
+    ],
+    [
+      -5,
+      600,
+      -5
+    ],
+    [
+      1,
+      600,
+      1
+    ],
+    [
+      1500,
+      600,
+      1500
+    ],
+    [
+      0,
+      240,
+      240
+    ]
+  ],
   "sse_headers": {
     "Cache-Control": "no-cache, no-transform",
     "X-Accel-Buffering": "no",

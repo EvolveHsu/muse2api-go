@@ -29,29 +29,33 @@ import (
 func TestV1ReadOnlyContract(t *testing.T) {
 	g := loadRoutesGolden(t)
 
-	// 线上那两个媒体文件的精确 st_mtime（容器里 os.stat 取回的浮点秒），
-	// 用来在本地复现同一个 etag：算法与 str(float) 的写法都要对上。
-	seed := map[string]struct {
-		mtime float64
-		size  int64
-	}{
-		"2fefc0ec0931492da3529cca7cdec6be.webp": {1791212303.8032646, 115944},
-		".gitkeep":                              {1791112752.6836884, 14},
-	}
+	// media_real_* 打的是线上真实媒体文件，名字每次复录都会变（新生成的排在最前），
+	// 所以种子文件从金样本里取，不再硬编码 —— 否则每复录一次就要来改一遍这张表。
+	// head 模式不比 etag / last-modified（那两个由各实现按文件时间生成），
+	// 文件只要存在、字节数与录制时一致即可；/admin/media 的 shape 记的是条目个数，
+	// 所以种子必须与金样本里那几条 media_real_* 一一对应。
 	a, mediaDir := testApp(t, "cap-key", time.Unix(1791264799, 0))
-	for name, s := range seed {
+	for _, k := range sortedKeys(g) {
+		if !strings.HasPrefix(k, "media_real_") {
+			continue
+		}
+		row := g[k].(map[string]any)
+		name := strings.TrimPrefix(strOf(row["path"]), "/v1/media/")
+		if name == "" || name == strOf(row["path"]) {
+			t.Fatalf("%s 的 path 不是 /v1/media/ 下的文件：%v", k, row["path"])
+		}
 		p := filepath.Join(mediaDir, name)
-		if err := os.WriteFile(p, make([]byte, s.size), 0o644); err != nil {
+		if err := os.WriteFile(p, make([]byte, intOf(row["blob_len"])), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		secs := int64(s.mtime)
-		ts := time.Unix(secs, int64((s.mtime-float64(secs))*1e9))
+		ts := time.Unix(1791212303, 803264600)
 		if err := os.Chtimes(p, ts, ts); err != nil {
 			t.Fatal(err)
 		}
 	}
 
-	cases := append(replayCases(), append(append(writeProbeCases(g), docProbeCases(g)...), bodyProbeCases(g)...)...)
+	cases := append(append(mediaRealCases(g), replayCases()...),
+		append(append(writeProbeCases(g), docProbeCases(g)...), bodyProbeCases(g)...)...)
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			row := section(t, g, c.name)
@@ -239,6 +243,9 @@ func TestGoldenCasesAllAccountedFor(t *testing.T) {
 // 手写的表 + 写接口探测清单，两处都由 contract 测试自己维护，不会与实跑脱节。
 func replayedSet(g map[string]any) map[string]bool {
 	replayed := map[string]bool{}
+	for _, c := range mediaRealCases(g) {
+		replayed[c.name] = true
+	}
 	for _, c := range replayCases() {
 		replayed[c.name] = true
 	}
@@ -545,6 +552,18 @@ func sameShape(shape any, got any) bool {
 	}
 }
 
+// mediaRealCases 按前缀收线上真实媒体文件那几条：复录时线上多了几个文件，
+// 硬编码的用例表就会把它们漏成「待实现」，而 head 模式的回放本来就不依赖具体文件名。
+func mediaRealCases(g map[string]any) []replayCase {
+	var out []replayCase
+	for _, k := range sortedKeys(g) {
+		if strings.HasPrefix(k, "media_real_") {
+			out = append(out, replayCase{k, "head", nil})
+		}
+	}
+	return out
+}
+
 // replayCases 是契约测试用的用例表，也是台账判断「已回放」的唯一出处。
 func replayCases() []replayCase {
 	return []replayCase{
@@ -562,8 +581,7 @@ func replayCases() []replayCase {
 		{"media_traversal", "body", nil},
 		{"media_dotdot_plain", "body", nil},
 		{"media_utf8_name", "body", nil},
-		{"media_real_0", "head", nil},
-		{"media_real_1", "head", nil},
+		// media_real_* 是线上真实媒体文件，条数随线上媒体库变化，按前缀收（见 mediaRealCases）。
 		{"task_missing", "body", nil}, {"video_missing", "body", nil},
 		{"video_gen_missing", "body", nil},
 		{"v1_unmatched", "body", nil},
@@ -683,6 +701,13 @@ func bodyProbeCases(g map[string]any) []replayCase {
 	var names []string
 	for k := range bodyProbeModes {
 		if _, ok := g[k]; ok {
+			names = append(names, k)
+		}
+	}
+	// edits_model_* 是 /v1/images/edits 的字段校验家族，整族同一种回放方式，
+	// 所以按前缀收 —— 以后往这族加探针不必再来测试里逐条点名。
+	for k := range g {
+		if strings.HasPrefix(k, "edits_model_") {
 			names = append(names, k)
 		}
 	}

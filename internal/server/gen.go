@@ -412,7 +412,7 @@ func (a *App) queueImage(c *reqCtx, req *ImageRequest, prompt, referenceImage st
 		t0 := a.now()
 		a.Store.UpdateTask(tid, map[string]any{"status": "processing", "progress": 5})
 		res, accID, err := a.runGeneration(prompt, "image",
-			int(numOrPtr(req.Timeout, int64(a.CFG.ImageTimeout))), "",
+			int(pyNumOr(req.Timeout, int64(a.CFG.ImageTimeout))), "",
 			func(p int) { a.Store.UpdateTask(tid, map[string]any{"progress": p}) },
 			referenceImage, nil)
 		if err != nil {

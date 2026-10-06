@@ -75,6 +75,42 @@ func numOrPtr(n *json.Number, def int64) int64 {
 	return int64(f)
 }
 
+// pyNumOr 对应 Python 的 `req.timeout or CFG.xxx_timeout`：只有 None 与 0 算 falsy 才落到默认值，
+// 负数会原样传下去 —— 那边 deadline 落在过去，等价于「立刻超时」，不是「用默认值」。
+func pyNumOr(n *json.Number, def int64) int64 {
+	v := numOrPtr(n, def)
+	if v == 0 {
+		return def
+	}
+	return v
+}
+
+// pyOrAny 就是 Python 的 `x or y`，但保留 x 的原始类型：handler 里取出来的值既会进模型校验，
+// 也可能被原值传给生成函数（/v1/images/edits 就是这么写的），提前归一成字符串就看不到那几条 500 了。
+func pyOrAny(x, y any) any {
+	if truthy(x) {
+		return x
+	}
+	return y
+}
+
+// jsonGet / formGet 对应 `body.get(k)` 与 `form.get(k, default)`：
+// 键不存在给 default，存在就把原始值交出去（JSON 里的数字是 json.Number，表单里的一定是字符串）。
+func jsonGet(body map[string]any, k string, def any) any {
+	if v, ok := body[k]; ok {
+		return v
+	}
+	return def
+}
+
+func formGet(f map[string][]string, k string, def any) any {
+	v, ok := f[k]
+	if !ok || len(v) == 0 {
+		return def
+	}
+	return v[0]
+}
+
 func toStringMap(v any) map[string]string {
 	out := map[string]string{}
 	m, ok := v.(map[string]any)

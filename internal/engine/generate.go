@@ -330,9 +330,8 @@ func (e *Engine) Generate(cookies map[string]string, prompt, expect string, time
 	expires map[string]int, accountID string, onProgress func(int),
 	referenceImage string, stop <-chan struct{}) (*GenResult, error) {
 
-	if timeout <= 0 {
-		timeout = 240
-	}
+	// Python 的 240 是形参默认值，调用方一律显式传 timeout（路由层已经用 `or` 兜过底），
+	// 所以这里不能再自作主张把 0 或负数改成 240 —— 负数在 Python 那边就是「立刻超时」。
 	if _, err := e.ensurePage(cookies, expires, accountID); err != nil {
 		return nil, err
 	}

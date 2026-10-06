@@ -67,7 +67,9 @@ func (e *Engine) pollChat() (int, string, bool) {
 func (e *Engine) ChatStream(cookies map[string]string, prompt string, expires map[string]int,
 	timeout int, accountID string, stop <-chan struct{}, onDelta func(string) error) error {
 
-	if timeout <= 0 {
+	// Python: timeout = int(timeout or getattr(self.cfg, "chat_timeout", 300)) —— 只有 0 算 falsy，
+	// 负数原样留着（deadline 落在过去，等价于立刻超时），不能被当成「用默认值」。
+	if timeout == 0 {
 		timeout = e.CFG.ChatTimeout
 	}
 	if _, err := e.ensurePage(cookies, expires, accountID); err != nil {

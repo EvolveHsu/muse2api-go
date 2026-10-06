@@ -418,6 +418,19 @@ func TestRequestDefaultsGolden(t *testing.T) {
 	if !sameShapePy(MODELS, g["models_const"]) {
 		t.Errorf("MODELS 常量不同:\n go=%s\n py=%v", dumpsJSON(MODELS, false), g["models_const"])
 	}
+
+	// 路由层的超时兜底是 `req.timeout or CFG.xxx_timeout`：0 落默认值，负数原样传下去。
+	// ImageRequest 那边 timeout 有 ge=1，0 早就 422 了，这条只对 video/chat 生效。
+	for _, row := range arr(g["timeout_or"]) {
+		r := row.([]any)
+		var in *json.Number
+		if n, ok := r[0].(json.Number); ok {
+			in = &n
+		}
+		if got := pyNumOr(in, int64(numOr(r[1]))); got != int64(numOr(r[2])) {
+			t.Errorf("timeout or default 不同: in=%v def=%v py=%v go=%d", r[0], r[1], r[2], got)
+		}
+	}
 }
 
 // --- 小工具 ---

@@ -13,9 +13,9 @@
     "request_ctype": "",
     "body": {
       "status": "ok",
-      "time": 1791293450
+      "time": 1791298140
     },
-    "body_sha256": "29847d3961a55d87812258effffba8b0649e171115735279aaf45d3c5806b155",
+    "body_sha256": "438f549c6ea30ea70cda739271bd34ddad5b53141b19a8df900f3f9100ad546f",
     "body_len": 33
   },
   "readyz": {
@@ -439,7 +439,7 @@
               },
               "expires_at": {
                 "__type__": "int",
-                "__value__": 1791464785
+                "__value__": 1791470888
               },
               "expiry_anchor": {
                 "__type__": "NoneType",
@@ -455,15 +455,15 @@
               },
               "last_used": {
                 "__type__": "float",
-                "__value__": 1791122803.4562244
+                "__value__": 1791294451.264376
               },
               "last_keepalive": {
                 "__type__": "int",
-                "__value__": 1791291987
+                "__value__": 1791298089
               },
               "use_count": {
                 "__type__": "int",
-                "__value__": 1
+                "__value__": 2
               },
               "ok": {
                 "__type__": "bool",
@@ -475,11 +475,11 @@
               },
               "synced_at": {
                 "__type__": "int",
-                "__value__": 1791291987
+                "__value__": 1791298089
               },
               "checked_at": {
                 "__type__": "int",
-                "__value__": 1791291987
+                "__value__": 1791298089
               },
               "cookie_count": {
                 "__type__": "int",
@@ -545,7 +545,7 @@
         },
         "media_count": {
           "__type__": "int",
-          "__value__": 2
+          "__value__": 3
         },
         "browser_running": {
           "__type__": "bool",
@@ -666,7 +666,7 @@
               },
               "expires_at": {
                 "__type__": "int",
-                "__value__": 1791464785
+                "__value__": 1791470888
               },
               "expiry_anchor": {
                 "__type__": "NoneType",
@@ -682,15 +682,15 @@
               },
               "last_used": {
                 "__type__": "float",
-                "__value__": 1791122803.4562244
+                "__value__": 1791294451.264376
               },
               "last_keepalive": {
                 "__type__": "int",
-                "__value__": 1791291987
+                "__value__": 1791298089
               },
               "use_count": {
                 "__type__": "int",
-                "__value__": 1
+                "__value__": 2
               },
               "ok": {
                 "__type__": "bool",
@@ -702,11 +702,11 @@
               },
               "synced_at": {
                 "__type__": "int",
-                "__value__": 1791291987
+                "__value__": 1791298089
               },
               "checked_at": {
                 "__type__": "int",
-                "__value__": 1791291987
+                "__value__": 1791298089
               },
               "cookie_count": {
                 "__type__": "int",
@@ -843,7 +843,7 @@
       "__items__": {
         "media": {
           "__type__": "array",
-          "__n__": 2,
+          "__n__": 3,
           "__first__": {
             "__type__": "object",
             "__keys__": [
@@ -856,19 +856,19 @@
             "__items__": {
               "name": {
                 "__type__": "str",
-                "__value__": ".gitkeep"
+                "__value__": "e8861924da59409b81ea82ff75e19838.webp"
               },
               "url": {
                 "__type__": "str",
-                "__value__": "/v1/media/.gitkeep"
+                "__value__": "/v1/media/e8861924da59409b81ea82ff75e19838.webp"
               },
               "bytes": {
                 "__type__": "int",
-                "__value__": 14
+                "__value__": 444408
               },
               "mtime": {
                 "__type__": "int",
-                "__value__": 1791292607
+                "__value__": 1791293654
               },
               "kind": {
                 "__type__": "str",
@@ -879,7 +879,7 @@
         },
         "count": {
           "__type__": "int",
-          "__value__": 2
+          "__value__": 3
         }
       }
     }
@@ -1037,7 +1037,7 @@
         },
         "last_run": {
           "__type__": "int",
-          "__value__": 1791292624
+          "__value__": 1791298086
         },
         "last_result": {
           "__type__": "object",
@@ -1051,15 +1051,15 @@
           "__items__": {
             "checked_at": {
               "__type__": "int",
-              "__value__": 1791292624
+              "__value__": 1791298086
             },
             "refreshed_count": {
               "__type__": "int",
-              "__value__": 1
+              "__value__": 2
             },
             "refreshed": {
               "__type__": "array",
-              "__n__": 1,
+              "__n__": 2,
               "__first__": {
                 "__type__": "object",
                 "__keys__": [
@@ -1079,15 +1079,15 @@
                   },
                   "id": {
                     "__type__": "str",
-                    "__value__": "b2c3d4e5f6a7"
+                    "__value__": "a1b2c3d4e5f6"
                   },
                   "label": {
                     "__type__": "str",
-                    "__value__": "acct-c"
+                    "__value__": "acct-a"
                   },
                   "vm_id": {
                     "__type__": "str",
-                    "__value__": "00000000-0000-4000-8000-000000000002"
+                    "__value__": "00000000-0000-4000-8000-000000000001"
                   },
                   "vm_state": {
                     "__type__": "str",
@@ -1099,7 +1099,7 @@
                   },
                   "expires_at": {
                     "__type__": "int",
-                    "__value__": 1791465425
+                    "__value__": 1791470888
                   },
                   "quota": {
                     "__type__": "NoneType",
@@ -1110,11 +1110,11 @@
             },
             "skipped_count": {
               "__type__": "int",
-              "__value__": 2
+              "__value__": 1
             },
             "skipped": {
               "__type__": "array",
-              "__n__": 2,
+              "__n__": 1,
               "__first__": {
                 "__type__": "object",
                 "__keys__": [
@@ -1125,11 +1125,11 @@
                 "__items__": {
                   "id": {
                     "__type__": "str",
-                    "__value__": "a1b2c3d4e5f6"
+                    "__value__": "c3d4e5f6a7b8"
                   },
                   "label": {
                     "__type__": "str",
-                    "__value__": "acct-a"
+                    "__value__": "acct-b"
                   },
                   "reason": {
                     "__type__": "str",
@@ -1142,7 +1142,7 @@
         },
         "next_run": {
           "__type__": "int",
-          "__value__": 1791293524
+          "__value__": 1791298986
         }
       }
     }
@@ -1268,7 +1268,7 @@
         },
         "checked_at": {
           "__type__": "int",
-          "__value__": 1791293450
+          "__value__": 1791298068
         }
       }
     }
@@ -1394,7 +1394,7 @@
         },
         "checked_at": {
           "__type__": "int",
-          "__value__": 1791293450
+          "__value__": 1791298068
         }
       }
     }
@@ -2557,6 +2557,299 @@
     "body_sha256": "25b36e09890d3f51bb8fe1dd7a90c8b70fcd0ad5b515afda5aead29eca7fb430",
     "body_len": 93
   },
+  "edits_model_00_prompt": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "prompt": 5
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_01_model": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "model": 5
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_02_size": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "size": 5
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_03_aspect_ratio": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "aspect_ratio": 5
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_04_response_format": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "response_format": 5
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_05_timeout": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "timeout": 999
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_06_timeout": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "timeout": 0
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_07_timeout": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "timeout": -5
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_08_timeout": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "timeout": "abc"
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_09_timeout": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "timeout": 2.5
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_10_reference_image": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "reference_image": 5
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_11_image": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "image": {
+        "url": 5
+      }
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_12_image_url": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "image_url": 5
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_13_image": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "image": {
+        "b64_json": 5
+      }
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_14_timeout": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "timeout": "5"
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_15_timeout": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "timeout": []
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_model_16_timeout": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "request_body": {
+      "timeout": {}
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
   "gen_body_list": {
     "method": "POST",
     "path": "/v1/images/generations",
@@ -3530,6 +3823,25 @@
   },
   "media_real_0": {
     "method": "GET",
+    "path": "/v1/media/e8861924da59409b81ea82ff75e19838.webp",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "application/octet-stream",
+      "accept-ranges": "bytes",
+      "last-modified": "Tue, 06 Oct 2026 13:34:14 GMT",
+      "etag": "\"39d212e600a0c5986460446da63c761c\"",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": null,
+    "request_ctype": "",
+    "blob_sha256": "1a1155159015ffe5fcba0be45b0c4fefe4055f9a6a928726694f864872112807",
+    "blob_len": 444408,
+    "blob_head": ""
+  },
+  "media_real_1": {
+    "method": "GET",
     "path": "/v1/media/.gitkeep",
     "auth": "none",
     "status": 200,
@@ -3547,7 +3859,7 @@
     "blob_len": 14,
     "blob_head": ""
   },
-  "media_real_1": {
+  "media_real_2": {
     "method": "GET",
     "path": "/v1/media/2fefc0ec0931492da3529cca7cdec6be.webp",
     "auth": "none",
@@ -3569,7 +3881,7 @@
   "__meta__": {
     "port": 18610,
     "has_api_key": true,
-    "n_cases": 124,
+    "n_cases": 142,
     "fails": []
   }
 }

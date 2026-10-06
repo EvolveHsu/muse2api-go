@@ -1190,6 +1190,950 @@
       ],
       "timeout": 30
     },
+    "wait_att_video_grace_fallback": {
+      "ret": {
+        "tid": "hatch-chat-attachment-presentation-image",
+        "hasVideo": false,
+        "src": "https://x/a.png",
+        "vSrc": "",
+        "iSrc": "https://x/a.png",
+        "w": 512,
+        "h": 512
+      },
+      "log": [
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ]
+      ],
+      "n_scroll": 27,
+      "n_atts": 27,
+      "n_state": 26,
+      "secs": 16.199997425079346,
+      "timeout": 30
+    },
+    "wait_att_video_grace_not_yet": {
+      "ret": null,
+      "log": [
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ]
+      ],
+      "n_scroll": 17,
+      "n_atts": 17,
+      "n_state": 17,
+      "timeout": 10
+    },
     "wait_att_credits": {
       "err": "MuseGenerationError:账号额度不足",
       "log": [
@@ -3588,9 +4532,1462 @@
       "dump_file": true,
       "timeout": 3
     },
+    "generate_full_video": {
+      "log": [
+        [
+          "js",
+          26,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          22,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          10,
+          false,
+          "0",
+          false
+        ],
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":10,\"y\":20}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          30,
+          false,
+          3,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": true, \"src\": \"https://x/a.mp4\", \"vSrc\": \"https://x/a.mp4\", \"iSrc\": \"\", \"w\": 0, \"h\": 0}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": true, \"src\": \"https://x/a.mp4\", \"vSrc\": \"https://x/a.mp4\", \"iSrc\": \"\", \"w\": 0, \"h\": 0}]",
+          false
+        ],
+        [
+          "js",
+          31,
+          true,
+          "{\"ok\": true, \"mime\": \"video/mp4\", \"size\": 16, \"url\": \"https://x/a.mp4\", \"b64\": \"AAAAGGZ0eXBtcDQybXA0Mmlzb20=\"}",
+          false
+        ]
+      ],
+      "via": "blob",
+      "ext": ".mp4",
+      "kind": "video",
+      "size": 20,
+      "mime": "video/mp4",
+      "w": 0,
+      "h": 0,
+      "attachment": "hatch-chat-attachment-presentation-video",
+      "ret_keys": [
+        "attachment",
+        "ext",
+        "filename",
+        "h",
+        "kind",
+        "mime",
+        "path",
+        "size",
+        "via",
+        "w"
+      ],
+      "name_len": 36,
+      "name_tail": ".mp4",
+      "in_media_dir": true,
+      "bytes_b64": "AAAAGGZ0eXBtcDQybXA0Mmlzb20=",
+      "timeout": 60
+    },
+    "generate_full_video_ext_from_expect": {
+      "log": [
+        [
+          "js",
+          26,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          22,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          10,
+          false,
+          "0",
+          false
+        ],
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":10,\"y\":20}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          30,
+          false,
+          3,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": true, \"src\": \"https://x/a.mp4\", \"vSrc\": \"https://x/a.mp4\", \"iSrc\": \"\", \"w\": 0, \"h\": 0}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": true, \"src\": \"https://x/a.mp4\", \"vSrc\": \"https://x/a.mp4\", \"iSrc\": \"\", \"w\": 0, \"h\": 0}]",
+          false
+        ],
+        [
+          "js",
+          31,
+          true,
+          "{\"ok\": true, \"mime\": \"application/octet-stream\", \"size\": 9, \"url\": \"https://x/blob\", \"b64\": \"cmF3Ynl0ZXM=\"}",
+          false
+        ]
+      ],
+      "via": "blob",
+      "ext": ".mp4",
+      "kind": "video",
+      "size": 8,
+      "mime": "application/octet-stream",
+      "w": 0,
+      "h": 0,
+      "attachment": "hatch-chat-attachment-presentation-video",
+      "ret_keys": [
+        "attachment",
+        "ext",
+        "filename",
+        "h",
+        "kind",
+        "mime",
+        "path",
+        "size",
+        "via",
+        "w"
+      ],
+      "name_len": 36,
+      "name_tail": ".mp4",
+      "in_media_dir": true,
+      "bytes_b64": "cmF3Ynl0ZXM=",
+      "timeout": 60
+    },
+    "generate_full_video_poster_only": {
+      "log": [
+        [
+          "js",
+          26,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          22,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          10,
+          false,
+          "0",
+          false
+        ],
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":10,\"y\":20}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          30,
+          false,
+          3,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          32,
+          true,
+          "{\"ok\": true, \"mime\": \"image/jpeg\", \"size\": 11, \"url\": \"https://x/poster.jpg\", \"b64\": \"/9j/4GpwZ2RhdGE=\"}",
+          false
+        ]
+      ],
+      "via": "blob",
+      "ext": ".jpg",
+      "kind": "image",
+      "size": 11,
+      "mime": "image/jpeg",
+      "w": 640,
+      "h": 360,
+      "attachment": "hatch-chat-attachment-presentation-image",
+      "ret_keys": [
+        "attachment",
+        "ext",
+        "filename",
+        "h",
+        "kind",
+        "mime",
+        "path",
+        "size",
+        "via",
+        "w"
+      ],
+      "name_len": 36,
+      "name_tail": ".jpg",
+      "in_media_dir": true,
+      "bytes_b64": "/9j/4GpwZ2RhdGE=",
+      "n_atts": 28,
+      "n_state": 26,
+      "secs": 16.99999713897705,
+      "timeout": 60
+    },
+    "generate_full_video_gives_up": {
+      "err": "MuseGenerationError:等待生成超时，未出现新的生成结果",
+      "log": [
+        [
+          "js",
+          26,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          22,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          10,
+          false,
+          "0",
+          false
+        ],
+        [
+          "js",
+          1,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          2,
+          false,
+          "{\"x\":10,\"y\":20}",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mousePressed",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchMouseEvent",
+          {
+            "type": "mouseReleased",
+            "x": 10,
+            "y": 20,
+            "button": "left",
+            "clickCount": 1
+          }
+        ],
+        [
+          "js",
+          30,
+          false,
+          3,
+          false
+        ],
+        [
+          "js",
+          4,
+          false,
+          "clicked",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/poster.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/poster.jpg\", \"w\": 640, \"h\": 360}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          18,
+          false,
+          "{}",
+          false
+        ]
+      ],
+      "n_atts": 18,
+      "n_state": 17,
+      "timeout": 10
+    },
     "__fallbacks__": {
       "focus": 7,
-      "scroll": 30,
+      "scroll": 74,
       "dump": 2
     }
   },
@@ -3624,6 +6021,9 @@
     "(function(forChat){\n                var d = document.querySelector('[role=\"dialog\"]');\n                if (d) {\n                    var b = d.querySelector('button[aria-label*=\"close\" i], button');\n                    if (b) b.click();\n                }\n                var scope = document.querySelector('main,[class*=\"chat-scroll\"],[class*=\"hatch-chat-scroll\"]') || document.body;\n                var bubbleCount = scope ? scope.querySelectorAll('div[class*=\"hatch-chat-groupable-bubble\"]').length : 0;\n                var hasAtts = document.querySelectorAll('[data-testid^=\"hatch-chat-attachment-presentation-\"]').length > 0;\n                var hasStop = !!(document.querySelector('[data-testid=\"hatch-composer-stop-button\"]')\n                    || document.querySelector('button[aria-label*=\"Stop\" i]')\n                    || document.querySelector('button[aria-label*=\"停止\"]'));\n                var bodyTxt = document.body ? (document.body.innerText || '') : '';\n                var hasStuck = bodyTxt.indexOf('Still sending') !== -1 || bodyTxt.indexOf('Connecting...') !== -1;\n                if (hasStop || hasStuck || hasAtts) return true;\n                if (forChat) {\n                    return bubbleCount >= 24;\n                }\n                return (window.location.pathname !== '/thread/new') || bubbleCount > 0;\n            })(false)",
     "(function(t){var ta=document.querySelector('textarea');if(!ta) return 0;ta.focus();var s=Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set;s.call(ta,t);ta.dispatchEvent(new Event('input',{bubbles:true}));ta.dispatchEvent(new Event('change',{bubbles:true}));return (ta.value||'').length;})(\"\\u753b\\u732b\")",
     "\n    (async function(src, expect){\n      try{\n        var u = src;\n        if(!u) return JSON.stringify({ok:false,err:'no-media-src'});\n        var r = await fetch(u);\n        if(!r.ok) return JSON.stringify({ok:false,err:'media-http-'+r.status});\n        var b = await r.blob();\n        var ab = await b.arrayBuffer();\n        var bytes = new Uint8Array(ab);\n        var s = '';\n        for(var i=0; i<bytes.length; i+=65536){\n          s += String.fromCharCode.apply(null, bytes.subarray(i, i+65536));\n        }\n        return JSON.stringify({ok:true, mime:b.type||'', size:b.size, url:u, b64:btoa(s)});\n      }catch(e){\n        return JSON.stringify({ok:false, err:String(e)});\n      }\n    })(\"https://x/a.png\", \"image\")\n    ",
-    "(function(src){\n            var media=[...document.querySelectorAll('img,video')]\n                .find(m=>(m.currentSrc||m.src||'')===src);\n            var node=media && media.closest('[data-testid^=\"hatch-chat-attachment-presentation-\"]');\n            if(!node) return 'none';\n            node=node.closest('[class*=\"group/widget-presentation\"]')||node;\n            var b=[...node.querySelectorAll('button,[role=button]')]\n                .find(x=>/下载|保存|download/i.test(x.getAttribute('aria-label')||''));\n            if(!b) return 'none';\n            b.click();return 'ok';\n        })(\"https://x/a.png\")"
+    "(function(src){\n            var media=[...document.querySelectorAll('img,video')]\n                .find(m=>(m.currentSrc||m.src||'')===src);\n            var node=media && media.closest('[data-testid^=\"hatch-chat-attachment-presentation-\"]');\n            if(!node) return 'none';\n            node=node.closest('[class*=\"group/widget-presentation\"]')||node;\n            var b=[...node.querySelectorAll('button,[role=button]')]\n                .find(x=>/下载|保存|download/i.test(x.getAttribute('aria-label')||''));\n            if(!b) return 'none';\n            b.click();return 'ok';\n        })(\"https://x/a.png\")",
+    "(function(t){var ta=document.querySelector('textarea');if(!ta) return 0;ta.focus();var s=Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set;s.call(ta,t);ta.dispatchEvent(new Event('input',{bubbles:true}));ta.dispatchEvent(new Event('change',{bubbles:true}));return (ta.value||'').length;})(\"\\u7ea2\\u7403\\u5f39\\u8d77\")",
+    "\n    (async function(src, expect){\n      try{\n        var u = src;\n        if(!u) return JSON.stringify({ok:false,err:'no-media-src'});\n        var r = await fetch(u);\n        if(!r.ok) return JSON.stringify({ok:false,err:'media-http-'+r.status});\n        var b = await r.blob();\n        var ab = await b.arrayBuffer();\n        var bytes = new Uint8Array(ab);\n        var s = '';\n        for(var i=0; i<bytes.length; i+=65536){\n          s += String.fromCharCode.apply(null, bytes.subarray(i, i+65536));\n        }\n        return JSON.stringify({ok:true, mime:b.type||'', size:b.size, url:u, b64:btoa(s)});\n      }catch(e){\n        return JSON.stringify({ok:false, err:String(e)});\n      }\n    })(\"https://x/a.mp4\", \"video\")\n    ",
+    "\n    (async function(src, expect){\n      try{\n        var u = src;\n        if(!u) return JSON.stringify({ok:false,err:'no-media-src'});\n        var r = await fetch(u);\n        if(!r.ok) return JSON.stringify({ok:false,err:'media-http-'+r.status});\n        var b = await r.blob();\n        var ab = await b.arrayBuffer();\n        var bytes = new Uint8Array(ab);\n        var s = '';\n        for(var i=0; i<bytes.length; i+=65536){\n          s += String.fromCharCode.apply(null, bytes.subarray(i, i+65536));\n        }\n        return JSON.stringify({ok:true, mime:b.type||'', size:b.size, url:u, b64:btoa(s)});\n      }catch(e){\n        return JSON.stringify({ok:false, err:String(e)});\n      }\n    })(\"https://x/poster.jpg\", \"video\")\n    "
   ]
 }

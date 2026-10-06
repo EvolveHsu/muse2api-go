@@ -215,6 +215,11 @@ out["media_url_public_slash"] = media_url("中文 名.webp")
 A.CFG.public_base = ""
 
 out["models_const"] = A.MODELS
+# 路由层的超时兜底写的是 `req.timeout or CFG.xxx_timeout` —— 是 falsy 判断，不是 is-None 判断：
+# 0 会落到默认值，负数原样传下去（deadline 落在过去 = 立刻超时）。
+# 形参是 int | None，分数在 pydantic 那层就 422 了，所以这里只列整数与 None。
+out["timeout_or"] = [[x, d, x or d] for x, d in [
+    (None, 600), (0, 600), (-5, 600), (1, 600), (1500, 600), (0, 240)]]
 out["sse_headers"] = A._SSE_HEADERS
 out["image_request_defaults"] = ImageRequest(prompt="p").model_dump(by_alias=True)
 out["video_request_defaults"] = VideoRequest(prompt="p").model_dump(by_alias=True)

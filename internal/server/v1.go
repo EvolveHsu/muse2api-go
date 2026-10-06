@@ -51,7 +51,7 @@ func (a *App) imagesGenerations(c *reqCtx) (any, error) {
 	}
 	ref := resolveRef(req.Reference, req.Image, req.Images)
 	prompt := buildImagePrompt(req)
-	timeout := int(numOrPtr(req.Timeout, int64(a.CFG.ImageTimeout)))
+	timeout := int(pyNumOr(req.Timeout, int64(a.CFG.ImageTimeout)))
 	if req.Async {
 		return a.queueImage(c, req, prompt, ref, nil)
 	}
@@ -75,101 +75,154 @@ func mapGenErr(err error) error {
 	return err
 }
 
-// imagesEdits 手工解析 body（同时兼容 multipart/form-data 与 application/json），
-// 所以它没有 pydantic 的 422 —— 坏 JSON 会一路穿到 500，金样本 edits_badjson 钉着这条。
+// errModelRejected 对应 handler 里 `ImageRequest(**字段)` 抛出的 pydantic ValidationError。
+// 它不在 FastAPI 的校验层里，所以没有 422 —— 是未捕获异常，客户端只拿到 500 纯文本。
+var errModelRejected = errors.New("ImageRequest 构造抛 ValidationError")
+
+// errMaxType 对应 `_run_generation` 第一行的 `max(1, timeout)`：
+// 传进去的是那个**局部原始值**，字符串能过 pydantic 却过不了 max → TypeError → 500。
+var errMaxType = errors.New("max(1, timeout) TypeError")
+
+// imagesEdits 对应 images_edits()。这个路由的签名是 `request: Request`，FastAPI 不做 body 校验，
+// handler 自己解析完再 `req_obj = ImageRequest(...)` —— 于是校验失败的形态是 500 而不是 422，
+// 并且一律发生在进 _run_generation 之前：浏览器不会起、额度不会花。
+// 金样本 edits_model_00..16 逐字段钉住了这件事。
 func (a *App) imagesEdits(c *reqCtx) (any, error) {
 	ct := strings.ToLower(c.R.Header.Get("content-type"))
-	var (
-		asyncMode bool
-		prompt    string
-		model     = "muse-image"
-		size      *string
-		ar        *string
-		format    = "url"
-		timeout   *json.Number
-		ref       string
-	)
+	var asyncRaw, promptRaw, modelRaw, sizeRaw, arRaw, formatRaw, timeoutRaw, refRaw any
 	if strings.Contains(ct, "multipart/form-data") {
 		if err := c.R.ParseMultipartForm(32 << 20); err != nil {
 			return nil, err
 		}
 		f := c.R.MultipartForm.Value
-		asyncMode = truthy(fv(f, "async"))
-		prompt = fv(f, "prompt")
-		if v := fv(f, "model"); v != "" {
-			model = v
-		}
-		size, ar = optStr(fv(f, "size")), optStr(fv(f, "aspect_ratio"))
-		if v := fv(f, "response_format"); v != "" {
-			format = v
-		}
-		if v := fv(f, "timeout"); v != "" {
-			if n, err := parseInt(v); err == nil {
-				timeout = &n
-			}
-		}
-		if file, hdr, err := c.R.FormFile("image"); err == nil {
-			data, rerr := io.ReadAll(file)
-			file.Close()
-			if rerr == nil {
-				mimeT := hdr.Header.Get("Content-Type")
-				if mimeT == "" {
-					mimeT = "image/png"
-				}
-				ref = "data:" + mimeT + ";base64," + encodeB64(data)
-			}
-		} else if v := fv(f, "image"); v != "" {
-			ref = v
-		}
+		asyncRaw = formGet(f, "async", false)
+		promptRaw = pyOrAny(formGet(f, "prompt", nil), "")
+		modelRaw = pyOrAny(formGet(f, "model", nil), "muse-image")
+		sizeRaw = formGet(f, "size", nil)
+		arRaw = formGet(f, "aspect_ratio", nil)
+		formatRaw = pyOrAny(formGet(f, "response_format", nil), "url")
+		timeoutRaw = formTimeout(f)
+		refRaw = formImageRef(c.R, f)
 	} else {
-		// 这个路由的签名是 `request: Request`，FastAPI 不做 body 校验，handler 里自己
-		// await request.json() —— 所以坏 JSON 与非对象 body 都是未捕获异常（500），
-		// 不走 decodeBody 那套 422。
+		// 坏 JSON 与非对象 body 都从这里出去（500），edits_badjson 钉着。
 		body, err := manualJSONBody(c.R)
 		if err != nil {
 			return nil, err
 		}
-		if b, ok := body["async"].(bool); ok {
-			asyncMode = b
-		}
-		prompt = strOf(body["prompt"])
-		if v := strOf(body["model"]); v != "" {
-			model = v
-		}
-		size, ar = optStr(body["size"]), optStr(body["aspect_ratio"])
-		if v := strOf(body["response_format"]); v != "" {
-			format = v
-		}
-		if v, ok := body["timeout"].(json.Number); ok {
-			timeout = &v
-		}
-		ref = refFromImage(body["image"])
-		if ref == "" {
-			ref = refFromImages(anySliceOf(body["images"]))
-		}
-		if ref == "" {
-			ref = strOf(body["reference_image"])
-		}
-		if ref == "" {
-			ref = strOf(body["image_url"])
-		}
+		asyncRaw = jsonGet(body, "async", false)
+		promptRaw = pyOrAny(body["prompt"], "")
+		modelRaw = pyOrAny(body["model"], "muse-image")
+		sizeRaw = body["size"]
+		arRaw = body["aspect_ratio"]
+		formatRaw = pyOrAny(body["response_format"], "url")
+		timeoutRaw = body["timeout"]
+		refRaw = editsJSONRef(body)
 	}
-	if prompt == "" {
-		prompt = "参考此图片并进行生图创作"
+	// if not prompt: prompt = "参考此图片并进行生图创作"
+	if !truthy(promptRaw) {
+		promptRaw = "参考此图片并进行生图创作"
 	}
-	req := &ImageRequest{Prompt: prompt, Model: model, N: json.Number("1"),
-		Size: size, AspectRatio: ar, ResponseFormat: format, Timeout: timeout,
-		Reference: optStr(ref), Async: asyncMode}
+
+	// Python 在这里构造 ImageRequest(prompt=…, model=…, size=…, aspect_ratio=…,
+	// response_format=…, timeout=…, reference_image=…, **{"async": …}) —— 只有这八个字段，
+	// 所以 n / extra / images 传坏了也不影响这条路由，字段表里就一个都不能多。
+	req, errs := parseImageRequest(map[string]any{
+		"prompt": promptRaw, "model": modelRaw, "size": sizeRaw, "aspect_ratio": arRaw,
+		"response_format": formatRaw, "timeout": timeoutRaw,
+		"reference_image": refRaw, "async": asyncRaw})
+	if len(errs) > 0 {
+		return nil, errModelRejected
+	}
 	full := buildImagePrompt(req)
-	genTimeout := int(numOrPtr(timeout, int64(a.CFG.ImageTimeout)))
-	if asyncMode {
+	ref, _ := refRaw.(string) // 过了 reference_image: str | None，剩下的只可能是字符串或 nil
+	if req.Async {
 		return a.queueImage(c, req, full, ref, nil)
 	}
-	res, _, err := a.runGeneration(full, "image", genTimeout, "", nil, ref, c.R.Context().Done())
+	genTimeout, ok := genTimeoutOr(timeoutRaw, int64(a.CFG.ImageTimeout))
+	if !ok {
+		return nil, errMaxType
+	}
+	res, _, err := a.runGeneration(full, "image", int(genTimeout), "", nil, ref, c.R.Context().Done())
 	if err != nil {
 		return nil, mapGenErr(err)
 	}
 	return a.imageResponse(req, res), nil
+}
+
+// genTimeoutOr 对应 `timeout = body.get("timeout")` 之后的 `timeout or CFG.image_timeout`，
+// 以及 `_run_generation` 第一行的 `max(1, timeout)`。只有数字能活着走完这两步：
+// 字符串在 max 上 TypeError，None/0 落默认值。
+func genTimeoutOr(raw any, def int64) (int64, bool) {
+	if !truthy(raw) {
+		return def, true
+	}
+	switch t := raw.(type) {
+	case json.Number:
+		f, err := t.Float64()
+		if err != nil {
+			return 0, false
+		}
+		return int64(f), true
+	case int64:
+		return t, true
+	}
+	return 0, false
+}
+
+// formTimeout 对应 multipart 分支那三连：`if timeout_val: try int(timeout_val) except ValueError: pass`。
+// 空串与非字符串字段都留在 None，转不出整数也留在 None（于是走默认超时）。
+func formTimeout(f map[string][]string) any {
+	if v, ok := f["timeout"]; !ok || len(v) == 0 || v[0] == "" {
+		return nil
+	} else if n, err := parseInt(v[0]); err == nil {
+		return n
+	}
+	return nil
+}
+
+// formImageRef 对应 multipart 的 image 字段：有 read() 的上传件转成 data URL，
+// 纯文本字段原样，其余形态都不认（ref_image_data 留在 None）。
+func formImageRef(r *http.Request, f map[string][]string) any {
+	if file, hdr, err := r.FormFile("image"); err == nil {
+		defer file.Close()
+		data, rerr := io.ReadAll(file)
+		if rerr != nil {
+			return nil
+		}
+		mimeT := hdr.Header.Get("Content-Type")
+		if mimeT == "" {
+			mimeT = "image/png"
+		}
+		return "data:" + mimeT + ";base64," + encodeB64(data)
+	}
+	if v, ok := f["image"]; ok && len(v) > 0 {
+		return v[0]
+	}
+	return nil
+}
+
+// editsJSONRef 对应 JSON 分支那段四级兜底，逐层都是 Python 的 `or`，
+// 所以值必须保持原始类型往下传 —— {"image":{"url":5}} 要带着 5 去撞 reference_image 的 str 校验。
+func editsJSONRef(body map[string]any) any {
+	var ref any
+	switch v := body["image"].(type) {
+	case map[string]any:
+		ref = pyOrAny(v["url"], v["b64_json"])
+	case string:
+		ref = v
+	}
+	if l, ok := body["images"].([]any); ok && !truthy(ref) && len(l) > 0 {
+		switch first := l[0].(type) {
+		case map[string]any:
+			ref = pyOrAny(first["image_url"], first["url"])
+		case string:
+			ref = first
+		}
+	}
+	if !truthy(ref) {
+		ref = pyOrAny(body["reference_image"], body["image_url"])
+	}
+	return ref
 }
 
 func (a *App) imagesTasks(c *reqCtx) (any, error) {
@@ -227,7 +280,7 @@ func (a *App) createVideo(c *reqCtx) (any, error) {
 		ref = refFromImage(req.Image)
 	}
 	prompt := buildVideoPrompt(req)
-	timeout := int(numOrPtr(req.Timeout, int64(a.CFG.VideoTimeout)))
+	timeout := int(pyNumOr(req.Timeout, int64(a.CFG.VideoTimeout)))
 	task := a.Store.CreateTask("video", req.Prompt)
 	tid := strOf(task["id"])
 	a.Store.UpdateTask(tid, map[string]any{"api_prompt": prompt})
@@ -324,7 +377,7 @@ func (a *App) chatCompletions(c *reqCtx) (any, error) {
 		}
 	}
 	model := resolveModel(optStr(req.Model), "muse-spark")
-	timeout := int(numOrPtr(req.Timeout, int64(a.CFG.ChatTimeout)))
+	timeout := int(pyNumOr(req.Timeout, int64(a.CFG.ChatTimeout)))
 	acc := a.Store.PickAccount(a.Engine.CurrentAccountID(), true, false, "")
 	if acc == nil {
 		return nil, httpError(400, "没有可用账号，请先在管理页面导入 cookie")
@@ -578,7 +631,7 @@ func (a *App) responsesAPI(c *reqCtx) (any, error) {
 		return nil, httpError(400, "input 为空")
 	}
 	model := resolveModel(optStr(req.Model), "muse-spark")
-	timeout := int(numOrPtr(req.Timeout, int64(a.CFG.ChatTimeout)))
+	timeout := int(pyNumOr(req.Timeout, int64(a.CFG.ChatTimeout)))
 	acc := a.Store.PickAccount(a.Engine.CurrentAccountID(), true, false, "")
 	if acc == nil {
 		return nil, httpError(400, "没有可用账号，请先在管理页面导入 cookie")
