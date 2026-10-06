@@ -13,8 +13,10 @@
     "request_ctype": "",
     "body": {
       "status": "ok",
-      "time": 1791292066
-    }
+      "time": 1791293450
+    },
+    "body_sha256": "29847d3961a55d87812258effffba8b0649e171115735279aaf45d3c5806b155",
+    "body_len": 33
   },
   "readyz": {
     "method": "GET",
@@ -32,7 +34,9 @@
       "status": "ready",
       "accounts": 3,
       "browser_running": true
-    }
+    },
+    "body_sha256": "ad7e5d405701fe657c09e64e05fce67c30105c79b3c1ee1de857c33823788fba",
+    "body_len": 54
   },
   "models_anon": {
     "method": "GET",
@@ -53,7 +57,9 @@
         "param": null,
         "code": 401
       }
-    }
+    },
+    "body_sha256": "5c1134b6acab56e1471a0eda97a8cef612fda871f345015ed28305894cced0dd",
+    "body_len": 113
   },
   "models_bad": {
     "method": "GET",
@@ -74,7 +80,9 @@
         "param": null,
         "code": 401
       }
-    }
+    },
+    "body_sha256": "25b36e09890d3f51bb8fe1dd7a90c8b70fcd0ad5b515afda5aead29eca7fb430",
+    "body_len": 93
   },
   "models_ok": {
     "method": "GET",
@@ -110,7 +118,9 @@
           "description": "Muse Video —— 文生视频 / 图生视频（网页免费额度）"
         }
       ]
-    }
+    },
+    "body_sha256": "0507af7265ff551db101b3070856eddbf5960f10b39b5e9372710ab230ad9fb2",
+    "body_len": 455
   },
   "media_missing": {
     "method": "GET",
@@ -131,7 +141,9 @@
         "param": null,
         "code": 404
       }
-    }
+    },
+    "body_sha256": "b5d7556c3d090db883494bbc6e27c523a2584d1d35d0a623d115a67bd7f3968a",
+    "body_len": 88
   },
   "media_traversal": {
     "method": "GET",
@@ -313,7 +325,9 @@
         "param": null,
         "code": 404
       }
-    }
+    },
+    "body_sha256": "4746aab013bf1320cd57d575ded28f2dd0cc23044532b2e833dfa08bd7a48458",
+    "body_len": 93
   },
   "video_missing": {
     "method": "GET",
@@ -334,7 +348,9 @@
         "param": null,
         "code": 404
       }
-    }
+    },
+    "body_sha256": "d14cd4efe06bef62ba47ff72d22625cc0e9e87498ea22db56bb89442bf0dc204",
+    "body_len": 87
   },
   "video_gen_missing": {
     "method": "GET",
@@ -355,7 +371,9 @@
         "param": null,
         "code": 404
       }
-    }
+    },
+    "body_sha256": "d14cd4efe06bef62ba47ff72d22625cc0e9e87498ea22db56bb89442bf0dc204",
+    "body_len": 87
   },
   "status_ok": {
     "method": "GET",
@@ -800,7 +818,9 @@
           "input": "abc"
         }
       ]
-    }
+    },
+    "body_sha256": "555996df714fe38a8eb5154f10825218429d3e9bcd2794c9f14321c41869132e",
+    "body_len": 151
   },
   "media_list": {
     "method": "GET",
@@ -836,19 +856,19 @@
             "__items__": {
               "name": {
                 "__type__": "str",
-                "__value__": "2fefc0ec0931492da3529cca7cdec6be.webp"
+                "__value__": ".gitkeep"
               },
               "url": {
                 "__type__": "str",
-                "__value__": "/v1/media/2fefc0ec0931492da3529cca7cdec6be.webp"
+                "__value__": "/v1/media/.gitkeep"
               },
               "bytes": {
                 "__type__": "int",
-                "__value__": 115944
+                "__value__": 14
               },
               "mtime": {
                 "__type__": "int",
-                "__value__": 1791212303
+                "__value__": 1791292607
               },
               "kind": {
                 "__type__": "str",
@@ -912,8 +932,8 @@
     "headers": {
       "content-type": "text/x-python; charset=utf-8",
       "accept-ranges": "bytes",
-      "last-modified": "Sun, 04 Oct 2026 11:19:12 GMT",
-      "etag": "\"cfcc1d89dae7994bdce76fa532fbd605\"",
+      "last-modified": "Tue, 06 Oct 2026 13:16:47 GMT",
+      "etag": "\"1e6f7b3e725eae2d582560fba8688f12\"",
       "vary": "Origin"
     },
     "request_body": null,
@@ -932,8 +952,8 @@
       "content-disposition": "attachment; filename=\"get_muse_cookie.py\"",
       "content-type": "text/x-python; charset=utf-8",
       "accept-ranges": "bytes",
-      "last-modified": "Sun, 04 Oct 2026 11:19:12 GMT",
-      "etag": "\"cfcc1d89dae7994bdce76fa532fbd605\"",
+      "last-modified": "Tue, 06 Oct 2026 13:16:47 GMT",
+      "etag": "\"1e6f7b3e725eae2d582560fba8688f12\"",
       "vary": "Origin"
     },
     "request_body": null,
@@ -957,7 +977,7 @@
     "request_body": null,
     "request_raw": null,
     "request_ctype": "",
-    "blob_sha256": "a1b0aa8a43395539ab825e70c13397a55e6af0be21579677dae1ff575ca895fa",
+    "blob_sha256": "feb4a0e9c33e2776f82f0fe03993c6a2d384aa95e2b00e881f15659e099d7d40",
     "blob_len": 7674,
     "blob_head": ""
   },
@@ -1017,7 +1037,7 @@
         },
         "last_run": {
           "__type__": "int",
-          "__value__": 1791291983
+          "__value__": 1791292624
         },
         "last_result": {
           "__type__": "object",
@@ -1031,15 +1051,15 @@
           "__items__": {
             "checked_at": {
               "__type__": "int",
-              "__value__": 1791291983
+              "__value__": 1791292624
             },
             "refreshed_count": {
               "__type__": "int",
-              "__value__": 2
+              "__value__": 1
             },
             "refreshed": {
               "__type__": "array",
-              "__n__": 2,
+              "__n__": 1,
               "__first__": {
                 "__type__": "object",
                 "__keys__": [
@@ -1059,15 +1079,15 @@
                   },
                   "id": {
                     "__type__": "str",
-                    "__value__": "a1b2c3d4e5f6"
+                    "__value__": "b2c3d4e5f6a7"
                   },
                   "label": {
                     "__type__": "str",
-                    "__value__": "acct-a"
+                    "__value__": "acct-c"
                   },
                   "vm_id": {
                     "__type__": "str",
-                    "__value__": "00000000-0000-4000-8000-000000000001"
+                    "__value__": "00000000-0000-4000-8000-000000000002"
                   },
                   "vm_state": {
                     "__type__": "str",
@@ -1079,7 +1099,7 @@
                   },
                   "expires_at": {
                     "__type__": "int",
-                    "__value__": 1791464785
+                    "__value__": 1791465425
                   },
                   "quota": {
                     "__type__": "NoneType",
@@ -1090,11 +1110,11 @@
             },
             "skipped_count": {
               "__type__": "int",
-              "__value__": 1
+              "__value__": 2
             },
             "skipped": {
               "__type__": "array",
-              "__n__": 1,
+              "__n__": 2,
               "__first__": {
                 "__type__": "object",
                 "__keys__": [
@@ -1105,11 +1125,11 @@
                 "__items__": {
                   "id": {
                     "__type__": "str",
-                    "__value__": "b2c3d4e5f6a7"
+                    "__value__": "a1b2c3d4e5f6"
                   },
                   "label": {
                     "__type__": "str",
-                    "__value__": "acct-c"
+                    "__value__": "acct-a"
                   },
                   "reason": {
                     "__type__": "str",
@@ -1122,7 +1142,7 @@
         },
         "next_run": {
           "__type__": "int",
-          "__value__": 1791292883
+          "__value__": 1791293524
         }
       }
     }
@@ -1165,11 +1185,11 @@
         },
         "has_git": {
           "__type__": "bool",
-          "__value__": false
+          "__value__": true
         },
         "local_version": {
           "__type__": "str",
-          "__value__": "1.5.3"
+          "__value__": "1.5.4"
         },
         "remote_version": {
           "__type__": "str",
@@ -1177,15 +1197,15 @@
         },
         "local_sha": {
           "__type__": "str",
-          "__value__": "2374061"
+          "__value__": "42ee039"
         },
         "local_msg": {
           "__type__": "str",
-          "__value__": ""
+          "__value__": "fix(update): 修复远端与本地 SHA 相同仍误报有新更新的判定逻辑"
         },
         "local_ts": {
           "__type__": "int",
-          "__value__": 0
+          "__value__": 1791280780
         },
         "remote_sha": {
           "__type__": "str",
@@ -1201,11 +1221,11 @@
         },
         "has_update": {
           "__type__": "bool",
-          "__value__": true
+          "__value__": false
         },
         "up_to_date": {
           "__type__": "bool",
-          "__value__": false
+          "__value__": true
         },
         "highlights": {
           "__type__": "array",
@@ -1248,7 +1268,7 @@
         },
         "checked_at": {
           "__type__": "int",
-          "__value__": 1791291977
+          "__value__": 1791293450
         }
       }
     }
@@ -1291,11 +1311,11 @@
         },
         "has_git": {
           "__type__": "bool",
-          "__value__": false
+          "__value__": true
         },
         "local_version": {
           "__type__": "str",
-          "__value__": "1.5.3"
+          "__value__": "1.5.4"
         },
         "remote_version": {
           "__type__": "str",
@@ -1303,15 +1323,15 @@
         },
         "local_sha": {
           "__type__": "str",
-          "__value__": "2374061"
+          "__value__": "42ee039"
         },
         "local_msg": {
           "__type__": "str",
-          "__value__": ""
+          "__value__": "fix(update): 修复远端与本地 SHA 相同仍误报有新更新的判定逻辑"
         },
         "local_ts": {
           "__type__": "int",
-          "__value__": 0
+          "__value__": 1791280780
         },
         "remote_sha": {
           "__type__": "str",
@@ -1327,11 +1347,11 @@
         },
         "has_update": {
           "__type__": "bool",
-          "__value__": true
+          "__value__": false
         },
         "up_to_date": {
           "__type__": "bool",
-          "__value__": false
+          "__value__": true
         },
         "highlights": {
           "__type__": "array",
@@ -1374,7 +1394,7 @@
         },
         "checked_at": {
           "__type__": "int",
-          "__value__": 1791291977
+          "__value__": 1791293450
         }
       }
     }
@@ -1391,8 +1411,8 @@
     "request_body": null,
     "request_raw": null,
     "request_ctype": "",
-    "blob_sha256": "5b4e400481664bc069c56116d6163694e8e848e0317acabbf4550801cc27e319",
-    "blob_len": 81020,
+    "blob_sha256": "355026e8b6172555c89b91bf2bdd55dfc0533844824e0998224091592bf1eb41",
+    "blob_len": 85630,
     "blob_head": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>muse2api · 账号池控制台</title>\n<style>\n  :root{\n    --bg:#0a0e17"
   },
   "admin_page": {
@@ -1407,8 +1427,8 @@
     "request_body": null,
     "request_raw": null,
     "request_ctype": "",
-    "blob_sha256": "5b4e400481664bc069c56116d6163694e8e848e0317acabbf4550801cc27e319",
-    "blob_len": 81020,
+    "blob_sha256": "355026e8b6172555c89b91bf2bdd55dfc0533844824e0998224091592bf1eb41",
+    "blob_len": 85630,
     "blob_head": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>muse2api · 账号池控制台</title>\n<style>\n  :root{\n    --bg:#0a0e17"
   },
   "openapi": {
@@ -1423,8 +1443,8 @@
     "request_body": null,
     "request_raw": null,
     "request_ctype": "",
-    "blob_sha256": "7c3ae09b99961b14e6d07afdfce89160039cd8ad6b8225b14ef1cb69d7ecf296",
-    "blob_len": 31219,
+    "blob_sha256": "4a5d2f3338840788f599dc471283780c2bb175264da5fc21d856591483bdd433",
+    "blob_len": 32456,
     "openapi_keys": [
       "openapi",
       "info",
@@ -1530,6 +1550,12 @@
       "/admin/media": [
         "get"
       ],
+      "/admin/media/delete": [
+        "post"
+      ],
+      "/admin/media/{name}": [
+        "delete"
+      ],
       "/": [
         "get"
       ],
@@ -1592,7 +1618,9 @@
     "request_ctype": "",
     "body": {
       "detail": "Not Found"
-    }
+    },
+    "body_sha256": "37ec4665a8102d115ffd1ac20dae94c98b4dac64b0c1a68228aa2a531caeb35d",
+    "body_len": 22
   },
   "admin_unmatched": {
     "method": "GET",
@@ -1608,7 +1636,9 @@
     "request_ctype": "",
     "body": {
       "detail": "Not Found"
-    }
+    },
+    "body_sha256": "37ec4665a8102d115ffd1ac20dae94c98b4dac64b0c1a68228aa2a531caeb35d",
+    "body_len": 22
   },
   "anon_admin": {
     "method": "GET",
@@ -1634,6 +1664,348 @@
         }
       }
     }
+  },
+  "media_del_noauth": {
+    "method": "POST",
+    "path": "/admin/media/delete",
+    "auth": "none",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": {
+      "names": [
+        "nope.webp"
+      ]
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "body": {
+      "detail": "缺少 Authorization: Bearer <key>"
+    },
+    "body_sha256": "4a45ffec2d72eeaccf5b7c02719445756645dd5b5568dd95548b7740783cba83",
+    "body_len": 47
+  },
+  "media_del_missing": {
+    "method": "POST",
+    "path": "/admin/media/delete",
+    "auth": "good",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": {
+      "names": [
+        "definitely-not-there.webp"
+      ]
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "body": {
+      "removed": 0,
+      "errors": []
+    },
+    "body_sha256": "7cb985fcd94ba4c98c1583b8851e54831b2d8ef6b22a613a86f8c5365d2b12b4",
+    "body_len": 25
+  },
+  "media_del_traversal": {
+    "method": "POST",
+    "path": "/admin/media/delete",
+    "auth": "good",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": {
+      "names": [
+        "../.env",
+        "..\\app.py"
+      ]
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "body": {
+      "removed": 0,
+      "errors": [
+        "非法文件名: ../.env",
+        "非法文件名: ..\\app.py"
+      ]
+    },
+    "body_sha256": "97b7fe4f4e885059bfb6722d8faf87733c044d2fa61ca101924bf13e15bb4f8e",
+    "body_len": 81
+  },
+  "media_del_str": {
+    "method": "POST",
+    "path": "/admin/media/delete",
+    "auth": "good",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": {
+      "names": "definitely-not-there.webp"
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "body": {
+      "removed": 0,
+      "errors": []
+    },
+    "body_sha256": "7cb985fcd94ba4c98c1583b8851e54831b2d8ef6b22a613a86f8c5365d2b12b4",
+    "body_len": 25
+  },
+  "media_del_notlist": {
+    "method": "POST",
+    "path": "/admin/media/delete",
+    "auth": "good",
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": {
+      "names": 5
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "body": {
+      "detail": "names 必须是文件名数组"
+    },
+    "body_sha256": "ddf740e78b6cc0475f66f5801c42b0e20d859823899c5c2fa9eea65b2adcd7bd",
+    "body_len": 43
+  },
+  "media_del_badtypes": {
+    "method": "POST",
+    "path": "/admin/media/delete",
+    "auth": "good",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": {
+      "names": [
+        null,
+        true,
+        123,
+        1.5,
+        [
+          "x"
+        ],
+        {
+          "k": "v"
+        }
+      ]
+    },
+    "request_raw": null,
+    "request_ctype": "application/json",
+    "body": {
+      "removed": 0,
+      "errors": [
+        "非法文件名: None",
+        "非法文件名: True",
+        "非法文件名: 123",
+        "非法文件名: 1.5",
+        "非法文件名: ['x']",
+        "非法文件名: {'k': 'v'}"
+      ]
+    },
+    "body_sha256": "bd42484d947407682bc3ab62c4d33b81c489127d35d4b0c0bfcf19b4722bdc10",
+    "body_len": 173
+  },
+  "media_del_body_list": {
+    "method": "POST",
+    "path": "/admin/media/delete",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[]",
+    "request_ctype": "application/json",
+    "body": {
+      "detail": [
+        {
+          "type": "dict_type",
+          "loc": [
+            "body"
+          ],
+          "msg": "Input should be a valid dictionary",
+          "input": []
+        }
+      ]
+    },
+    "body_sha256": "428ea81a6886e3ffa0a84092256e40a1f863c261ec4364f10e4b7c500a1c2a2a",
+    "body_len": 102
+  },
+  "cookies_body_list": {
+    "method": "POST",
+    "path": "/admin/accounts/nope/cookies",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[]",
+    "request_ctype": "application/json",
+    "body": {
+      "detail": [
+        {
+          "type": "dict_type",
+          "loc": [
+            "body"
+          ],
+          "msg": "Input should be a valid dictionary",
+          "input": []
+        }
+      ]
+    },
+    "body_sha256": "428ea81a6886e3ffa0a84092256e40a1f863c261ec4364f10e4b7c500a1c2a2a",
+    "body_len": 102
+  },
+  "cookies_body_str": {
+    "method": "POST",
+    "path": "/admin/accounts/nope/cookies",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "\"abc\"",
+    "request_ctype": "application/json",
+    "body": {
+      "detail": [
+        {
+          "type": "dict_type",
+          "loc": [
+            "body"
+          ],
+          "msg": "Input should be a valid dictionary",
+          "input": "abc"
+        }
+      ]
+    },
+    "body_sha256": "ae2287aca0092162ff3317e7aca2bf9efcfae49c6860f85168e149a8e0127cc7",
+    "body_len": 105
+  },
+  "cookies_body_empty": {
+    "method": "POST",
+    "path": "/admin/accounts/nope/cookies",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "",
+    "request_ctype": "application/json",
+    "body": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body"
+          ],
+          "msg": "Field required",
+          "input": null
+        }
+      ]
+    },
+    "body_sha256": "d9074c92c1e824f4154954e70941ca26ea361a1e4238cd6062bd95562f36e06f",
+    "body_len": 82
+  },
+  "tasks_clear_body_list": {
+    "method": "POST",
+    "path": "/admin/tasks/clear",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "[]",
+    "request_ctype": "application/json",
+    "body": {
+      "detail": [
+        {
+          "type": "dict_type",
+          "loc": [
+            "body"
+          ],
+          "msg": "Input should be a valid dictionary",
+          "input": []
+        }
+      ]
+    },
+    "body_sha256": "428ea81a6886e3ffa0a84092256e40a1f863c261ec4364f10e4b7c500a1c2a2a",
+    "body_len": 102
+  },
+  "media_del_empty_body": {
+    "method": "POST",
+    "path": "/admin/media/delete",
+    "auth": "good",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": "",
+    "request_ctype": "",
+    "body": {
+      "removed": 0,
+      "errors": []
+    },
+    "body_sha256": "7cb985fcd94ba4c98c1583b8851e54831b2d8ef6b22a613a86f8c5365d2b12b4",
+    "body_len": 25
+  },
+  "media_one_missing": {
+    "method": "DELETE",
+    "path": "/admin/media/definitely-not-there.webp",
+    "auth": "good",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": null,
+    "request_ctype": "",
+    "body": {
+      "detail": "文件不存在"
+    },
+    "body_sha256": "2e6524d4ab812a608e1649b7cab9ac88d3c82982f5be85f5480cf6bb2c45342f",
+    "body_len": 28
+  },
+  "media_one_traversal": {
+    "method": "DELETE",
+    "path": "/admin/media/..%2F.env",
+    "auth": "good",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": null,
+    "request_ctype": "",
+    "body": {
+      "detail": "Not Found"
+    },
+    "body_sha256": "37ec4665a8102d115ffd1ac20dae94c98b4dac64b0c1a68228aa2a531caeb35d",
+    "body_len": 22
   },
   "redoc": {
     "method": "GET",
@@ -1680,7 +2052,9 @@
     "request_body": null,
     "request_raw": null,
     "request_ctype": "",
-    "body_text": ""
+    "body_text": "",
+    "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "body_len": 0
   },
   "slash_redirect_models": {
     "method": "GET",
@@ -1729,7 +2103,9 @@
     "request_ctype": "",
     "body": {
       "detail": "Method Not Allowed"
-    }
+    },
+    "body_sha256": "83c09ba9a8daedb136f90b17a294caa90ad471a016e430df6e229acb5a81e100",
+    "body_len": 31
   },
   "images_gen_noauth": {
     "method": "POST",
@@ -1752,7 +2128,9 @@
         "param": null,
         "code": 401
       }
-    }
+    },
+    "body_sha256": "5c1134b6acab56e1471a0eda97a8cef612fda871f345015ed28305894cced0dd",
+    "body_len": 113
   },
   "images_gen_bad": {
     "method": "POST",
@@ -1775,7 +2153,9 @@
         "param": null,
         "code": 401
       }
-    }
+    },
+    "body_sha256": "25b36e09890d3f51bb8fe1dd7a90c8b70fcd0ad5b515afda5aead29eca7fb430",
+    "body_len": 93
   },
   "images_gen_empty": {
     "method": "POST",
@@ -1796,7 +2176,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "54adfa7ad3558288a4b9c6327001e27a1b5434836c35427e44ba4903495b5153",
+    "body_len": 192
   },
   "images_gen_prompt_type": {
     "method": "POST",
@@ -1819,7 +2201,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "94687d4d44aae0cde93489001edc5f249accb0cf72aa9861cf194c76e7e48b4a",
+    "body_len": 213
   },
   "images_gen_timeout": {
     "method": "POST",
@@ -1843,7 +2227,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "98e1803fcce0205ec063cc80320cb788c553796e054023d7f5483dbc5d1c507a",
+    "body_len": 249
   },
   "images_tasks_empty": {
     "method": "POST",
@@ -1864,7 +2250,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "54adfa7ad3558288a4b9c6327001e27a1b5434836c35427e44ba4903495b5153",
+    "body_len": 192
   },
   "images_tasks_bad": {
     "method": "POST",
@@ -1885,7 +2273,9 @@
         "param": null,
         "code": 401
       }
-    }
+    },
+    "body_sha256": "25b36e09890d3f51bb8fe1dd7a90c8b70fcd0ad5b515afda5aead29eca7fb430",
+    "body_len": 93
   },
   "videos_empty": {
     "method": "POST",
@@ -1906,7 +2296,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "54adfa7ad3558288a4b9c6327001e27a1b5434836c35427e44ba4903495b5153",
+    "body_len": 192
   },
   "videos_gen_empty": {
     "method": "POST",
@@ -1927,7 +2319,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "54adfa7ad3558288a4b9c6327001e27a1b5434836c35427e44ba4903495b5153",
+    "body_len": 192
   },
   "videos_bad": {
     "method": "POST",
@@ -1948,7 +2342,9 @@
         "param": null,
         "code": 401
       }
-    }
+    },
+    "body_sha256": "25b36e09890d3f51bb8fe1dd7a90c8b70fcd0ad5b515afda5aead29eca7fb430",
+    "body_len": 93
   },
   "chat_empty": {
     "method": "POST",
@@ -1969,7 +2365,9 @@
         "param": null,
         "code": 400
       }
-    }
+    },
+    "body_sha256": "94ecc9c2cccd05839b55cc1786e6ed5d900af842f78d1a558d2c9d6827e9a39b",
+    "body_len": 94
   },
   "chat_bad_msgs": {
     "method": "POST",
@@ -1992,7 +2390,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "13f8afdfda3ac0fe5334375cff72f4fe0c92c4c3be85e09ec7bdaf9befec9041",
+    "body_len": 211
   },
   "chat_bad_role": {
     "method": "POST",
@@ -2019,7 +2419,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "757716cbdaff9d7bf2863a1cbc4f7b8484c997b595e5133e548d4cc8a9afe6b7",
+    "body_len": 220
   },
   "chat_noauth": {
     "method": "POST",
@@ -2042,7 +2444,9 @@
         "param": null,
         "code": 401
       }
-    }
+    },
+    "body_sha256": "5c1134b6acab56e1471a0eda97a8cef612fda871f345015ed28305894cced0dd",
+    "body_len": 113
   },
   "responses_empty": {
     "method": "POST",
@@ -2063,7 +2467,9 @@
         "param": null,
         "code": 400
       }
-    }
+    },
+    "body_sha256": "594b1deb6d54955169b583f14957b1251c67f5f055184c5df901fef5b99c80bb",
+    "body_len": 91
   },
   "responses_bad_input": {
     "method": "POST",
@@ -2086,7 +2492,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "d8e822a677bd6febd99375988d38a3864ce5c855c6bdbbacb59deaf57815838c",
+    "body_len": 332
   },
   "responses_noauth": {
     "method": "POST",
@@ -2107,7 +2515,9 @@
         "param": null,
         "code": 401
       }
-    }
+    },
+    "body_sha256": "5c1134b6acab56e1471a0eda97a8cef612fda871f345015ed28305894cced0dd",
+    "body_len": 113
   },
   "edits_badjson": {
     "method": "POST",
@@ -2143,7 +2553,9 @@
         "param": null,
         "code": 401
       }
-    }
+    },
+    "body_sha256": "25b36e09890d3f51bb8fe1dd7a90c8b70fcd0ad5b515afda5aead29eca7fb430",
+    "body_len": 93
   },
   "gen_body_list": {
     "method": "POST",
@@ -2164,7 +2576,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "2e2a19af1c4554b4a40d7e0fecb0f2f7c6db1a1b3bc23ca5eb4ac9846602160e",
+    "body_len": 250
   },
   "gen_body_scalar": {
     "method": "POST",
@@ -2185,7 +2599,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "5dc16c4c8021b5eb5355d653b540d30807e32888125f67fed72f3db94555dce7",
+    "body_len": 251
   },
   "chat_body_list": {
     "method": "POST",
@@ -2206,7 +2622,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "2e2a19af1c4554b4a40d7e0fecb0f2f7c6db1a1b3bc23ca5eb4ac9846602160e",
+    "body_len": 250
   },
   "accounts_body_list": {
     "method": "POST",
@@ -2231,7 +2649,9 @@
           "input": []
         }
       ]
-    }
+    },
+    "body_sha256": "79fcf2f0dcf84ae5cbe5a5dccd84adc52b2891f048c6ca10968af2c9d7749820",
+    "body_len": 147
   },
   "accounts_body_str": {
     "method": "POST",
@@ -2256,7 +2676,9 @@
           "input": "abc"
         }
       ]
-    }
+    },
+    "body_sha256": "ffa9a3481d0ed302561865835bf49926c11f92920f0ff54f3ca540ae7cdb526c",
+    "body_len": 150
   },
   "gen_noctype_empty": {
     "method": "POST",
@@ -2277,7 +2699,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "b81e0f93372f50595b8b48b96aea9aa95f332a2cdefd7b5d5eb1c1a1221da31e",
+    "body_len": 253
   },
   "gen_badjson_ctype": {
     "method": "POST",
@@ -2298,7 +2722,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "f072c095387afffc2725d846d0ccc145792649ffb6eb0bcb743183282eefdc41",
+    "body_len": 264
   },
   "gen_badjson_0": {
     "method": "POST",
@@ -2319,7 +2745,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "fc6a476e539399addb7d6c5f8b2d98ae9a5bf5326cb5b3b1bf524a44fa2d1aaf",
+    "body_len": 240
   },
   "gen_badjson_1": {
     "method": "POST",
@@ -2340,7 +2768,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "0d0183292d8c46683f48f1a3af1f9250330f94c7c8350523b7dc10be6add38a8",
+    "body_len": 230
   },
   "gen_badjson_2": {
     "method": "POST",
@@ -2361,7 +2791,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "9bea782b2b727bb32b8c47f9b0b0559d9e9ce21a54be7b44e810e0c07cb721b9",
+    "body_len": 240
   },
   "gen_badjson_3": {
     "method": "POST",
@@ -2382,7 +2814,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "1dc39ae525e25e3a7b4806766b5de06001db137c995d38ab642c746a48b197cc",
+    "body_len": 264
   },
   "gen_badjson_4": {
     "method": "POST",
@@ -2403,7 +2837,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "d0b6df57ded8fc516b9b25c7df9b0f10295d9fb53cd71a765d990006fc35ca76",
+    "body_len": 246
   },
   "gen_badjson_5": {
     "method": "POST",
@@ -2424,7 +2860,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "62390877aedabff920e402bcbe1861247037cfc4e994978d82560508e088da4b",
+    "body_len": 225
   },
   "gen_badjson_6": {
     "method": "POST",
@@ -2445,7 +2883,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "c4fdb3a002ea2f9e13e1cfe6bc2fcc1f6e790227f29f4ce70776b4668beac3d7",
+    "body_len": 230
   },
   "gen_bad_escape": {
     "method": "POST",
@@ -2466,7 +2906,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "711c0faf5d31bcee12321a250f405531f669b4ec26f035fe90965ae2e437d6c3",
+    "body_len": 233
   },
   "gen_bad_control": {
     "method": "POST",
@@ -2487,7 +2929,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "f95f45aabfd3b7f76f57d6ce6dd720f3e04889d2903cfb28422c9d3ca8009ddb",
+    "body_len": 243
   },
   "gen_bad_uni": {
     "method": "POST",
@@ -2508,7 +2952,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "16ce26b21722d6e99dd21237d0b535fd8b684d5b5035e05a83a112f43d03f3b6",
+    "body_len": 239
   },
   "accounts_empty": {
     "method": "POST",
@@ -2524,7 +2970,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "未解析到任何 cookie，请检查格式"
-    }
+    },
+    "body_sha256": "9f53c544aa5ed3b546d986a2ba0402c5d0e2c9a6bfe0cf605741c25691131f30",
+    "body_len": 56
   },
   "accounts_noctype": {
     "method": "POST",
@@ -2560,7 +3008,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "2e2a19af1c4554b4a40d7e0fecb0f2f7c6db1a1b3bc23ca5eb4ac9846602160e",
+    "body_len": 250
   },
   "gen_ctype_1": {
     "method": "POST",
@@ -2581,7 +3031,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "2e2a19af1c4554b4a40d7e0fecb0f2f7c6db1a1b3bc23ca5eb4ac9846602160e",
+    "body_len": 250
   },
   "gen_ctype_2": {
     "method": "POST",
@@ -2602,7 +3054,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "ae6350ab2f3b0f73a743269e795ba06ab6160b691cf7a91952b3aeaa10cad6fe",
+    "body_len": 253
   },
   "gen_ctype_3": {
     "method": "POST",
@@ -2623,7 +3077,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "2e2a19af1c4554b4a40d7e0fecb0f2f7c6db1a1b3bc23ca5eb4ac9846602160e",
+    "body_len": 250
   },
   "gen_ctype_4": {
     "method": "POST",
@@ -2644,7 +3100,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "ae6350ab2f3b0f73a743269e795ba06ab6160b691cf7a91952b3aeaa10cad6fe",
+    "body_len": 253
   },
   "gen_empty_body_json": {
     "method": "POST",
@@ -2665,7 +3123,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "316a973c192990c9e0886e002c4415ec1a395e858072f6459d3b077ac896a45f",
+    "body_len": 185
   },
   "gen_empty_body_none": {
     "method": "POST",
@@ -2686,7 +3146,9 @@
         "param": null,
         "code": 422
       }
-    }
+    },
+    "body_sha256": "316a973c192990c9e0886e002c4415ec1a395e858072f6459d3b077ac896a45f",
+    "body_len": 185
   },
   "accounts_empty_body": {
     "method": "POST",
@@ -2711,7 +3173,9 @@
           "input": null
         }
       ]
-    }
+    },
+    "body_sha256": "d9074c92c1e824f4154954e70941ca26ea361a1e4238cd6062bd95562f36e06f",
+    "body_len": 82
   },
   "write_post_admin_accounts": {
     "method": "POST",
@@ -2727,7 +3191,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_patch_admin_accounts_capnope": {
     "method": "PATCH",
@@ -2743,7 +3209,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_delete_admin_accounts_capnope": {
     "method": "DELETE",
@@ -2759,7 +3227,9 @@
     "request_ctype": "",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_apikey_rotate": {
     "method": "POST",
@@ -2775,7 +3245,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_tasks_clear": {
     "method": "POST",
@@ -2791,7 +3263,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_delete_admin_tasks_capnope": {
     "method": "DELETE",
@@ -2807,7 +3281,9 @@
     "request_ctype": "",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_relogin": {
     "method": "POST",
@@ -2823,7 +3299,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_accounts_capnope_test": {
     "method": "POST",
@@ -2839,7 +3317,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_accounts_capnope_relogin": {
     "method": "POST",
@@ -2855,7 +3335,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_accounts_capnope_cookies": {
     "method": "POST",
@@ -2871,7 +3353,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_accounts_capnope_quota": {
     "method": "POST",
@@ -2887,7 +3371,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_quota": {
     "method": "POST",
@@ -2903,7 +3389,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_accounts_keepalive": {
     "method": "POST",
@@ -2919,7 +3407,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_accounts_capnope_keepalive": {
     "method": "POST",
@@ -2935,7 +3425,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_update_upgrade": {
     "method": "POST",
@@ -2951,7 +3443,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_repo_pull": {
     "method": "POST",
@@ -2967,7 +3461,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "write_post_admin_repo_push": {
     "method": "POST",
@@ -2983,7 +3479,9 @@
     "request_ctype": "application/json",
     "body": {
       "detail": "API key 无效"
-    }
+    },
+    "body_sha256": "cb2e2249d92b44ccc6067f6341315c1f47c25e7cbc015a927a9a4775f31cdd7b",
+    "body_len": 27
   },
   "cors_get": {
     "method": "GET",
@@ -3006,7 +3504,9 @@
         "param": null,
         "code": 401
       }
-    }
+    },
+    "body_sha256": "5c1134b6acab56e1471a0eda97a8cef612fda871f345015ed28305894cced0dd",
+    "body_len": 113
   },
   "cors_options": {
     "method": "OPTIONS",
@@ -3030,6 +3530,25 @@
   },
   "media_real_0": {
     "method": "GET",
+    "path": "/v1/media/.gitkeep",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "application/octet-stream",
+      "accept-ranges": "bytes",
+      "last-modified": "Tue, 06 Oct 2026 13:16:47 GMT",
+      "etag": "\"933af229cebc4bab7a2bba9e6831912b\"",
+      "vary": "Origin"
+    },
+    "request_body": null,
+    "request_raw": null,
+    "request_ctype": "",
+    "blob_sha256": "9d9f2cc91d124e1c4a995d0c99dfa67fda7fa98b6b9ab972c18e6c36dd3de7d2",
+    "blob_len": 14,
+    "blob_head": ""
+  },
+  "media_real_1": {
+    "method": "GET",
     "path": "/v1/media/2fefc0ec0931492da3529cca7cdec6be.webp",
     "auth": "none",
     "status": 200,
@@ -3047,29 +3566,10 @@
     "blob_len": 115944,
     "blob_head": ""
   },
-  "media_real_1": {
-    "method": "GET",
-    "path": "/v1/media/.gitkeep",
-    "auth": "none",
-    "status": 200,
-    "headers": {
-      "content-type": "application/octet-stream",
-      "accept-ranges": "bytes",
-      "last-modified": "Sun, 04 Oct 2026 11:19:12 GMT",
-      "etag": "\"70424634ba813e962b1a00d211180f6c\"",
-      "vary": "Origin"
-    },
-    "request_body": null,
-    "request_raw": null,
-    "request_ctype": "",
-    "blob_sha256": "9d9f2cc91d124e1c4a995d0c99dfa67fda7fa98b6b9ab972c18e6c36dd3de7d2",
-    "blob_len": 14,
-    "blob_head": ""
-  },
   "__meta__": {
     "port": 18610,
     "has_api_key": true,
-    "n_cases": 110,
+    "n_cases": 124,
     "fails": []
   }
 }

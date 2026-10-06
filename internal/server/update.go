@@ -202,7 +202,7 @@ func (a *App) checkUpdate(c *reqCtx) (any, error) {
 
 // upgradeManual / repoPushManual 是偏离清单第 4 条的落地点：不做在线升级、不推仓库。
 func (a *App) upgradeManual(c *reqCtx) (any, error) {
-	if _, err := decodeBodyWithDefault(c.R); err != nil {
+	if _, err := decodeBodyDictDefault(c.R); err != nil {
 		return nil, err
 	}
 	status, _ := a.checkUpdate(c)
@@ -216,7 +216,7 @@ func (a *App) upgradeManual(c *reqCtx) (any, error) {
 func (a *App) repoPushManual(c *reqCtx) (any, error) {
 	// Python 的签名是 `payload: dict = Body(default={})`：body 校验照做（[] / 坏 JSON /
 	// 非 JSON Content-Type 都各有结局），只是这份实现用不上里面的字段。
-	if _, err := decodeBodyWithDefault(c.R); err != nil {
+	if _, err := decodeBodyDictDefault(c.R); err != nil {
 		return nil, err
 	}
 	return pyval.Obj{

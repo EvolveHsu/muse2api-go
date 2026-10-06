@@ -23,7 +23,7 @@ type pyBytes []byte
 //	零字节 body            → 422 missing（`Body(default=…)` 则用空对象放行）
 //	Content-Type 不是 JSON → body 当 bytes → 422 model_attributes_type（/admin 那边崩成 500）
 //	JSON 读不通            → 422 json_invalid（loc 带字符偏移、ctx.error 是 CPython 的措辞）
-//	合法但不是对象         → 422 model_attributes_type（input 就是那个值）
+//	合法但不是对象         → 422，但**措辞按 body 的声明形态分两种**（bodyShape，见 notObjectErr）
 //
 // 判定规则取自 fastapi/routing.py 的 get_request_handler：只有 media type 的 maintype 是
 // application、subtype 等于 json 或以 +json 结尾时才会走 request.json()；
@@ -31,12 +31,31 @@ type pyBytes []byte
 //
 // 数字一律用 json.Number 承载：Python 的 1（int）与 1.0（float）在 str()、repr、
 // 幂等哈希里写法不同，过成 Go float64 就分不出来了。
-func decodeBody(r *http.Request) (map[string]any, error) { return decodeBodyWith(r, false) }
+func decodeBody(r *http.Request) (map[string]any, error) { return decodeBodyAs(r, bodyModel, false) }
 
-// decodeBodyWithDefault 对应 `payload: dict = Body(default={})`：没有 body 时用空对象放行。
-func decodeBodyWithDefault(r *http.Request) (map[string]any, error) { return decodeBodyWith(r, true) }
+// bodyShape 是 body 的两种声明形态。pydantic 对它们的报错 type/msg 完全不同 ——
+// gen_body_list（模型）与 media_del_body_list（dict）两条金样本一边一个，
+// 差别是「Input should be a valid dictionary or object to extract fields from」
+// 对「Input should be a valid dictionary」。
+type bodyShape int
 
-func decodeBodyWith(r *http.Request, optional bool) (map[string]any, error) {
+const (
+	bodyModel bodyShape = iota // x: SomeModel = Body(...)
+	bodyDict                   // payload: dict = Body(...) / Body(default={})
+)
+
+// decodeBodyDict 对应 `payload: dict = Body(...)`（/admin/accounts/{aid}/cookies）。
+func decodeBodyDict(r *http.Request) (map[string]any, error) {
+	return decodeBodyAs(r, bodyDict, false)
+}
+
+// decodeBodyDictDefault 对应 `payload: dict = Body(default={})`：没有 body 时用空对象放行。
+// 走这条的是 /admin/tasks/clear、/admin/update/upgrade、/admin/repo/push、/admin/media/delete。
+func decodeBodyDictDefault(r *http.Request) (map[string]any, error) {
+	return decodeBodyAs(r, bodyDict, true)
+}
+
+func decodeBodyAs(r *http.Request, shape bodyShape, optional bool) (map[string]any, error) {
 	raw, err := io.ReadAll(r.Body)
 	if err != nil {
 		return nil, err
@@ -49,7 +68,7 @@ func decodeBodyWith(r *http.Request, optional bool) (map[string]any, error) {
 			Loc: []any{"body"}, Msg: "Field required", Input: nil}})
 	}
 	if !contentTypeIsJSON(r.Header.Get("content-type")) {
-		return nil, bodyRejectedBytes(r.URL.Path, raw)
+		return nil, bodyRejectedBytes(r.URL.Path, raw, shape)
 	}
 	dec := json.NewDecoder(bytes.NewReader(raw))
 	dec.UseNumber()
@@ -62,12 +81,19 @@ func decodeBodyWith(r *http.Request, optional bool) (map[string]any, error) {
 	}
 	m, ok := v.(map[string]any)
 	if !ok {
-		return nil, validationErrorFor(r.URL.Path, []vErr{{Type: "model_attributes_type",
-			Loc:   []any{"body"},
-			Msg:   "Input should be a valid dictionary or object to extract fields from",
-			Input: v}})
+		return nil, validationErrorFor(r.URL.Path, []vErr{notObjectErr(shape, v)})
 	}
 	return m, nil
+}
+
+// notObjectErr 是「body 能解析成 JSON 但不是对象」那条错误，措辞按声明形态分两种。
+func notObjectErr(shape bodyShape, v any) vErr {
+	if shape == bodyDict {
+		return vErr{Type: "dict_type", Loc: []any{"body"},
+			Msg: "Input should be a valid dictionary", Input: v}
+	}
+	return vErr{Type: "model_attributes_type", Loc: []any{"body"},
+		Msg: "Input should be a valid dictionary or object to extract fields from", Input: v}
 }
 
 // contentTypeIsJSON 就是 FastAPI 那句 maintype=="application" && (subtype=="json" || subtype.endswith("+json"))。
@@ -104,11 +130,9 @@ func bodyJSONInvalid(path, body string) error {
 // bodyRejectedBytes：body 留在 bytes 形态，任何模型都收不下。
 // /v1 的错误会被 repr 成字符串（'input': b'…'）所以还是 422；
 // /admin 要把 input 原样序列化进 JSON，bytes 办不到 —— 线上错误处理器当场抛异常，客户端看到 500。
-func bodyRejectedBytes(path string, raw []byte) error {
+func bodyRejectedBytes(path string, raw []byte, shape bodyShape) error {
 	if strings.HasPrefix(path, "/v1/") {
-		return validationErrorFor(path, []vErr{{Type: "model_attributes_type",
-			Loc: []any{"body"}, Msg: "Input should be a valid dictionary or object to extract fields from",
-			Input: pyBytes(raw)}})
+		return validationErrorFor(path, []vErr{notObjectErr(shape, pyBytes(raw))})
 	}
 	return errBytesUnserializable
 }

@@ -103,7 +103,35 @@ case("v1_unmatched", "GET", "/v1/nope", "good")
 case("admin_unmatched", "GET", "/admin/nope", "good")
 case("anon_admin", "GET", "/admin/status", "none", record="shape")
 
-# ---------------- 路由器自身的边角（2026-10-06 D3 之后新增，等下次复录补上） ----------------
+# 1.5.4 新增的两条媒体删除路由。只发「删不掉任何东西」的形态：名字一律是不存在的
+# 或带穿越片段被校验挡掉的，绝不点名线上真实文件 —— 这样它对媒体库是零改动。
+case("media_del_noauth", "POST", "/admin/media/delete", "none", {"names": ["nope.webp"]})
+case("media_del_missing", "POST", "/admin/media/delete", "good",
+     {"names": ["definitely-not-there.webp"]})
+case("media_del_traversal", "POST", "/admin/media/delete", "good",
+     {"names": ["../.env", "..\\app.py"]})
+case("media_del_str", "POST", "/admin/media/delete", "good",
+     {"names": "definitely-not-there.webp"})
+case("media_del_notlist", "POST", "/admin/media/delete", "good", {"names": 5})
+case("media_del_badtypes", "POST", "/admin/media/delete", "good",
+     {"names": [None, True, 123, 1.5, ["x"], {"k": "v"}]})
+case("media_del_body_list", "POST", "/admin/media/delete", "good", raw="[]",
+     headers={"Content-Type": "application/json"})
+# `payload: dict = Body(...)`（必填 dict）与 `dict = Body(default={})` 是不是同一套措辞？
+# cookies 这条给合法 dict 会真的写库，所以只发非对象与空 body 三种。
+case("cookies_body_list", "POST", "/admin/accounts/nope/cookies", "good", raw="[]",
+     headers={"Content-Type": "application/json"})
+case("cookies_body_str", "POST", "/admin/accounts/nope/cookies", "good", raw='"abc"',
+     headers={"Content-Type": "application/json"})
+case("cookies_body_empty", "POST", "/admin/accounts/nope/cookies", "good", raw="",
+     headers={"Content-Type": "application/json"})
+case("tasks_clear_body_list", "POST", "/admin/tasks/clear", "good", raw="[]",
+     headers={"Content-Type": "application/json"})
+
+case("media_del_empty_body", "POST", "/admin/media/delete", "good", raw="")
+case("media_one_missing", "DELETE", "/admin/media/definitely-not-there.webp", "good")
+case("media_one_traversal", "DELETE", "/admin/media/..%2F.env", "good")
+
 # 这几条都不是业务接口，而是 FastAPI/Starlette 的对外行为，Go 侧一并复刻了：
 #   /redoc 与 /docs/oauth2-redirect 是 app 装配时白挂的另两条自动路由；
 #   HEAD 由 Starlette 自动加进 GET 路由的 methods；
@@ -297,6 +325,11 @@ for c in CASES:
             row["body"] = redact(r.json())
         except Exception:  # noqa: BLE001
             row["body_text"] = r.text[:400]
+        # 光有解析后的 JSON 只能做语义比较，抓不到**键序**：FastAPI 的 json.dumps 保插入序，
+        # Go 的 encoding/json 对 map 按字母排，这个差异直到 2026-10-06 拿两个服务并排比字节才暴露。
+        # 所以再存一份原始字节摘要，Go 侧对没有易变字段的用例直接比 sha。
+        row["body_sha256"] = hashlib.sha256(r.content).hexdigest()
+        row["body_len"] = len(r.content)
     out[c["name"]] = row
 
 out["__meta__"] = {"port": CFG.port, "has_api_key": bool(CFG.api_key),

@@ -1,10 +1,11 @@
 {
-  "version": "1.5.3",
+  "version": "1.5.4",
   "updated_at": "2026-10-06",
   "repo": "https://github.com/czg86389-hub/muse2api",
   "port": "go",
   "highlights": [
-    "Go 复刻版：43 条对外路由、错误壳与 SSE 帧按 Python 1.5.3 的线上契约逐条回放校验",
+    "Go 复刻版：45 条对外路由、错误壳与 SSE 帧按 Python 1.5.4 的线上契约逐条回放校验（120 条金样本）",
+    "媒体库删除：POST /admin/media/delete 批量 + DELETE /admin/media/{name} 单删，穿越路径逐个挡下",
     "空闲 30 分钟自动释放 Chromium（MUSE2API_BROWSER_IDLE_MINUTES，设 0 关闭这条）",
     "默认不常驻热标签页；要恢复 Python 的常驻行为设 MUSE2API_WARM_TAB=1",
     "不做容器内 git 自更新：/admin/update/upgrade 只报版本与手动更新步骤"

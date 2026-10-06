@@ -91,6 +91,18 @@ func TestV1ReadOnlyContract(t *testing.T) {
 					dropBodyKey(got, k)
 					dropBodyKey(want, k)
 				}
+				// 没有易变字段的用例连字节都比一遍：语义相等抓不到键序
+				// （FastAPI 保插入序、encoding/json 对 map 按字母排），
+				// 那个差异是 2026-10-06 拿两个服务并排比 curl 输出才暴露的。
+				if len(c.drop) == 0 {
+					if sha, ok := row["body_sha256"].(string); ok && sha != "" {
+						sum := sha256.Sum256(rec.Body.Bytes())
+						if gotSha := hex.EncodeToString(sum[:]); gotSha != sha {
+							t.Errorf("响应体字节不同\n go=%s len=%d\n py=%s len=%v\n go body=%s",
+								gotSha, rec.Body.Len(), sha, row["body_len"], rec.Body.String())
+						}
+					}
+				}
 				if !jsonEquiv(want, got) {
 					t.Errorf("响应体不同\n py=%v\n go=%s", row["body"], rec.Body.String())
 				}
@@ -624,33 +636,47 @@ func writeProbeCases(g map[string]any) []replayCase {
 // 它们全部卡在 FastAPI 的 body 校验层，handler 一次都没进，所以对线上零副作用；
 // 补这批是因为 Go 原先把这些一律当「读不出请求体」走成 500，而回放里根本没有覆盖到它们。
 var bodyProbeModes = map[string]string{
-	"gen_body_list":       "body",
-	"gen_body_scalar":     "body",
-	"chat_body_list":      "body",
-	"gen_noctype_empty":   "body",
-	"gen_badjson_ctype":   "body",
-	"gen_badjson_0":       "body",
-	"gen_badjson_1":       "body",
-	"gen_badjson_2":       "body",
-	"gen_badjson_3":       "body",
-	"gen_badjson_4":       "body",
-	"gen_badjson_5":       "body",
-	"gen_badjson_6":       "body",
-	"gen_bad_escape":      "body",
-	"gen_bad_control":     "body",
-	"gen_bad_uni":         "body",
-	"gen_ctype_0":         "body",
-	"gen_ctype_1":         "body",
-	"gen_ctype_2":         "body",
-	"gen_ctype_3":         "body",
-	"gen_ctype_4":         "body",
-	"gen_empty_body_json": "body",
-	"gen_empty_body_none": "body",
-	"accounts_body_list":  "body",
-	"accounts_body_str":   "body",
-	"accounts_empty":      "body",
-	"accounts_empty_body": "body",
-	"accounts_noctype":    "body",
+	"gen_body_list":         "body",
+	"gen_body_scalar":       "body",
+	"chat_body_list":        "body",
+	"gen_noctype_empty":     "body",
+	"gen_badjson_ctype":     "body",
+	"gen_badjson_0":         "body",
+	"gen_badjson_1":         "body",
+	"gen_badjson_2":         "body",
+	"gen_badjson_3":         "body",
+	"gen_badjson_4":         "body",
+	"gen_badjson_5":         "body",
+	"gen_badjson_6":         "body",
+	"gen_bad_escape":        "body",
+	"gen_bad_control":       "body",
+	"gen_bad_uni":           "body",
+	"gen_ctype_0":           "body",
+	"gen_ctype_1":           "body",
+	"gen_ctype_2":           "body",
+	"gen_ctype_3":           "body",
+	"gen_ctype_4":           "body",
+	"gen_empty_body_json":   "body",
+	"gen_empty_body_none":   "body",
+	"accounts_body_list":    "body",
+	"accounts_body_str":     "body",
+	"accounts_empty":        "body",
+	"accounts_empty_body":   "body",
+	"accounts_noctype":      "body",
+	"media_del_noauth":      "body",
+	"media_del_missing":     "body",
+	"media_del_traversal":   "body",
+	"media_del_str":         "body",
+	"media_del_notlist":     "body",
+	"media_del_badtypes":    "body",
+	"media_del_body_list":   "body",
+	"media_del_empty_body":  "body",
+	"media_one_missing":     "body",
+	"media_one_traversal":   "body",
+	"cookies_body_list":     "body",
+	"cookies_body_str":      "body",
+	"cookies_body_empty":    "body",
+	"tasks_clear_body_list": "body",
 }
 
 func bodyProbeCases(g map[string]any) []replayCase {

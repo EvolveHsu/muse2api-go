@@ -19,10 +19,7 @@ import (
 // pendingDocPaths 是「代码已经对齐 1.5.4、内嵌的 openapi.json 还是 1.5.3 录的」那几条。
 // 38465 升到 1.5.4 之后重录一次文档，这张表就该清空 —— 测试会检查它是否还有残留，
 // 不允许它悄悄长成一个逃生口。
-var pendingDocPaths = map[string]bool{
-	"POST /admin/media/delete":   true,
-	"DELETE /admin/media/{name}": true,
-}
+var pendingDocPaths = map[string]bool{}
 
 // docsAutoRoutes 是 FastAPI 装配时白挂出来的四条：它们不出现在自己生成的 openapi.json 里
 // （include_in_schema=False），所以路由表对账要把它们单独列出来。
@@ -143,33 +140,30 @@ func TestDocsPages(t *testing.T) {
 }
 
 // TestRawBodyCarriesContentLength：Starlette 的 Response 带正文就一定写 content-length。
-// 不显式设的话 Go 在正文超过 2KB 后自动转 chunked —— 81020 字节的 admin.html 正好撞在这上面，
+// 不显式设的话 Go 在正文超过 2KB 后自动转 chunked —— 85630 字节的 admin.html 正好撞在这上面，
 // 而金样本比对把头部的 content-length 列进了 DROP_HEADERS，所以这条只能在单测里钉。
+// 长度一律从内嵌资源现算：字节数本身由 blob 用例对着线上 sha 校验，这里只钉「有没有这个头」。
 func TestRawBodyCarriesContentLength(t *testing.T) {
 	a, _ := testApp(t, "cap-key", time.Unix(1700000000, 0))
 	for _, c := range []struct {
 		path string
-		want string
+		body []byte
 	}{
-		{"/docs", "1007"},
-		{"/redoc", "889"},
-		{"/openapi.json", "31219"},
-		{"/admin", "81020"},
-		{"/admin/cookie-helper", strconv.Itoa(len(webui.CookieHelper()))},
+		{"/docs", []byte(swaggerUIHTML(openAPIJSONPath, appTitle+" - Swagger UI", oauth2RedirPath))},
+		{"/redoc", []byte(redocUIHTML(openAPIJSONPath, appTitle+" - ReDoc"))},
+		{"/openapi.json", webui.OpenAPIDoc()},
+		{"/admin", webui.AdminHTML()},
+		{oauth2RedirPath, webui.OAuth2RedirectHTML()},
+		{"/admin/cookie-helper", webui.CookieHelper()},
 	} {
 		rec := get(a, c.path, "")
-		if got := rec.Header().Get("content-length"); got != c.want {
-			t.Errorf("%s content-length go=%q want=%q（不设就会掉进 chunked）", c.path, got, c.want)
+		if got, want := rec.Header().Get("content-length"), strconv.Itoa(len(c.body)); got != want {
+			t.Errorf("%s content-length go=%q want=%q（不设就会掉进 chunked）", c.path, got, want)
 		}
-		if rec.Body.Len() != mustAtoi(c.want) {
-			t.Errorf("%s 正文长度 %d 与 content-length %s 不符", c.path, rec.Body.Len(), c.want)
+		if rec.Body.Len() != len(c.body) {
+			t.Errorf("%s 正文长度 %d 与 content-length %d 不符", c.path, rec.Body.Len(), len(c.body))
 		}
 	}
-}
-
-func mustAtoi(s string) int {
-	n, _ := strconv.Atoi(s)
-	return n
 }
 
 // TestHeadIsNotMatched：Starlette 的 Route 会给 GET 自动补 HEAD，**FastAPI 的 APIRoute 不补**。

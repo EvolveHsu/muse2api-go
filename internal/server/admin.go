@@ -295,7 +295,8 @@ func (a *App) delAccount(c *reqCtx) (any, error) {
 }
 
 func (a *App) updateCookies(c *reqCtx) (any, error) {
-	body, err := decodeBody(c.R)
+	// Python: payload: dict = Body(...) —— 必填 dict，非对象 body 报 dict_type 不是 model_attributes_type。
+	body, err := decodeBodyDict(c.R)
 	if err != nil {
 		return nil, err
 	}
@@ -406,7 +407,8 @@ func (a *App) delTask(c *reqCtx) (any, error) {
 }
 
 func (a *App) clearTasks(c *reqCtx) (any, error) {
-	body, err := decodeBody(c.R)
+	// Python: payload: dict = Body(default={}) —— 不给 body 也算合法。
+	body, err := decodeBodyDictDefault(c.R)
 	if err != nil {
 		return nil, err
 	}
@@ -463,7 +465,7 @@ func (a *App) adminMedia(c *reqCtx) (any, error) {
 //   - 非法名字的提示是 f"非法文件名: {name}" —— name 是 JSON 里的任何值，
 //     所以走 Python 的 str()：123 → "123"、True → "True"、null → "None"、对象 → repr。
 func (a *App) deleteMedia(c *reqCtx) (any, error) {
-	payload, err := decodeBodyWithDefault(c.R)
+	payload, err := decodeBodyDictDefault(c.R)
 	if err != nil {
 		return nil, err
 	}

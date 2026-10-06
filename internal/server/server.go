@@ -12,6 +12,7 @@ import (
 
 	"muse2api-go/internal/config"
 	"muse2api-go/internal/engine"
+	"muse2api-go/internal/pyval"
 	"muse2api-go/internal/store"
 )
 
@@ -369,11 +370,13 @@ func (a *App) writeError(w http.ResponseWriter, r *http.Request, status int, det
 			b, _ := json.Marshal(detail)
 			msg = string(b)
 		}
-		jsonOut(w, status, map[string]any{"error": map[string]any{
-			"message": msg, "type": errType(status), "param": nil, "code": status}})
+		// 键序必须是 message/type/param/code：FastAPI 的 json.dumps 保插入序，
+		// 用 map 会被 encoding/json 按字母排成 code/message/param/type（跨服务实测抓到）。
+		jsonOut(w, status, pyval.Obj{{"error", pyval.Obj{
+			{"message", msg}, {"type", errType(status)}, {"param", nil}, {"code", status}}}})
 		return
 	}
-	jsonOut(w, status, map[string]any{"detail": detail})
+	jsonOut(w, status, pyval.Obj{{"detail", detail}})
 }
 
 // --- CORS（app.py 的 add_middleware：allow_origins=["*"] 等） ---

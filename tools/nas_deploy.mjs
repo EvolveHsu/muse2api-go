@@ -18,7 +18,7 @@ import { createRequire } from 'node:module';
 
 const HOST = '192.0.2.10', USER = 'nasuser', PORT = 22;
 const REMOTE_DIR = '/opt/muse2api-go';
-const IMG = 'muse2api-go:1.5.3';
+const IMG = 'muse2api-go:1.5.4';
 const CONTAINER = 'muse2api-go';
 const HOST_PORT = '38467';
 

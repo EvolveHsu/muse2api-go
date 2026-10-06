@@ -156,7 +156,7 @@ func (g etagGuard) Write(b []byte) (int, error) {
 // registerRoutes 先挂上这一批只读路由；生成类路由（要抢浏览器锁的那些）在后面的提交里补。
 func (a *App) registerRoutes() {
 	a.add("GET", "/healthz", false, func(c *reqCtx) (any, error) {
-		return map[string]any{"status": "ok", "time": int(a.now().Unix())}, nil
+		return pyval.Obj{{"status", "ok"}, {"time", int(a.now().Unix())}}, nil
 	})
 	a.add("GET", "/readyz", false, func(c *reqCtx) (any, error) {
 		enabled := 0
@@ -169,11 +169,11 @@ func (a *App) registerRoutes() {
 		if enabled > 0 {
 			st = "ready"
 		}
-		return map[string]any{"status": st, "accounts": enabled,
-			"browser_running": a.Engine != nil && a.Engine.BrowserProcUp()}, nil
+		return pyval.Obj{{"status", st}, {"accounts", enabled},
+			{"browser_running", a.Engine != nil && a.Engine.BrowserProcUp()}}, nil
 	})
 	a.add("GET", "/v1/models", true, func(c *reqCtx) (any, error) {
-		return map[string]any{"object": "list", "data": MODELS}, nil
+		return pyval.Obj{{"object", "list"}, {"data", MODELS}}, nil
 	})
 	a.add("GET", "/v1/media/{name}", false, func(c *reqCtx) (any, error) {
 		name := c.Args["name"]

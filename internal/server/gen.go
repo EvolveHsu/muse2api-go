@@ -143,14 +143,16 @@ func (a *App) renewAndPersist(accID string, wakeVM, force bool) (map[string]any,
 
 // syncCookies 对应 _sync_cookies()。
 // 注意：生成已经成功了，这里纯粹锦上添花，出任何问题都只记一条日志，绝不能把生成搞失败。
-func (a *App) syncCookies(accID string) map[string]any {
+// syncCookies 的返回值是要原样吐给客户端的，所以用有序对象：Python 那边是 dict 字面量，
+// 键序 synced → changed → expires_at（用 map 会被 encoding/json 按字母排）。
+func (a *App) syncCookies(accID string) pyval.Obj {
 	live := a.Engine.ReadCookies()
 	if len(live) == 0 {
-		return map[string]any{"synced": 0}
+		return pyval.Obj{{"synced", 0}}
 	}
 	acc := a.Store.GetAccount(accID)
 	if acc == nil {
-		return map[string]any{"synced": 0}
+		return pyval.Obj{{"synced", 0}}
 	}
 	cur := toStringMap(acc["cookies"])
 	newVals := map[string]string{}
@@ -183,9 +185,10 @@ func (a *App) syncCookies(accID string) map[string]any {
 	a.Store.UpdateAccount(accID, map[string]any{
 		"cookies": toStringAny(merged), "cookies_exp": exps, "synced_at": int64(a.now().Unix())})
 	updated := a.Store.GetAccount(accID)
-	out := map[string]any{"synced": len(newVals), "changed": changed}
+	// 键序照 Python 的 dict 字面量：synced → changed → expires_at。
+	out := pyval.Obj{{"synced", len(newVals)}, {"changed", changed}}
 	if updated != nil {
-		out["expires_at"] = updated["expires_at"]
+		out = append(out, pyval.Pair{"expires_at", updated["expires_at"]})
 	}
 	return out
 }
