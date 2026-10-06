@@ -56,6 +56,13 @@ func (r *rawResponse) write(c *reqCtx) {
 	if st == 0 {
 		st = http.StatusOK
 	}
+	// Starlette 的 Response 只要带正文就一定给 content-length；不显式设的话 Go 在正文超过
+	// 2KB 缓冲后转 chunked，客户端看到的头就与 Python 不一致（金样本把 content-length
+	// 列进了 DROP_HEADERS 不参与比对，所以这一条只能靠真机发现）。
+	// 上面 Stream 那条路不受影响 —— SSE 本来就该分块，与 StreamingResponse 一致。
+	if _, ok := r.Headers["content-length"]; !ok {
+		c.W.Header().Set("content-length", strconv.Itoa(len(r.Body)))
+	}
 	c.W.WriteHeader(st)
 	_, _ = c.W.Write(r.Body)
 }

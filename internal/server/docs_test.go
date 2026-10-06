@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -125,6 +126,36 @@ func TestDocsPages(t *testing.T) {
 			}
 		}
 	}
+}
+
+// TestRawBodyCarriesContentLength：Starlette 的 Response 带正文就一定写 content-length。
+// 不显式设的话 Go 在正文超过 2KB 后自动转 chunked —— 81020 字节的 admin.html 正好撞在这上面，
+// 而金样本比对把头部的 content-length 列进了 DROP_HEADERS，所以这条只能在单测里钉。
+func TestRawBodyCarriesContentLength(t *testing.T) {
+	a, _ := testApp(t, "cap-key", time.Unix(1700000000, 0))
+	for _, c := range []struct {
+		path string
+		want string
+	}{
+		{"/docs", "1007"},
+		{"/redoc", "889"},
+		{"/openapi.json", "31219"},
+		{"/admin", "81020"},
+		{"/admin/cookie-helper", strconv.Itoa(len(webui.CookieHelper()))},
+	} {
+		rec := get(a, c.path, "")
+		if got := rec.Header().Get("content-length"); got != c.want {
+			t.Errorf("%s content-length go=%q want=%q（不设就会掉进 chunked）", c.path, got, c.want)
+		}
+		if rec.Body.Len() != mustAtoi(c.want) {
+			t.Errorf("%s 正文长度 %d 与 content-length %s 不符", c.path, rec.Body.Len(), c.want)
+		}
+	}
+}
+
+func mustAtoi(s string) int {
+	n, _ := strconv.Atoi(s)
+	return n
 }
 
 // TestHeadMatchesGetRoutes：Starlette 给带 GET 的路由自动加上 HEAD，
