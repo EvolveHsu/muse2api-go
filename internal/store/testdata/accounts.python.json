@@ -1,0 +1,52 @@
+[
+ {
+  "id": "100000000000",
+  "label": "测试 <A&B> 周杰伦",
+  "cookies": {
+   "hatch_sess": "s1",
+   "hatch_gw": "g1",
+   "hatch_vml": "v1",
+   "hatch_native_auth_device": "d1",
+   "extra": "<a&b> 中文"
+  },
+  "cookies_exp": {
+   "hatch_vml": 1700172800
+  },
+  "expires_at": 1700172800,
+  "expiry_anchor": null,
+  "enabled": true,
+  "created_at": 1700000000,
+  "last_used": 1700000000.5,
+  "last_keepalive": null,
+  "use_count": 1,
+  "ok": true,
+  "note": "会话有效",
+  "synced_at": null,
+  "checked_at": 1700000000,
+  "quota": {
+   "plan": "Free plan",
+   "weekly_used_pct": 12
+  }
+ },
+ {
+  "id": "200000000000",
+  "label": "200000000000",
+  "cookies": {
+   "hatch_sess": "s2"
+  },
+  "cookies_exp": {
+   "hatch_sess": 1700090000
+  },
+  "expires_at": 1700172800,
+  "expiry_anchor": null,
+  "enabled": true,
+  "created_at": 1700000000,
+  "last_used": null,
+  "last_keepalive": null,
+  "use_count": 0,
+  "ok": null,
+  "note": "保活未确认（保留账号状态）: HTTP 503",
+  "synced_at": null,
+  "checked_at": 1700000000
+ }
+]

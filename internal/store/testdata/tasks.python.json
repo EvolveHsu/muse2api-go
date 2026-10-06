@@ -1,0 +1,16 @@
+{
+ "task_30000000000000000000": {
+  "id": "task_30000000000000000000",
+  "object": "task",
+  "kind": "image",
+  "prompt": "画一只猫",
+  "status": "completed",
+  "created_at": 1700000000,
+  "updated_at": 1700000000,
+  "result": {
+   "url": "/v1/media/x.webp",
+   "kind": "image"
+  },
+  "error": null
+ }
+}
