@@ -317,8 +317,18 @@ func (a *App) dispatch(w http.ResponseWriter, r *http.Request, rt *route, args m
 
 // --- 鉴权（app.py: auth()） ---
 
+// apiKey 读当前密钥。写它的有两处（启动时自动生成、面板轮换 Key），都在 a.mu 下；
+// 读这边也必须上锁 —— Python 里 `CFG.api_key` 是 GIL 保护的单次属性读，
+// Go 里对一个 string（指针+长度两个字）无锁读写就是数据竞争，轮换瞬间可能读到撕裂值。
+func (a *App) apiKey() string {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	return a.CFG.APIKey
+}
+
 func (a *App) auth(r *http.Request) error {
-	if a.CFG.APIKey == "" {
+	key := a.apiKey()
+	if key == "" {
 		return nil
 	}
 	h := r.Header.Get("Authorization")
@@ -326,7 +336,7 @@ func (a *App) auth(r *http.Request) error {
 		return httpError(401, "缺少 Authorization: Bearer <key>")
 	}
 	token := strings.TrimSpace(h[len("Bearer "):])
-	if token == "" || token != a.CFG.APIKey {
+	if token == "" || token != key {
 		return httpError(401, "API key 无效")
 	}
 	return nil

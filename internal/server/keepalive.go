@@ -283,19 +283,36 @@ func (a *App) queryAnyQuota(c *reqCtx) (any, error) {
 	return a.queryQuota(c)
 }
 
-// reloginAll 对应 relogin()：注意 Python 这里**不持锁**（就是 6 个取锁点之外的路径），
-// 照抄不改。
+// reloginAll 对应 relogin()。
+//
+// DEVIATION: Python 这一条**不持 GEN_LOCK**（是 6 个取锁点之外的路径），Go 改成按
+// test_account 那样 `with GEN_LOCK` 排队，理由有两条：
+//
+//	① 内存安全 —— Refresh 会换掉 e.page/e.browser，而并发的生成任务正在无锁读它们，
+//	   Python 有 GIL 兜着只是「逻辑上互相踩」，Go 里这是数据竞争，最坏读到撕裂的接口值直接 panic；
+//	② 逻辑上 Python 这条本来就没有正确结果 —— 任务跑到一半被 refresh 关掉标签页，
+//	   两边都拿不到想要的东西。排队之后行为可预期，空闲时的对外结果与 Python 完全一致。
 func (a *App) reloginAll(c *reqCtx) (any, error) {
 	acc := a.Store.PickAccount("", true, false, "")
 	if acc == nil {
 		return nil, httpError(400, "没有可用账号")
 	}
-	if err := a.Engine.Start(); err != nil {
+	cookies := toStringMap(acc["cookies"])
+	expires := cookieIntMap(acc["cookies_exp"])
+	var failure error
+	if err := a.browser.runBlocking(c.R.Context().Done(), func() {
+		if err := a.Engine.Start(); err != nil {
+			failure = err
+			return
+		}
+		if _, err := a.Engine.Refresh(cookies, expires); err != nil {
+			failure = err
+		}
+	}); err != nil {
 		return reloginErr(err), nil
 	}
-	if _, err := a.Engine.Refresh(toStringMap(acc["cookies"]),
-		cookieIntMap(acc["cookies_exp"])); err != nil {
-		return reloginErr(err), nil
+	if failure != nil {
+		return reloginErr(failure), nil
 	}
 	return pyval.Obj{{"ok", true}, {"account", acc["id"]}}, nil
 }

@@ -13,6 +13,8 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 
 	"muse2api-go/internal/config"
@@ -48,10 +50,20 @@ type Engine struct {
 	// 而金样本录制时这一步是被打桩跳过的。nil 时用真实的 EnsurePage。
 	EnsurePageFn func(cookies map[string]string, expires map[string]int, accountID string) (Session, error)
 
-	proc          Process
-	browser       Session
-	page          Session
-	currentAccID  string
+	// DEVIATION: Python 没有 visible / renewMu，它靠 GIL 保证「一次赋值/一次查表」的原子性。
+	// Go 里这两个字段会被**不持 GEN_LOCK 的读者**看到：面板每几秒打 /admin/status 与 /readyz
+	// （BrowserProcUp），保活协程读写 lastHTTPRenew（renewAndPersist 在锁外也走）。
+	// 不加锁的并发读写在 Go 里是数据竞争，最坏 `fatal error: concurrent map writes` 直接带走进程。
+	//
+	// 处理方式不改任何获取顺序：proc/page/currentAccID 本体仍旧只由 GEN_LOCK 持有者读写，
+	// 变更时整份替换一份 atomic 快照供锁外读者用；lastHTTPRenew 那张表则用小锁包住单次读写。
+	visible      atomic.Pointer[browserState]
+	renewMu      sync.Mutex
+	proc         Process
+	browser      Session
+	page         Session
+	currentAccID string
+
 	lastHTTPRenew map[string]float64
 	logFile       *os.File
 
@@ -81,6 +93,49 @@ func defaultSessionFactory(wsURL string, timeout time.Duration) (Session, error)
 		return nil, err
 	}
 	return c, nil
+}
+
+// browserState 是给「不抢浏览器锁的读者」看的那份快照；三个字段永远整份换掉，
+// 所以读者不会看见「进程已经没了但页面还挂着」这种半新半旧的组合。
+type browserState struct {
+	proc  Process
+	page  Session
+	accID string
+}
+
+// publish 在每次状态变更后调用。调用方此刻持着 GEN_LOCK，读本体字段是安全的。
+func (e *Engine) publish() {
+	e.visible.Store(&browserState{proc: e.proc, page: e.page, accID: e.currentAccID})
+}
+
+func (e *Engine) snap() *browserState {
+	if s := e.visible.Load(); s != nil {
+		return s
+	}
+	return &browserState{}
+}
+
+func (e *Engine) setProc(p Process) { e.proc = p; e.publish() }
+func (e *Engine) setPage(s Session) { e.page = s; e.publish() }
+func (e *Engine) setAccountID(id string) {
+	e.currentAccID = id
+	e.publish()
+}
+
+// renewAt / setRenewAt 包住 lastHTTPRenew 那张表的单次读写。
+func (e *Engine) renewAt(accountID string) float64 {
+	e.renewMu.Lock()
+	defer e.renewMu.Unlock()
+	return e.lastHTTPRenew[accountID]
+}
+
+func (e *Engine) setRenewAt(accountID string, ts float64) {
+	e.renewMu.Lock()
+	defer e.renewMu.Unlock()
+	if e.lastHTTPRenew == nil {
+		e.lastHTTPRenew = map[string]float64{}
+	}
+	e.lastHTTPRenew[accountID] = ts
 }
 
 func (e *Engine) debugURL() string {
@@ -155,7 +210,7 @@ func (e *Engine) Start() error {
 		e.logFile = nil
 		return &ErrGeneration{Msg: err.Error()}
 	}
-	e.proc = proc
+	e.setProc(proc)
 
 	var last error
 	for i := 0; i < 90; i++ {
@@ -245,7 +300,9 @@ func (e *Engine) Stop() {
 			c.Close()
 		}
 	}
-	e.page, e.browser = nil, nil
+	e.setPage(nil)
+	e.browser = nil
+	e.publish()
 
 	if e.proc != nil && e.alive() {
 		e.proc.Terminate() // proc.terminate()
@@ -258,7 +315,7 @@ func (e *Engine) Stop() {
 			waitProcExit(e.proc, 5*time.Second, e.sleep)
 		}
 	}
-	e.proc = nil
+	e.setProc(nil)
 	if e.logFile != nil {
 		_ = e.logFile.Close()
 		e.logFile = nil
@@ -433,12 +490,12 @@ func (e *Engine) EnsurePage(cookies map[string]string, expires map[string]int, a
 	}
 	if e.page != nil {
 		e.page.Close()
-		e.page = nil
+		e.setPage(nil)
 	}
 
 	// 仅当距离上次 HTTP 续签超过 10 分钟才在主链路打 /api/session，避免每次切号重复阻塞
 	nowTS := float64(e.now().UnixNano()) / 1e9
-	if accountID == "" || nowTS-e.lastHTTPRenew[accountID] > 600 {
+	if accountID == "" || nowTS-e.renewAt(accountID) > 600 {
 		renewed, err := e.RenewSessionHTTP(cookies, expires, true)
 		if err != nil {
 			if IsAuthErr(err) {
@@ -453,7 +510,7 @@ func (e *Engine) EnsurePage(cookies map[string]string, expires map[string]int, a
 				expires = renewed.CookiesExp
 			}
 			if accountID != "" {
-				e.lastHTTPRenew[accountID] = nowTS
+				e.setRenewAt(accountID, nowTS)
 			}
 		}
 	}
@@ -469,15 +526,15 @@ func (e *Engine) EnsurePage(cookies map[string]string, expires map[string]int, a
 	for i := 0; i < e.CFG.LoginWait*2; i++ {
 		e.sleep(150 * time.Millisecond)
 		if ok, err := page.JS(jsEnsurePageL377, false, 0); err == nil && ok.Truthy() {
-			e.page = page
-			e.currentAccID = accountID
+			e.setPage(page)
+			e.setAccountID(accountID)
 			e.waitWSReady(page, 15*time.Second)
 			return page, nil
 		}
 	}
 	if ok, err := page.JS(jsEnsurePageL377, false, 0); err == nil && ok.Truthy() {
-		e.page = page
-		e.currentAccID = accountID
+		e.setPage(page)
+		e.setAccountID(accountID)
 		e.waitWSReady(page, 15*time.Second)
 		return page, nil
 	}
@@ -507,15 +564,19 @@ func (e *Engine) ensurePage(cookies map[string]string, expires map[string]int, a
 func (e *Engine) Refresh(cookies map[string]string, expires map[string]int) (Session, error) {
 	if e.page != nil {
 		e.page.Close()
-		e.page = nil
+		e.setPage(nil)
 	}
 	return e.EnsurePage(cookies, expires, "")
 }
 
 // CurrentAccountID / Page / Browser 暴露内部状态（app.py 直接读这些属性）。
-func (e *Engine) CurrentAccountID() string { return e.currentAccID }
-func (e *Engine) Page() Session            { return e.page }
-func (e *Engine) BrowserProcUp() bool      { return e.proc != nil && e.alive() }
+// 这三个是「不抢浏览器锁的读者」也会打的口子，所以读快照而不是读本体字段。
+func (e *Engine) CurrentAccountID() string { return e.snap().accID }
+func (e *Engine) Page() Session            { return e.snap().page }
+func (e *Engine) BrowserProcUp() bool {
+	p := e.snap().proc
+	return p != nil && p.Alive()
+}
 
 func (e *Engine) httpJSON(url string, timeout time.Duration) (map[string]any, error) {
 	resp, err := e.HTTP.Get(url, nil, timeout, true)
@@ -543,16 +604,7 @@ func asString(v any) string {
 // LastHTTPRenew / SetLastHTTPRenew 暴露那张「上次 HTTP 续签时间」表。
 // Python 里 app.py 直接读写 engine._last_http_renew（跨模块访问私有属性），
 // Go 没有这种走法，只能给两个访问器 —— 语义还是那份：同一份数据、同一个 map。
-func (e *Engine) LastHTTPRenew(accountID string) float64 {
-	if e.lastHTTPRenew == nil {
-		return 0
-	}
-	return e.lastHTTPRenew[accountID]
-}
+// 表本身由 renewMu 包住单次读写：保活协程在 GEN_LOCK 外也要碰它。
+func (e *Engine) LastHTTPRenew(accountID string) float64 { return e.renewAt(accountID) }
 
-func (e *Engine) SetLastHTTPRenew(accountID string, ts float64) {
-	if e.lastHTTPRenew == nil {
-		e.lastHTTPRenew = map[string]float64{}
-	}
-	e.lastHTTPRenew[accountID] = ts
-}
+func (e *Engine) SetLastHTTPRenew(accountID string, ts float64) { e.setRenewAt(accountID, ts) }

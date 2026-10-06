@@ -334,7 +334,7 @@ func (a *App) updateCookies(c *reqCtx) (any, error) {
 func (a *App) getApikey(c *reqCtx) (any, error) {
 	base := a.publicBase()
 	return pyval.Obj{
-		{"api_key", a.CFG.APIKey}, {"base_url", urlOrEmpty(base, "/v1")},
+		{"api_key", a.apiKey()}, {"base_url", urlOrEmpty(base, "/v1")},
 		{"models_url", urlOrEmpty(base, "/v1/models")},
 		{"media_url", urlOrEmpty(base, "/v1/media/{name}")},
 	}, nil
@@ -342,7 +342,7 @@ func (a *App) getApikey(c *reqCtx) (any, error) {
 
 func (a *App) rotateApikey(c *reqCtx) (any, error) {
 	newKey := "m2a_" + randHex(48)
-	old := a.CFG.APIKey
+	old := a.apiKey()
 	a.mu.Lock()
 	a.CFG.APIKey = newKey
 	a.mu.Unlock()

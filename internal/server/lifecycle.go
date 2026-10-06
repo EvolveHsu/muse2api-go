@@ -18,7 +18,7 @@ func (a *App) Startup(stop <-chan struct{}) {
 	if n := a.Store.FailInterruptedTasks("服务重启中断了任务，请重新提交"); n > 0 {
 		log.Printf("【启动】%d 个被重启打断的生图任务已置为失败", n)
 	}
-	if a.CFG.APIKey == "" {
+	if a.apiKey() == "" {
 		newKey := "m2a_" + randHex(24) // 与 secrets.token_hex(24) 同宽：48 位十六进制
 		a.mu.Lock()
 		a.CFG.APIKey = newKey
