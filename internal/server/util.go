@@ -229,3 +229,12 @@ func orDefault(v any, def string) string {
 	}
 	return s
 }
+
+// toIntAny 把 map[string]int 转成 JSON 形状（store 只认 map[string]any）。
+func toIntAny(m map[string]int) map[string]any {
+	out := make(map[string]any, len(m))
+	for k, v := range m {
+		out[k] = v
+	}
+	return out
+}

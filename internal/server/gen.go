@@ -101,7 +101,7 @@ func (a *App) renewAndPersist(accID string, wakeVM, force bool) (map[string]any,
 			okVal = true
 		}
 		a.Store.UpdateAccount(accID, map[string]any{
-			"cookies": toStringMap(res.Cookies), "cookies_exp": res.CookiesExp,
+			"cookies": toStringAny(res.Cookies), "cookies_exp": toIntAny(res.CookiesExp),
 			"ok": okVal, "synced_at": int64(now)})
 		vm := "RUNNING"
 		if res.VMState != "" {
@@ -153,7 +153,7 @@ func (a *App) syncCookies(accID string) map[string]any {
 		merged[k] = v
 	}
 	a.Store.UpdateAccount(accID, map[string]any{
-		"cookies": merged, "cookies_exp": exps, "synced_at": int64(a.now().Unix())})
+		"cookies": toStringAny(merged), "cookies_exp": exps, "synced_at": int64(a.now().Unix())})
 	updated := a.Store.GetAccount(accID)
 	out := map[string]any{"synced": len(newVals), "changed": changed}
 	if updated != nil {

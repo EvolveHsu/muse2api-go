@@ -51,48 +51,7 @@ func TestV1ReadOnlyContract(t *testing.T) {
 		}
 	}
 
-	cases := []replayCase{
-		{"healthz", "body", []string{"time"}},
-		{"readyz", "shape", nil},
-		{"models_anon", "body", nil},
-		{"models_bad", "body", nil},
-		{"models_ok", "body", nil},
-		{"media_missing", "body", nil},
-		{"media_backslash", "body", nil},
-		{"media_backslash_traversal", "body", nil},
-		{"media_dots_only", "body", nil},
-		{"media_enc_slash_only", "body", nil},
-		{"media_space_name", "body", nil},
-		{"media_traversal", "body", nil},
-		{"media_dotdot_plain", "body", nil},
-		{"media_utf8_name", "body", nil},
-		{"media_real_0", "head", nil},
-		{"media_real_1", "head", nil},
-		{"v1_unmatched", "body", nil},
-		{"admin_unmatched", "body", nil},
-		{"cors_get", "body", nil},
-		{"cors_options", "head", nil},
-		// 生成类路由：body 合法才会进 handler，所以金样本里这些用例全是「进不去」的分支。
-		{"images_gen_noauth", "body", nil}, {"images_gen_bad", "body", nil},
-		{"images_gen_empty", "body", nil}, {"images_gen_prompt_type", "body", nil},
-		{"images_gen_timeout", "body", nil}, {"images_tasks_empty", "body", nil},
-		{"images_tasks_bad", "body", nil}, {"videos_empty", "body", nil},
-		{"videos_gen_empty", "body", nil}, {"videos_bad", "body", nil},
-		{"chat_empty", "body", nil}, {"chat_bad_msgs", "body", nil},
-		{"chat_bad_role", "body", nil}, {"chat_noauth", "body", nil},
-		{"responses_empty", "body", nil}, {"responses_bad_input", "body", nil},
-		{"responses_noauth", "body", nil}, {"edits_noauth", "body", nil},
-		{"edits_badjson", "body", nil},
-		// 管理面：只读几条按线上态用 shape/shallow 比，写接口用坏 token 比 401 壳。
-		{"status_ok", "shape", nil}, {"accounts_ok", "shape", nil}, {"media_list", "shape", nil},
-		{"apikey_ok", "shape", nil}, {"tasks_limit", "shape", nil}, {"tasks_bad_limit", "body", nil},
-		{"extension_files", "shape", nil}, {"keepalive_status", "shallow", nil},
-		{"update_check", "shallow", nil}, {"repo_status", "shallow", nil},
-		{"cookie_helper", "blob", nil}, {"cookie_helper_dl", "blob", nil},
-		{"index", "blob", nil}, {"admin_page", "blob", nil},
-		{"extension", "head", nil}, {"anon_admin", "shape", nil},
-	}
-	cases = append(cases, writeProbeCases(g)...)
+	cases := append(replayCases(), writeProbeCases(g)...)
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			row := section(t, g, c.name)
@@ -180,64 +139,36 @@ func TestV1ReadOnlyContract(t *testing.T) {
 // 「已回放」或「待实现（点名）」里，防止后面加路由时静默漏掉某条契约。
 func TestGoldenCasesAllAccountedFor(t *testing.T) {
 	g := loadRoutesGolden(t)
-	replayed := map[string]bool{
-		"healthz": true, "readyz": true,
-		"models_anon": true, "models_bad": true, "models_ok": true,
-		"media_missing": true, "media_backslash": true, "media_backslash_traversal": true,
-		"media_dots_only": true, "media_enc_slash_only": true, "media_space_name": true,
-		"media_traversal": true, "media_dotdot_plain": true, "media_utf8_name": true,
-		"media_real_0": true, "media_real_1": true,
-		"v1_unmatched": true, "admin_unmatched": true,
-		"images_gen_noauth": true, "images_gen_bad": true, "images_gen_empty": true,
-		"images_gen_prompt_type": true, "images_gen_timeout": true,
-		"images_tasks_empty": true, "images_tasks_bad": true,
-		"videos_empty": true, "videos_gen_empty": true, "videos_bad": true,
-		"chat_empty": true, "chat_bad_msgs": true, "chat_bad_role": true, "chat_noauth": true,
-		"responses_empty": true, "responses_bad_input": true, "responses_noauth": true,
-		"edits_noauth": true, "edits_badjson": true,
-		"status_ok": true, "accounts_ok": true, "media_list": true, "apikey_ok": true,
-		"tasks_limit": true, "tasks_bad_limit": true, "extension_files": true,
-		"keepalive_status": true, "update_check": true, "repo_status": true, "anon_admin": true,
-		"cookie_helper": true, "cookie_helper_dl": true, "index": true, "admin_page": true,
-		"extension": true,
-		"cors_get":  true, "cors_options": true,
-	}
-	for _, c := range writeProbeCases(g) {
-		replayed[c.name] = true
-	}
+	replayed := replayedSet(g)
 
 	deferred := map[string]string{
 		"openapi": "D3：内嵌 /openapi.json 静态文件",
 		"docs":    "D3：内嵌 /docs",
-		"index":   "D3：内嵌 admin.html", "admin_page": "D3：内嵌 admin.html",
-		"cookie_helper":    "D3：内嵌 cookie 助手脚本（FileResponse 语义已由 media_real 验过）",
-		"cookie_helper_dl": "D3：同上", "extension": "D3：扩展 zip 构建",
-		"extension_files": "D3：扩展文件列表",
-		// 其余按路由分组待实现，这里点名到组，避免"未知"混进来。
 	}
 	var missing []string
+	replayedN, deferredN, total := 0, 0, 0
 	for name, raw := range g {
-		if name == "__meta__" || replayed[name] {
+		if name == "__meta__" {
+			continue
+		}
+		total++
+		if replayed[name] {
+			replayedN++
 			continue
 		}
 		if _, ok := deferred[name]; ok {
+			deferredN++
 			continue
 		}
 		row, _ := raw.(map[string]any)
 		p, _ := row["path"].(string)
 		switch {
-		case strings.HasPrefix(p, "/admin/status"), strings.HasPrefix(p, "/admin/accounts"),
-			strings.HasPrefix(p, "/admin/apikey"), strings.HasPrefix(p, "/admin/tasks"),
-			strings.HasPrefix(p, "/admin/media"), strings.HasPrefix(p, "/admin/relogin"),
-			strings.HasPrefix(p, "/admin/quota"), strings.HasPrefix(p, "/admin/keepalive"),
-			strings.HasPrefix(p, "/admin/update"), strings.HasPrefix(p, "/admin/repo"),
-			strings.HasPrefix(p, "/admin/nope"):
-			deferred[name] = "D2：/admin 路由"
-		case p == "/healthz" || p == "/readyz" || p == "/v1/models":
-			t.Errorf("%s 既在台账又在 replayed？", name)
-		case strings.HasPrefix(p, "/v1/images"), strings.HasPrefix(p, "/v1/videos"),
-			strings.HasPrefix(p, "/v1/chat"), strings.HasPrefix(p, "/v1/responses"):
-			deferred[name] = "D1：生成类路由与请求校验"
+		case strings.HasPrefix(p, "/admin/"):
+			deferred[name] = "D2：/admin 路由里还依赖浏览器的几条"
+			deferredN++
+		case strings.HasPrefix(p, "/v1/"), p == "/healthz" || p == "/readyz":
+			deferred[name] = "D1：生成类路由的成功路径"
+			deferredN++
 		default:
 			missing = append(missing, name)
 		}
@@ -246,9 +177,25 @@ func TestGoldenCasesAllAccountedFor(t *testing.T) {
 		sort.Strings(missing)
 		t.Errorf("这些金样本用例既没回放也没登记待实现：%v", missing)
 	}
-	t.Logf("已回放 %d 条，待实现 %d 条", len(replayed), len(deferred))
+	if replayedN+deferredN != total {
+		t.Errorf("台账没对上：金样本 %d 条，回放 %d + 待实现 %d = %d",
+			total, replayedN, deferredN, replayedN+deferredN)
+	}
+	t.Logf("金样本 %d 条：已回放 %d，待实现 %d", total, replayedN, deferredN)
 }
 
+// replayedSet 是「哪些金样本用例真的被回放了」的唯一出处：
+// 手写的表 + 写接口探测清单，两处都由 contract 测试自己维护，不会与实跑脱节。
+func replayedSet(g map[string]any) map[string]bool {
+	replayed := map[string]bool{}
+	for _, c := range replayCases() {
+		replayed[c.name] = true
+	}
+	for _, c := range writeProbeCases(g) {
+		replayed[c.name] = true
+	}
+	return replayed
+}
 func loadRoutesGolden(t *testing.T) map[string]any {
 	t.Helper()
 	raw, err := os.ReadFile("testdata/routes_golden.json")
@@ -341,7 +288,7 @@ func deriveShape(v any) any {
 	}
 }
 
-func testApp(t *testing.T, key string, now time.Time) (*App, string) {
+func testApp(t *testing.T, key string, now time.Time, hc ...engine.HTTPClient) (*App, string) {
 	t.Helper()
 	base := t.TempDir()
 	cfg := &config.Config{BaseDir: base, Host: "0.0.0.0", Port: 18610,
@@ -350,7 +297,11 @@ func testApp(t *testing.T, key string, now time.Time) (*App, string) {
 		ImageTimeout: 240, VideoTimeout: 600, ChatTimeout: 300,
 		ProfileRoot: filepath.Join(base, "profiles"), APIKey: key}
 	cfg.EnsureDirs()
-	a := NewApp(cfg, store.New(cfg), engine.NewEngine(cfg, nil, nil))
+	var client engine.HTTPClient
+	if len(hc) > 0 {
+		client = hc[0]
+	}
+	a := NewApp(cfg, store.New(cfg), engine.NewEngine(cfg, client, nil))
 	a.now = func() time.Time { return now }
 	return a, cfg.MediaDir()
 }
@@ -537,6 +488,52 @@ func sameShape(shape any, got any) bool {
 	}
 }
 
+// replayCases 是契约测试用的用例表，也是台账判断「已回放」的唯一出处。
+func replayCases() []replayCase {
+	return []replayCase{
+		{"healthz", "body", []string{"time"}},
+		{"readyz", "shape", nil},
+		{"models_anon", "body", nil},
+		{"models_bad", "body", nil},
+		{"models_ok", "body", nil},
+		{"media_missing", "body", nil},
+		{"media_backslash", "body", nil},
+		{"media_backslash_traversal", "body", nil},
+		{"media_dots_only", "body", nil},
+		{"media_enc_slash_only", "body", nil},
+		{"media_space_name", "body", nil},
+		{"media_traversal", "body", nil},
+		{"media_dotdot_plain", "body", nil},
+		{"media_utf8_name", "body", nil},
+		{"media_real_0", "head", nil},
+		{"media_real_1", "head", nil},
+		{"task_missing", "body", nil}, {"video_missing", "body", nil},
+		{"video_gen_missing", "body", nil},
+		{"v1_unmatched", "body", nil},
+		{"admin_unmatched", "body", nil},
+		{"cors_get", "body", nil},
+		{"cors_options", "head", nil},
+		// 生成类路由：body 合法才会进 handler，所以金样本里这些用例全是「进不去」的分支。
+		{"images_gen_noauth", "body", nil}, {"images_gen_bad", "body", nil},
+		{"images_gen_empty", "body", nil}, {"images_gen_prompt_type", "body", nil},
+		{"images_gen_timeout", "body", nil}, {"images_tasks_empty", "body", nil},
+		{"images_tasks_bad", "body", nil}, {"videos_empty", "body", nil},
+		{"videos_gen_empty", "body", nil}, {"videos_bad", "body", nil},
+		{"chat_empty", "body", nil}, {"chat_bad_msgs", "body", nil},
+		{"chat_bad_role", "body", nil}, {"chat_noauth", "body", nil},
+		{"responses_empty", "body", nil}, {"responses_bad_input", "body", nil},
+		{"responses_noauth", "body", nil}, {"edits_noauth", "body", nil},
+		{"edits_badjson", "body", nil},
+		// 管理面：只读几条按线上态用 shape/shallow 比，写接口用坏 token 比 401 壳。
+		{"status_ok", "shape", nil}, {"accounts_ok", "shape", nil}, {"media_list", "shape", nil},
+		{"apikey_ok", "shape", nil}, {"tasks_limit", "shape", nil}, {"tasks_bad_limit", "body", nil},
+		{"extension_files", "shape", nil}, {"keepalive_status", "shallow", nil},
+		{"update_check", "shallow", nil}, {"repo_status", "shallow", nil},
+		{"cookie_helper", "blob", nil}, {"cookie_helper_dl", "blob", nil},
+		{"index", "blob", nil}, {"admin_page", "blob", nil},
+		{"extension", "head", nil}, {"anon_admin", "shape", nil}}
+}
+
 // replayCase 是一条金样本用例的回放方式。
 type replayCase struct {
 	name string
@@ -553,7 +550,13 @@ func writeProbeCases(g map[string]any) []replayCase {
 		"write_post_admin_tasks_clear": true, "write_delete_admin_tasks_capnope": true,
 		"write_post_admin_accounts_capnope_cookies": true,
 		"write_post_admin_update_upgrade":           true, "write_post_admin_repo_pull": true,
-		"write_post_admin_repo_push": true,
+		"write_post_admin_repo_push":                true,
+		"write_post_admin_accounts_capnope_test":    true,
+		"write_post_admin_accounts_capnope_relogin": true,
+		"write_post_admin_accounts_capnope_quota":   true,
+		"write_post_admin_quota":                    true, "write_post_admin_relogin": true,
+		"write_post_admin_accounts_keepalive":         true,
+		"write_post_admin_accounts_capnope_keepalive": true,
 	}
 	var names []string
 	for k := range g {

@@ -47,6 +47,7 @@ func (a *App) registerAdmin() {
 	a.add("POST", "/admin/repo/pull", true, a.upgradeManual)
 	a.add("POST", "/admin/repo/push", true, a.repoPushManual)
 	a.add("GET", "/admin", false, a.indexPage)
+	a.registerBrowserAdmin()
 }
 
 // --- 总览 ---
