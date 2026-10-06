@@ -9,7 +9,9 @@ version: '3.8'
 #     ├── Dockerfile              ← 仓库根的 Dockerfile
 #     ├── build/muse2api-go       ← 本地交叉编译产物（GOOS=linux CGO_ENABLED=0）
 #     └── deploy/version.json     ← /admin/status 与 /admin/update/check 读它报版本
-#   再把本文件复制成 docker-compose.yml，然后 docker compose up -d。
+#   再把本文件复制成 docker-compose.yml；旁边放一份 .env（600 权限）写 MUSE2API_KEY=…，
+#   与 Python 侧共用同一把密钥 —— 客户端只改端口就够用，重建容器也不会再换 key。
+#   然后 docker compose up -d。
 #
 # 想把现有账号带过来（cookie 快照导入，两边 accounts.json 的格式是同一套）：
 #   docker cp muse2api:/app/data/accounts.json /opt/muse2api-go/data-go/accounts.json
