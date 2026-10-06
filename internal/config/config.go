@@ -174,6 +174,11 @@ type Config struct {
 	// WarmTab=true 时完全恢复 Python 的常驻行为。
 	WarmTab            bool
 	BrowserIdleMinutes int
+
+	// DEVIATION(#19): AccessLog 也不是 Python 侧的配置项 —— uvicorn 的 access log 默认开着，
+	// 开关在启动命令的参数里而不在环境里，所以没有可照抄的变量名。这里给 Go 版留一个同义的开关，
+	// 默认开（与线上部署一致），设 0 关掉。
+	AccessLog bool
 }
 
 func Load() *Config {
@@ -204,6 +209,10 @@ func Load() *Config {
 
 		WarmTab:            envBool("MUSE2API_WARM_TAB", "0"),
 		BrowserIdleMinutes: envInt("MUSE2API_BROWSER_IDLE_MINUTES", "30"),
+		// AccessLog 是 Go 版自己的开关，对应 uvicorn 默认开启的 access log（设 0 关掉）。
+		// Python 那边这个开关在启动命令 `uvicorn ... ` 的参数里，不在 app 的环境变量里，
+		// 所以这条没有可照抄的环境名 —— 线上部署用的是默认值「开」，这里也默认开。
+		AccessLog: envBool("MUSE2API_ACCESS_LOG", "1"),
 	}
 }
 

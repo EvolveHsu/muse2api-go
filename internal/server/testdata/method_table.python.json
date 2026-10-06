@@ -1,0 +1,267 @@
+{
+  "DELETE": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "GET": [
+    200,
+    "application/json",
+    "{\"status\":\"ok\",\"time\":1791301210}"
+  ],
+  "HEAD": [
+    405,
+    "application/json",
+    ""
+  ],
+  "POST": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "PUT": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "CONNECT": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "OPTIONS": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "TRACE": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "COPY": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "LOCK": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "MKCOL": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "MOVE": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "PROPFIND": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "PROPPATCH": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "SEARCH": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "UNLOCK": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "BIND": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "REBIND": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "UNBIND": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "ACL": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "REPORT": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "MKACTIVITY": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "CHECKOUT": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "MERGE": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "M-SEARCH": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "NOTIFY": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "SUBSCRIBE": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "UNSUBSCRIBE": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "PATCH": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "PURGE": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "MKCALENDAR": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "LINK": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "UNLINK": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "SOURCE": [
+    405,
+    "application/json",
+    "{\"detail\":\"Method Not Allowed\"}"
+  ],
+  "PRI": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "DESCRIBE": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "ANNOUNCE": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "SETUP": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "PLAY": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "PAUSE": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "TEARDOWN": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "GET_PARAMETER": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "SET_PARAMETER": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "REDIRECT": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "RECORD": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "FLUSH": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "FOO": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "M-GET": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "FETCH": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "VIEW": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "get": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "Get": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ],
+  "PoSt": [
+    400,
+    "text/plain; charset=utf-8",
+    "Invalid HTTP request received."
+  ]
+}

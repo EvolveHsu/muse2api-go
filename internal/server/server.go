@@ -5,7 +5,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -93,6 +96,9 @@ type App struct {
 	// 只要两端都取自 time.Now，Sub/Before 走的就是单调钟。
 	now  func() time.Time
 	mono func() time.Time
+
+	// accessOut 是 access log 的去处，默认 stderr（与 uvicorn 一致）；测试注入 buffer。
+	accessOut io.Writer
 }
 
 func NewApp(cfg *config.Config, st *store.Store, eng *engine.Engine) *App {
@@ -159,10 +165,38 @@ func matchPath(segs []segment, path string) (map[string]string, bool) {
 //
 // 匹配顺序照 fastapi/routing.py::Router.app：整匹配 → 首个「路径对但方法不对」的偏匹配（405 + Allow）
 // → redirect_slashes（补/去尾斜杠后能匹配就 307）→ 404。
+// llhttpMethods 是线上解析器认的那 35 个方法名。名单来自部署中的 llhttp enum，
+// 再用 53 条实测钉住（testdata/method_table.python.json）：enum 里 PRI 往后的那批
+// RTSP/SIP 方法（PRI DESCRIBE ANNOUNCE SETUP PLAY PAUSE TEARDOWN GET_PARAMETER
+// SET_PARAMETER REDIRECT RECORD FLUSH）实际会被拒，所以不在表内；
+// 表外的写法一律 400 —— 包括任何小写或混合大小写的 get / Get / PoSt。
+var llhttpMethods = map[string]bool{
+	"DELETE": true, "GET": true, "HEAD": true, "POST": true, "PUT": true,
+	"CONNECT": true, "OPTIONS": true, "TRACE": true, "COPY": true, "LOCK": true,
+	"MKCOL": true, "MOVE": true, "PROPFIND": true, "PROPPATCH": true, "SEARCH": true,
+	"UNLOCK": true, "BIND": true, "REBIND": true, "UNBIND": true, "ACL": true,
+	"REPORT": true, "MKACTIVITY": true, "CHECKOUT": true, "MERGE": true,
+	"M-SEARCH": true, "NOTIFY": true, "SUBSCRIBE": true, "UNSUBSCRIBE": true,
+	"PATCH": true, "PURGE": true, "MKCALENDAR": true, "LINK": true, "UNLINK": true,
+	"SOURCE": true,
+}
+
 func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	applyCORS(w, r)
+	// 协议层的方法表先拦一道：线上 uvicorn 用的解析器是 httptools（llhttp），不是 h11，
+	// 表外的方法连 ASGI 都进不去 —— 直接 400 纯文本，既不过 CORS 中间件，也不打 access log。
+	// Go 的 net/http 不设这张表，不拦就会把 `post /v1/images/generations` 这种请求当 POST 受理，
+	// 于是客户端少打一个大小写都算不上的错，我们却替它花掉一次额度。
+	if !llhttpMethods[r.Method] {
+		writePlain(w, http.StatusBadRequest, "Invalid HTTP request received.")
+		return
+	}
+	rec := &statusWriter{ResponseWriter: w, status: http.StatusOK}
+	if a.accessEnabled() {
+		defer func() { a.logAccess(rec, r) }()
+	}
+	applyCORS(rec, r)
 	if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
-		preflight(w, r)
+		preflight(rec, r)
 		return
 	}
 	method := strings.ToUpper(r.Method)
@@ -178,21 +212,78 @@ func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 			continue
 		}
-		a.dispatch(w, r, rt, args)
+		a.dispatch(rec, r, rt, args)
 		return
 	}
 	if partial != nil {
-		a.writeRouterError(w, http.StatusMethodNotAllowed, "Method Not Allowed",
+		a.writeRouterError(rec, http.StatusMethodNotAllowed, "Method Not Allowed",
 			map[string]string{"allow": allowedMethods(partial.method)})
 		return
 	}
 	if loc, ok := a.redirectSlash(r); ok {
 		// RedirectResponse：307，只有 location 头，正文空。
-		w.Header().Set("location", loc)
-		w.WriteHeader(http.StatusTemporaryRedirect)
+		rec.Header().Set("location", loc)
+		rec.WriteHeader(http.StatusTemporaryRedirect)
 		return
 	}
-	a.writeRouterError(w, http.StatusNotFound, "Not Found", nil)
+	a.writeRouterError(rec, http.StatusNotFound, "Not Found", nil)
+}
+
+// statusWriter 只为 access log 记下最终状态码：Go 的 ResponseWriter 不暴露它
+// —— 没显式 WriteHeader 时状态是 net/http 在第一次写时补的 200，所以我们默认 200、
+// 由第一次 WriteHeader 覆盖（后面的重复调用不改，客户端看到的就是第一个）。
+type statusWriter struct {
+	http.ResponseWriter
+	status int
+	wrote  bool
+}
+
+func (s *statusWriter) WriteHeader(code int) {
+	if !s.wrote {
+		s.wrote, s.status = true, code
+	}
+	s.ResponseWriter.WriteHeader(code)
+}
+
+// Flush 必须透传：SSE 那两条路由是 `c.W.(http.Flusher)` 拿 flusher 的，
+// 包一层之后若不实现，断言失败会静默退化成「攒完才发」，流式就没有流式了。
+func (s *statusWriter) Flush() {
+	if f, ok := s.ResponseWriter.(http.Flusher); ok {
+		f.Flush()
+	}
+}
+
+func (a *App) accessEnabled() bool { return a.CFG == nil || a.CFG.AccessLog }
+
+func (a *App) logAccess(rec *statusWriter, r *http.Request) {
+	out := a.accessOut
+	if out == nil {
+		out = os.Stderr
+	}
+	fmt.Fprintln(out, accessLine(rec, r))
+}
+
+// accessLine 复刻 uvicorn 的 access log 行：`INFO:` 补足到 10 个字符，然后
+// `client:port - "METHOD TARGET PROTO" 状态码 状态短语`。
+//
+// TARGET 不是裸的请求行 —— 线上实测 uvicorn 打的是 quote(unquote(target))：`%2F` 还原成 `/`、
+// `%2e%2e` 还原成 `..`，而 `%20`、`%252F`、`/./`、`//` 原样保留（金样本 28 行里
+// a17/w1/w7 三条就是这个差异，其中 w1/w7 是裸 socket 发出去的，排除了客户端自己改写的解释）。
+// 查询串按原始字节接在后面，不参与这轮转义。
+//
+// client 用 host 与 port 直接拼（uvicorn 是 `f"{client[0]}:{client[1]}"`），所以 IPv6
+// 的地址没有方括号 —— 与 Go 的 RemoteAddr 写法不同，这里按 Python 的来。
+func accessLine(rec *statusWriter, r *http.Request) string {
+	target := pyQuote(r.URL.Path, "/")
+	if r.URL.RawQuery != "" {
+		target += "?" + r.URL.RawQuery
+	}
+	host, port, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		host, port = r.RemoteAddr, "0"
+	}
+	return fmt.Sprintf("%-10s%s:%s - \"%s %s %s\" %d %s",
+		"INFO:", host, port, r.Method, target, r.Proto, rec.status, http.StatusText(rec.status))
 }
 
 // methodAllowed：FastAPI 的 APIRoute 只把自己声明的那一个方法放进 methods，
