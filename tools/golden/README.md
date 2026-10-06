@@ -10,6 +10,25 @@
 | `golden.py` | `internal/store/testdata/*.python.json`（真 store.py 的落盘字节） |
 | `golden_engine.py` | `internal/engine/testdata/engine_golden.json`（argv、cookie 注入、开页序列、续签 8 分支、纯函数） |
 | `golden_generate.py` | `internal/engine/testdata/generate_golden.json`（生成/对话流程的 CDP 调用序列） |
+| `golden_routes.py` | `internal/server/testdata/routes_golden.json` + `openapi.python.json`（43 个路由的对外契约） |
+
+`golden_routes.py` 是打到**现役实例**的，所以只发两类请求：纯读 GET，以及一定在进 handler
+之前就被拒的（错 token / 缺必填字段 / 空 prompt 的 400）。handler 一次都不会执行，
+因此不起浏览器、不花额度、不改账号库。写接口一律只用坏 token 探 401。
+密钥字段（cookies / api_key / cookie_header …）在离开容器前就 REDACT；
+list 型接口只记「类型 + 键集合」，免得把线上状态写进金样本。
+
+Go 侧回放时的比对口径（金样本自己也是按这个口径录的）：
+
+- `record=full`：状态码 + content-type + 脱敏后的 body 深比较。易变值按用例忽略
+  （`healthz.time`、`readyz.browser_running` 这类线上态）。
+- `record=shape`：**只比键集合与类型，不比值**（账号池/任务/媒体是活的线上数据）。
+- `record=blob`：静态 HTML（`/`、`/admin`、`/docs`）比 sha256；扩展 zip 只比状态码、
+  content-type 与 content-disposition（zip 里带文件时间戳，sha 天生不稳）。
+- `record=openapi`：31KB 的 `/openapi.json` 落到 `openapi.python.json`，
+  Go 直接内嵌该文件；金样本里留 sha256 + 每个 path 的 method 列表，用作路由表对账。
+- header 只比 CORS 相关子集；`date`/`content-length`/`server`/`connection` 不参与。
+- 静态文件（cookie-helper 脚本）的 `etag`/`last-modified` 由各自实现生成，不比。
 
 一条命令跑完（base64 送进容器 → AST 预检 → 执行 → 解 base64 落盘 → 有 `MISSING` 就非零退出）：
 

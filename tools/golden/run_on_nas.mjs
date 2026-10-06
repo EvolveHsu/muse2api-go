@@ -79,7 +79,18 @@ const nl = rest.search(/[\r\n]/);
 const json = Buffer.from(nl < 0 ? rest : rest.slice(0, nl), 'base64').toString('utf8');
 const obj = JSON.parse(json);
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
+
+// 附属产物（如导出的 openapi.json）：脚本用 __files__ 声明，一并落地后从主金样本里摘掉。
+const files = obj.__files__ || {};
+delete obj.__files__;
 fs.writeFileSync(outPath, JSON.stringify(obj, null, 2) + '\n');
+for (const [rel, b64] of Object.entries(files)) {
+  if (!b64) { console.error('附属产物为空：' + rel); continue; }
+  const buf = Buffer.from(b64, 'base64');
+  fs.mkdirSync(path.dirname(rel), { recursive: true });
+  fs.writeFileSync(rel, buf);
+  console.log('附带写出', rel, buf.length, 'bytes');
+}
 
 const S = obj.sections || {};
 console.log('写出', outPath, 'bytes', json.length, 'sections', Object.keys(S).length,

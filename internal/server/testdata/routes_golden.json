@@ -1,0 +1,2002 @@
+{
+  "healthz": {
+    "method": "GET",
+    "path": "/healthz",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "status": "ok",
+      "time": 1791264568
+    }
+  },
+  "readyz": {
+    "method": "GET",
+    "path": "/readyz",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "status": "ready",
+      "accounts": 3,
+      "browser_running": true
+    }
+  },
+  "models_anon": {
+    "method": "GET",
+    "path": "/v1/models",
+    "auth": "none",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "缺少 Authorization: Bearer <key>",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 401
+      }
+    }
+  },
+  "models_bad": {
+    "method": "GET",
+    "path": "/v1/models",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "API key 无效",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 401
+      }
+    }
+  },
+  "models_ok": {
+    "method": "GET",
+    "path": "/v1/models",
+    "auth": "good",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "object": "list",
+      "data": [
+        {
+          "id": "muse-spark",
+          "object": "model",
+          "owned_by": "muse",
+          "description": "Muse Spark —— 文本 / 代码对话（网页免费额度，支持流式）"
+        },
+        {
+          "id": "muse-image",
+          "object": "model",
+          "owned_by": "muse",
+          "description": "Muse Image —— 文生图 / 图像编辑（网页免费额度）"
+        },
+        {
+          "id": "muse-video",
+          "object": "model",
+          "owned_by": "muse",
+          "description": "Muse Video —— 文生视频 / 图生视频（网页免费额度）"
+        }
+      ]
+    }
+  },
+  "media_missing": {
+    "method": "GET",
+    "path": "/v1/media/muse2api-does-not-exist.png",
+    "auth": "none",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "文件不存在",
+        "type": "not_found_error",
+        "param": null,
+        "code": 404
+      }
+    }
+  },
+  "media_traversal": {
+    "method": "GET",
+    "path": "/v1/media/..%2Faccounts.json",
+    "auth": "none",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "served_bytes": 22
+  },
+  "media_dotdot_plain": {
+    "method": "GET",
+    "path": "/v1/media/..%2f..%2fetc%2fpasswd",
+    "auth": "none",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "served_bytes": 22
+  },
+  "media_utf8_name": {
+    "method": "GET",
+    "path": "/v1/media/%E7%8C%AB.png",
+    "auth": "none",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "served_bytes": 88
+  },
+  "task_missing": {
+    "method": "GET",
+    "path": "/v1/images/tasks/nope",
+    "auth": "good",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "image task 不存在",
+        "type": "not_found_error",
+        "param": null,
+        "code": 404
+      }
+    }
+  },
+  "video_missing": {
+    "method": "GET",
+    "path": "/v1/videos/nope",
+    "auth": "good",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "task 不存在",
+        "type": "not_found_error",
+        "param": null,
+        "code": 404
+      }
+    }
+  },
+  "video_gen_missing": {
+    "method": "GET",
+    "path": "/v1/videos/generations/nope",
+    "auth": "good",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "task 不存在",
+        "type": "not_found_error",
+        "param": null,
+        "code": 404
+      }
+    }
+  },
+  "status_ok": {
+    "method": "GET",
+    "path": "/admin/status",
+    "auth": "good",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body_shape": {
+      "__type__": "object",
+      "__keys__": [
+        "accounts",
+        "stats",
+        "tasks",
+        "media_count",
+        "browser_running",
+        "essential_cookies",
+        "base_url",
+        "config"
+      ],
+      "__items__": {
+        "accounts": {
+          "__type__": "array",
+          "__n__": 3,
+          "__first__": {
+            "__type__": "object",
+            "__keys__": [
+              "id",
+              "label",
+              "cookies_exp",
+              "expires_at",
+              "expiry_anchor",
+              "enabled",
+              "created_at",
+              "last_used",
+              "last_keepalive",
+              "use_count",
+              "ok",
+              "note",
+              "synced_at",
+              "checked_at",
+              "cookie_count",
+              "essential_ok",
+              "expires_estimated"
+            ],
+            "__items__": {
+              "id": {
+                "__type__": "str",
+                "__value__": "a1b2c3d4e5f6"
+              },
+              "label": {
+                "__type__": "str",
+                "__value__": "acct-a"
+              },
+              "cookies_exp": {
+                "__type__": "str",
+                "__value__": "<REDACTED>"
+              },
+              "expires_at": {
+                "__type__": "int",
+                "__value__": 1791436576
+              },
+              "expiry_anchor": {
+                "__type__": "NoneType",
+                "__value__": null
+              },
+              "enabled": {
+                "__type__": "bool",
+                "__value__": true
+              },
+              "created_at": {
+                "__type__": "int",
+                "__value__": 1791122667
+              },
+              "last_used": {
+                "__type__": "float",
+                "__value__": 1791122803.4562244
+              },
+              "last_keepalive": {
+                "__type__": "int",
+                "__value__": 1791263778
+              },
+              "use_count": {
+                "__type__": "int",
+                "__value__": 1
+              },
+              "ok": {
+                "__type__": "bool",
+                "__value__": true
+              },
+              "note": {
+                "__type__": "str",
+                "__value__": "会话有效 · 自动保活 (VM: RUNNING)"
+              },
+              "synced_at": {
+                "__type__": "int",
+                "__value__": 1791263778
+              },
+              "checked_at": {
+                "__type__": "int",
+                "__value__": 1791263778
+              },
+              "cookie_count": {
+                "__type__": "int",
+                "__value__": 6
+              },
+              "essential_ok": {
+                "__type__": "bool",
+                "__value__": true
+              },
+              "expires_estimated": {
+                "__type__": "bool",
+                "__value__": false
+              }
+            }
+          }
+        },
+        "stats": {
+          "__type__": "object",
+          "__keys__": [
+            "total",
+            "enabled",
+            "disabled",
+            "healthy",
+            "error",
+            "expiring",
+            "expired"
+          ],
+          "__items__": {
+            "total": {
+              "__type__": "int",
+              "__value__": 3
+            },
+            "enabled": {
+              "__type__": "int",
+              "__value__": 3
+            },
+            "disabled": {
+              "__type__": "int",
+              "__value__": 0
+            },
+            "healthy": {
+              "__type__": "int",
+              "__value__": 3
+            },
+            "error": {
+              "__type__": "int",
+              "__value__": 0
+            },
+            "expiring": {
+              "__type__": "int",
+              "__value__": 3
+            },
+            "expired": {
+              "__type__": "int",
+              "__value__": 0
+            }
+          }
+        },
+        "tasks": {
+          "__type__": "array",
+          "__n__": 0,
+          "__first__": null
+        },
+        "media_count": {
+          "__type__": "int",
+          "__value__": 2
+        },
+        "browser_running": {
+          "__type__": "bool",
+          "__value__": true
+        },
+        "essential_cookies": {
+          "__type__": "array",
+          "__n__": 4,
+          "__first__": {
+            "__type__": "str",
+            "__value__": "hatch_sess"
+          }
+        },
+        "base_url": {
+          "__type__": "str",
+          "__value__": ""
+        },
+        "config": {
+          "__type__": "object",
+          "__keys__": [
+            "site",
+            "cdp_port",
+            "image_timeout",
+            "video_timeout",
+            "host",
+            "port",
+            "public_base"
+          ],
+          "__items__": {
+            "site": {
+              "__type__": "str",
+              "__value__": "https://muse.ai/"
+            },
+            "cdp_port": {
+              "__type__": "int",
+              "__value__": 19210
+            },
+            "image_timeout": {
+              "__type__": "int",
+              "__value__": 240
+            },
+            "video_timeout": {
+              "__type__": "int",
+              "__value__": 600
+            },
+            "host": {
+              "__type__": "str",
+              "__value__": "0.0.0.0"
+            },
+            "port": {
+              "__type__": "int",
+              "__value__": 18610
+            },
+            "public_base": {
+              "__type__": "str",
+              "__value__": ""
+            }
+          }
+        }
+      }
+    }
+  },
+  "accounts_ok": {
+    "method": "GET",
+    "path": "/admin/accounts",
+    "auth": "good",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body_shape": {
+      "__type__": "object",
+      "__keys__": [
+        "accounts",
+        "stats"
+      ],
+      "__items__": {
+        "accounts": {
+          "__type__": "array",
+          "__n__": 3,
+          "__first__": {
+            "__type__": "object",
+            "__keys__": [
+              "id",
+              "label",
+              "cookies_exp",
+              "expires_at",
+              "expiry_anchor",
+              "enabled",
+              "created_at",
+              "last_used",
+              "last_keepalive",
+              "use_count",
+              "ok",
+              "note",
+              "synced_at",
+              "checked_at",
+              "cookie_count",
+              "essential_ok",
+              "expires_estimated"
+            ],
+            "__items__": {
+              "id": {
+                "__type__": "str",
+                "__value__": "a1b2c3d4e5f6"
+              },
+              "label": {
+                "__type__": "str",
+                "__value__": "acct-a"
+              },
+              "cookies_exp": {
+                "__type__": "str",
+                "__value__": "<REDACTED>"
+              },
+              "expires_at": {
+                "__type__": "int",
+                "__value__": 1791436576
+              },
+              "expiry_anchor": {
+                "__type__": "NoneType",
+                "__value__": null
+              },
+              "enabled": {
+                "__type__": "bool",
+                "__value__": true
+              },
+              "created_at": {
+                "__type__": "int",
+                "__value__": 1791122667
+              },
+              "last_used": {
+                "__type__": "float",
+                "__value__": 1791122803.4562244
+              },
+              "last_keepalive": {
+                "__type__": "int",
+                "__value__": 1791263778
+              },
+              "use_count": {
+                "__type__": "int",
+                "__value__": 1
+              },
+              "ok": {
+                "__type__": "bool",
+                "__value__": true
+              },
+              "note": {
+                "__type__": "str",
+                "__value__": "会话有效 · 自动保活 (VM: RUNNING)"
+              },
+              "synced_at": {
+                "__type__": "int",
+                "__value__": 1791263778
+              },
+              "checked_at": {
+                "__type__": "int",
+                "__value__": 1791263778
+              },
+              "cookie_count": {
+                "__type__": "int",
+                "__value__": 6
+              },
+              "essential_ok": {
+                "__type__": "bool",
+                "__value__": true
+              },
+              "expires_estimated": {
+                "__type__": "bool",
+                "__value__": false
+              }
+            }
+          }
+        },
+        "stats": {
+          "__type__": "object",
+          "__keys__": [
+            "total",
+            "enabled",
+            "disabled",
+            "healthy",
+            "error",
+            "expiring",
+            "expired"
+          ],
+          "__items__": {
+            "total": {
+              "__type__": "int",
+              "__value__": 3
+            },
+            "enabled": {
+              "__type__": "int",
+              "__value__": 3
+            },
+            "disabled": {
+              "__type__": "int",
+              "__value__": 0
+            },
+            "healthy": {
+              "__type__": "int",
+              "__value__": 3
+            },
+            "error": {
+              "__type__": "int",
+              "__value__": 0
+            },
+            "expiring": {
+              "__type__": "int",
+              "__value__": 3
+            },
+            "expired": {
+              "__type__": "int",
+              "__value__": 0
+            }
+          }
+        }
+      }
+    }
+  },
+  "tasks_limit": {
+    "method": "GET",
+    "path": "/admin/tasks?limit=5",
+    "auth": "good",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body_shape": {
+      "__type__": "object",
+      "__keys__": [
+        "tasks"
+      ],
+      "__items__": {
+        "tasks": {
+          "__type__": "array",
+          "__n__": 0,
+          "__first__": null
+        }
+      }
+    }
+  },
+  "tasks_bad_limit": {
+    "method": "GET",
+    "path": "/admin/tasks?limit=abc",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": [
+        {
+          "type": "int_parsing",
+          "loc": [
+            "query",
+            "limit"
+          ],
+          "msg": "Input should be a valid integer, unable to parse string as an integer",
+          "input": "abc"
+        }
+      ]
+    }
+  },
+  "media_list": {
+    "method": "GET",
+    "path": "/admin/media",
+    "auth": "good",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body_shape": {
+      "__type__": "object",
+      "__keys__": [
+        "media",
+        "count"
+      ],
+      "__items__": {
+        "media": {
+          "__type__": "array",
+          "__n__": 2,
+          "__first__": {
+            "__type__": "object",
+            "__keys__": [
+              "name",
+              "url",
+              "bytes",
+              "mtime",
+              "kind"
+            ],
+            "__items__": {
+              "name": {
+                "__type__": "str",
+                "__value__": "2fefc0ec0931492da3529cca7cdec6be.webp"
+              },
+              "url": {
+                "__type__": "str",
+                "__value__": "/v1/media/2fefc0ec0931492da3529cca7cdec6be.webp"
+              },
+              "bytes": {
+                "__type__": "int",
+                "__value__": 115944
+              },
+              "mtime": {
+                "__type__": "int",
+                "__value__": 1791212303
+              },
+              "kind": {
+                "__type__": "str",
+                "__value__": "image"
+              }
+            }
+          }
+        },
+        "count": {
+          "__type__": "int",
+          "__value__": 2
+        }
+      }
+    }
+  },
+  "apikey_ok": {
+    "method": "GET",
+    "path": "/admin/apikey",
+    "auth": "good",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body_shape": {
+      "__type__": "object",
+      "__keys__": [
+        "api_key",
+        "base_url",
+        "models_url",
+        "media_url"
+      ],
+      "__items__": {
+        "api_key": {
+          "__type__": "str",
+          "__value__": "<REDACTED>"
+        },
+        "base_url": {
+          "__type__": "str",
+          "__value__": ""
+        },
+        "models_url": {
+          "__type__": "str",
+          "__value__": ""
+        },
+        "media_url": {
+          "__type__": "str",
+          "__value__": "/v1/media/{name}"
+        }
+      }
+    }
+  },
+  "cookie_helper": {
+    "method": "GET",
+    "path": "/admin/cookie-helper",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "text/x-python; charset=utf-8",
+      "accept-ranges": "bytes",
+      "last-modified": "Sun, 04 Oct 2026 11:19:12 GMT",
+      "etag": "\"cfcc1d89dae7994bdce76fa532fbd605\"",
+      "vary": "Origin"
+    },
+    "blob_sha256": "e560f9ec5d4db03d42064a7c6be68b8a41c6320bae791fa8b2bf87d0f80794b5",
+    "blob_len": 17844,
+    "blob_head": "#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\"\"\"muse2api Cookie 助手 —— 一键把 muse.ai 的登录 cookie 导入账号池。\n\n为什么需要这个脚本？\n    muse.ai 的 4 条核心 cookie（hatch_sess / hatch_gw / hatch_vml /\n    hatch_native_auth_d"
+  },
+  "cookie_helper_dl": {
+    "method": "GET",
+    "path": "/admin/cookie-helper?download=1",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-disposition": "attachment; filename=\"get_muse_cookie.py\"",
+      "content-type": "text/x-python; charset=utf-8",
+      "accept-ranges": "bytes",
+      "last-modified": "Sun, 04 Oct 2026 11:19:12 GMT",
+      "etag": "\"cfcc1d89dae7994bdce76fa532fbd605\"",
+      "vary": "Origin"
+    },
+    "blob_sha256": "e560f9ec5d4db03d42064a7c6be68b8a41c6320bae791fa8b2bf87d0f80794b5",
+    "blob_len": 17844,
+    "blob_head": "#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\"\"\"muse2api Cookie 助手 —— 一键把 muse.ai 的登录 cookie 导入账号池。\n\n为什么需要这个脚本？\n    muse.ai 的 4 条核心 cookie（hatch_sess / hatch_gw / hatch_vml /\n    hatch_native_auth_d"
+  },
+  "extension": {
+    "method": "GET",
+    "path": "/admin/extension",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-disposition": "attachment; filename=\"muse2api-extension.zip\"",
+      "cache-control": "no-store",
+      "content-type": "application/zip",
+      "vary": "Origin"
+    },
+    "blob_sha256": "a1b0aa8a43395539ab825e70c13397a55e6af0be21579677dae1ff575ca895fa",
+    "blob_len": 7674,
+    "blob_head": ""
+  },
+  "extension_files": {
+    "method": "GET",
+    "path": "/admin/extension/files",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body_shape": {
+      "__type__": "object",
+      "__keys__": [
+        "files"
+      ],
+      "__items__": {
+        "files": {
+          "__type__": "array",
+          "__n__": 5,
+          "__first__": {
+            "__type__": "str",
+            "__value__": "README.md"
+          }
+        }
+      }
+    }
+  },
+  "keepalive_status": {
+    "method": "GET",
+    "path": "/admin/keepalive/status",
+    "auth": "good",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body_shape": {
+      "__type__": "object",
+      "__keys__": [
+        "running",
+        "last_run",
+        "last_result",
+        "next_run"
+      ],
+      "__items__": {
+        "running": {
+          "__type__": "bool",
+          "__value__": false
+        },
+        "last_run": {
+          "__type__": "int",
+          "__value__": 1791263775
+        },
+        "last_result": {
+          "__type__": "object",
+          "__keys__": [
+            "checked_at",
+            "refreshed_count",
+            "refreshed",
+            "skipped_count",
+            "skipped"
+          ],
+          "__items__": {
+            "checked_at": {
+              "__type__": "int",
+              "__value__": 1791263775
+            },
+            "refreshed_count": {
+              "__type__": "int",
+              "__value__": 3
+            },
+            "refreshed": {
+              "__type__": "array",
+              "__n__": 3,
+              "__first__": {
+                "__type__": "object",
+                "__keys__": [
+                  "ok",
+                  "id",
+                  "label",
+                  "vm_id",
+                  "vm_state",
+                  "wake_ok",
+                  "expires_at",
+                  "quota"
+                ],
+                "__items__": {
+                  "ok": {
+                    "__type__": "bool",
+                    "__value__": true
+                  },
+                  "id": {
+                    "__type__": "str",
+                    "__value__": "a1b2c3d4e5f6"
+                  },
+                  "label": {
+                    "__type__": "str",
+                    "__value__": "acct-a"
+                  },
+                  "vm_id": {
+                    "__type__": "str",
+                    "__value__": "00000000-0000-4000-8000-000000000001"
+                  },
+                  "vm_state": {
+                    "__type__": "str",
+                    "__value__": "RUNNING"
+                  },
+                  "wake_ok": {
+                    "__type__": "bool",
+                    "__value__": true
+                  },
+                  "expires_at": {
+                    "__type__": "int",
+                    "__value__": 1791436576
+                  },
+                  "quota": {
+                    "__type__": "NoneType",
+                    "__value__": null
+                  }
+                }
+              }
+            },
+            "skipped_count": {
+              "__type__": "int",
+              "__value__": 0
+            },
+            "skipped": {
+              "__type__": "array",
+              "__n__": 0,
+              "__first__": null
+            }
+          }
+        },
+        "next_run": {
+          "__type__": "int",
+          "__value__": 1791264675
+        }
+      }
+    }
+  },
+  "update_check": {
+    "method": "GET",
+    "path": "/admin/update/check",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body_shape": {
+      "__type__": "object",
+      "__keys__": [
+        "repo_url",
+        "has_git",
+        "local_version",
+        "remote_version",
+        "local_sha",
+        "local_msg",
+        "local_ts",
+        "remote_sha",
+        "remote_msg",
+        "remote_time",
+        "has_update",
+        "up_to_date",
+        "highlights",
+        "recent_commits",
+        "checked_at"
+      ],
+      "__items__": {
+        "repo_url": {
+          "__type__": "str",
+          "__value__": "https://github.com/czg86389-hub/muse2api"
+        },
+        "has_git": {
+          "__type__": "bool",
+          "__value__": false
+        },
+        "local_version": {
+          "__type__": "str",
+          "__value__": "1.5.3"
+        },
+        "remote_version": {
+          "__type__": "str",
+          "__value__": "1.5.3"
+        },
+        "local_sha": {
+          "__type__": "str",
+          "__value__": "2374061"
+        },
+        "local_msg": {
+          "__type__": "str",
+          "__value__": ""
+        },
+        "local_ts": {
+          "__type__": "int",
+          "__value__": 0
+        },
+        "remote_sha": {
+          "__type__": "str",
+          "__value__": "2374061"
+        },
+        "remote_msg": {
+          "__type__": "str",
+          "__value__": "docs: add djs-91 and toby-bridges to contributors & clean te"
+        },
+        "remote_time": {
+          "__type__": "str",
+          "__value__": "2026-10-04T07:38:54Z"
+        },
+        "has_update": {
+          "__type__": "bool",
+          "__value__": false
+        },
+        "up_to_date": {
+          "__type__": "bool",
+          "__value__": true
+        },
+        "highlights": {
+          "__type__": "array",
+          "__n__": 3,
+          "__first__": {
+            "__type__": "str",
+            "__value__": "修复 HTTP 403、网络超时被误判为 Cookie 失效；保留上次已确认的账号状态"
+          }
+        },
+        "recent_commits": {
+          "__type__": "array",
+          "__n__": 5,
+          "__first__": {
+            "__type__": "object",
+            "__keys__": [
+              "sha",
+              "message",
+              "date",
+              "url"
+            ],
+            "__items__": {
+              "sha": {
+                "__type__": "str",
+                "__value__": "2374061"
+              },
+              "message": {
+                "__type__": "str",
+                "__value__": "docs: add djs-91 and toby-bridges to contributors & clean te"
+              },
+              "date": {
+                "__type__": "str",
+                "__value__": "2026-10-04T07:38:54Z"
+              },
+              "url": {
+                "__type__": "str",
+                "__value__": "https://github.com/czg86389-hub/muse2api/commit/23740617ddee"
+              }
+            }
+          }
+        },
+        "checked_at": {
+          "__type__": "int",
+          "__value__": 1791264568
+        }
+      }
+    }
+  },
+  "repo_status": {
+    "method": "GET",
+    "path": "/admin/repo/status",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body_shape": {
+      "__type__": "object",
+      "__keys__": [
+        "repo_url",
+        "has_git",
+        "local_version",
+        "remote_version",
+        "local_sha",
+        "local_msg",
+        "local_ts",
+        "remote_sha",
+        "remote_msg",
+        "remote_time",
+        "has_update",
+        "up_to_date",
+        "highlights",
+        "recent_commits",
+        "checked_at"
+      ],
+      "__items__": {
+        "repo_url": {
+          "__type__": "str",
+          "__value__": "https://github.com/czg86389-hub/muse2api"
+        },
+        "has_git": {
+          "__type__": "bool",
+          "__value__": false
+        },
+        "local_version": {
+          "__type__": "str",
+          "__value__": "1.5.3"
+        },
+        "remote_version": {
+          "__type__": "str",
+          "__value__": "1.5.3"
+        },
+        "local_sha": {
+          "__type__": "str",
+          "__value__": "2374061"
+        },
+        "local_msg": {
+          "__type__": "str",
+          "__value__": ""
+        },
+        "local_ts": {
+          "__type__": "int",
+          "__value__": 0
+        },
+        "remote_sha": {
+          "__type__": "str",
+          "__value__": "2374061"
+        },
+        "remote_msg": {
+          "__type__": "str",
+          "__value__": "docs: add djs-91 and toby-bridges to contributors & clean te"
+        },
+        "remote_time": {
+          "__type__": "str",
+          "__value__": "2026-10-04T07:38:54Z"
+        },
+        "has_update": {
+          "__type__": "bool",
+          "__value__": false
+        },
+        "up_to_date": {
+          "__type__": "bool",
+          "__value__": true
+        },
+        "highlights": {
+          "__type__": "array",
+          "__n__": 3,
+          "__first__": {
+            "__type__": "str",
+            "__value__": "修复 HTTP 403、网络超时被误判为 Cookie 失效；保留上次已确认的账号状态"
+          }
+        },
+        "recent_commits": {
+          "__type__": "array",
+          "__n__": 5,
+          "__first__": {
+            "__type__": "object",
+            "__keys__": [
+              "sha",
+              "message",
+              "date",
+              "url"
+            ],
+            "__items__": {
+              "sha": {
+                "__type__": "str",
+                "__value__": "2374061"
+              },
+              "message": {
+                "__type__": "str",
+                "__value__": "docs: add djs-91 and toby-bridges to contributors & clean te"
+              },
+              "date": {
+                "__type__": "str",
+                "__value__": "2026-10-04T07:38:54Z"
+              },
+              "url": {
+                "__type__": "str",
+                "__value__": "https://github.com/czg86389-hub/muse2api/commit/23740617ddee"
+              }
+            }
+          }
+        },
+        "checked_at": {
+          "__type__": "int",
+          "__value__": 1791264568
+        }
+      }
+    }
+  },
+  "index": {
+    "method": "GET",
+    "path": "/",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "text/html; charset=utf-8",
+      "vary": "Origin"
+    },
+    "blob_sha256": "5b4e400481664bc069c56116d6163694e8e848e0317acabbf4550801cc27e319",
+    "blob_len": 81020,
+    "blob_head": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>muse2api · 账号池控制台</title>\n<style>\n  :root{\n    --bg:#0a0e17"
+  },
+  "admin_page": {
+    "method": "GET",
+    "path": "/admin",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "text/html; charset=utf-8",
+      "vary": "Origin"
+    },
+    "blob_sha256": "5b4e400481664bc069c56116d6163694e8e848e0317acabbf4550801cc27e319",
+    "blob_len": 81020,
+    "blob_head": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>muse2api · 账号池控制台</title>\n<style>\n  :root{\n    --bg:#0a0e17"
+  },
+  "openapi": {
+    "method": "GET",
+    "path": "/openapi.json",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "blob_sha256": "7c3ae09b99961b14e6d07afdfce89160039cd8ad6b8225b14ef1cb69d7ecf296",
+    "blob_len": 31219,
+    "openapi_keys": [
+      "openapi",
+      "info",
+      "paths",
+      "components"
+    ],
+    "openapi_paths": {
+      "/healthz": [
+        "get"
+      ],
+      "/readyz": [
+        "get"
+      ],
+      "/v1/models": [
+        "get"
+      ],
+      "/v1/images/tasks": [
+        "post"
+      ],
+      "/v1/images/tasks/{task_id}": [
+        "get"
+      ],
+      "/v1/images/generations": [
+        "post"
+      ],
+      "/v1/images/edits": [
+        "post"
+      ],
+      "/v1/videos/generations": [
+        "post"
+      ],
+      "/v1/videos": [
+        "post"
+      ],
+      "/v1/videos/generations/{task_id}": [
+        "get"
+      ],
+      "/v1/videos/{task_id}": [
+        "get"
+      ],
+      "/v1/chat/completions": [
+        "post"
+      ],
+      "/v1/responses": [
+        "post"
+      ],
+      "/v1/media/{name}": [
+        "get"
+      ],
+      "/admin/status": [
+        "get"
+      ],
+      "/admin/accounts": [
+        "get",
+        "post"
+      ],
+      "/admin/accounts/{aid}": [
+        "delete",
+        "patch"
+      ],
+      "/admin/accounts/{aid}/test": [
+        "post"
+      ],
+      "/admin/accounts/{aid}/relogin": [
+        "post"
+      ],
+      "/admin/accounts/{aid}/cookies": [
+        "post"
+      ],
+      "/admin/relogin": [
+        "post"
+      ],
+      "/admin/accounts/{aid}/quota": [
+        "post"
+      ],
+      "/admin/quota": [
+        "post"
+      ],
+      "/admin/apikey": [
+        "get"
+      ],
+      "/admin/apikey/rotate": [
+        "post"
+      ],
+      "/admin/cookie-helper": [
+        "get"
+      ],
+      "/admin/extension": [
+        "get"
+      ],
+      "/admin/extension/files": [
+        "get"
+      ],
+      "/admin/tasks": [
+        "get"
+      ],
+      "/admin/tasks/{tid}": [
+        "delete"
+      ],
+      "/admin/tasks/clear": [
+        "post"
+      ],
+      "/admin/media": [
+        "get"
+      ],
+      "/": [
+        "get"
+      ],
+      "/admin": [
+        "get"
+      ],
+      "/admin/accounts/keepalive": [
+        "post"
+      ],
+      "/admin/accounts/{aid}/keepalive": [
+        "post"
+      ],
+      "/admin/keepalive/status": [
+        "get"
+      ],
+      "/admin/repo/status": [
+        "get"
+      ],
+      "/admin/update/check": [
+        "get"
+      ],
+      "/admin/repo/pull": [
+        "post"
+      ],
+      "/admin/update/upgrade": [
+        "post"
+      ],
+      "/admin/repo/push": [
+        "post"
+      ]
+    }
+  },
+  "docs": {
+    "method": "GET",
+    "path": "/docs",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "content-type": "text/html; charset=utf-8",
+      "vary": "Origin"
+    },
+    "blob_sha256": "286c545b0a6b982ca98e77ac54eea3fafd36d6daf9730076a28b4cee626f2148",
+    "blob_len": 1007,
+    "blob_head": "\n    <!DOCTYPE html>\n    <html>\n    <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <link type=\"text/css\" rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/swag"
+  },
+  "v1_unmatched": {
+    "method": "GET",
+    "path": "/v1/nope",
+    "auth": "good",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "Not Found"
+    }
+  },
+  "admin_unmatched": {
+    "method": "GET",
+    "path": "/admin/nope",
+    "auth": "good",
+    "status": 404,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "Not Found"
+    }
+  },
+  "anon_admin": {
+    "method": "GET",
+    "path": "/admin/status",
+    "auth": "none",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body_shape": {
+      "__type__": "object",
+      "__keys__": [
+        "detail"
+      ],
+      "__items__": {
+        "detail": {
+          "__type__": "str",
+          "__value__": "缺少 Authorization: Bearer <key>"
+        }
+      }
+    }
+  },
+  "images_gen_noauth": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "none",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "缺少 Authorization: Bearer <key>",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 401
+      }
+    }
+  },
+  "images_gen_bad": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "API key 无效",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 401
+      }
+    }
+  },
+  "images_gen_empty": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "images_gen_prompt_type": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'string_type', 'loc': ('body', 'prompt'), 'msg': 'Input should be a valid string', 'input': 123}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "images_gen_timeout": {
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'less_than_equal', 'loc': ('body', 'timeout'), 'msg': 'Input should be less than or equal to 600', 'input': 999, 'ctx': {'le': 600}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "images_tasks_empty": {
+    "method": "POST",
+    "path": "/v1/images/tasks",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "images_tasks_bad": {
+    "method": "POST",
+    "path": "/v1/images/tasks",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "API key 无效",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 401
+      }
+    }
+  },
+  "videos_empty": {
+    "method": "POST",
+    "path": "/v1/videos",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "videos_gen_empty": {
+    "method": "POST",
+    "path": "/v1/videos/generations",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'missing', 'loc': ('body', 'prompt'), 'msg': 'Field required', 'input': {}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "videos_bad": {
+    "method": "POST",
+    "path": "/v1/videos",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "API key 无效",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 401
+      }
+    }
+  },
+  "chat_empty": {
+    "method": "POST",
+    "path": "/v1/chat/completions",
+    "auth": "good",
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "messages 为空",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 400
+      }
+    }
+  },
+  "chat_bad_msgs": {
+    "method": "POST",
+    "path": "/v1/chat/completions",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'list_type', 'loc': ('body', 'messages'), 'msg': 'Input should be a valid list', 'input': 'x'}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "chat_bad_role": {
+    "method": "POST",
+    "path": "/v1/chat/completions",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'missing', 'loc': ('body', 'messages', 0, 'role'), 'msg': 'Field required', 'input': {'content': 'hi'}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "chat_noauth": {
+    "method": "POST",
+    "path": "/v1/chat/completions",
+    "auth": "none",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "缺少 Authorization: Bearer <key>",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 401
+      }
+    }
+  },
+  "responses_empty": {
+    "method": "POST",
+    "path": "/v1/responses",
+    "auth": "good",
+    "status": 400,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "input 为空",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 400
+      }
+    }
+  },
+  "responses_bad_input": {
+    "method": "POST",
+    "path": "/v1/responses",
+    "auth": "good",
+    "status": 422,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "请求参数校验失败：[{'type': 'string_type', 'loc': ('body', 'input', 'str'), 'msg': 'Input should be a valid string', 'input': {}}, {'type': 'list_type', 'loc': ('body', 'input', 'list[any]'), 'msg': 'Input should be a valid list', 'input': {}}]",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 422
+      }
+    }
+  },
+  "responses_noauth": {
+    "method": "POST",
+    "path": "/v1/responses",
+    "auth": "none",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "缺少 Authorization: Bearer <key>",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 401
+      }
+    }
+  },
+  "edits_badjson": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "good",
+    "status": 500,
+    "headers": {
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "blob_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+    "blob_len": 21,
+    "blob_head": "Internal Server Error"
+  },
+  "edits_noauth": {
+    "method": "POST",
+    "path": "/v1/images/edits",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "API key 无效",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 401
+      }
+    }
+  },
+  "write_post_admin_accounts": {
+    "method": "POST",
+    "path": "/admin/accounts",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_patch_admin_accounts_capnope": {
+    "method": "PATCH",
+    "path": "/admin/accounts/capnope",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_delete_admin_accounts_capnope": {
+    "method": "DELETE",
+    "path": "/admin/accounts/capnope",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_apikey_rotate": {
+    "method": "POST",
+    "path": "/admin/apikey/rotate",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_tasks_clear": {
+    "method": "POST",
+    "path": "/admin/tasks/clear",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_delete_admin_tasks_capnope": {
+    "method": "DELETE",
+    "path": "/admin/tasks/capnope",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_relogin": {
+    "method": "POST",
+    "path": "/admin/relogin",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_accounts_capnope_test": {
+    "method": "POST",
+    "path": "/admin/accounts/capnope/test",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_accounts_capnope_relogin": {
+    "method": "POST",
+    "path": "/admin/accounts/capnope/relogin",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_accounts_capnope_cookies": {
+    "method": "POST",
+    "path": "/admin/accounts/capnope/cookies",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_accounts_capnope_quota": {
+    "method": "POST",
+    "path": "/admin/accounts/capnope/quota",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_quota": {
+    "method": "POST",
+    "path": "/admin/quota",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_accounts_keepalive": {
+    "method": "POST",
+    "path": "/admin/accounts/keepalive",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_accounts_capnope_keepalive": {
+    "method": "POST",
+    "path": "/admin/accounts/capnope/keepalive",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_update_upgrade": {
+    "method": "POST",
+    "path": "/admin/update/upgrade",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_repo_pull": {
+    "method": "POST",
+    "path": "/admin/repo/pull",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "write_post_admin_repo_push": {
+    "method": "POST",
+    "path": "/admin/repo/push",
+    "auth": "bad",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "vary": "Origin"
+    },
+    "body": {
+      "detail": "API key 无效"
+    }
+  },
+  "cors_get": {
+    "method": "GET",
+    "path": "/v1/models",
+    "auth": "none",
+    "status": 401,
+    "headers": {
+      "content-type": "application/json",
+      "access-control-allow-origin": "*",
+      "access-control-expose-headers": "*",
+      "vary": "Origin"
+    },
+    "body": {
+      "error": {
+        "message": "缺少 Authorization: Bearer <key>",
+        "type": "invalid_request_error",
+        "param": null,
+        "code": 401
+      }
+    }
+  },
+  "cors_options": {
+    "method": "OPTIONS",
+    "path": "/v1/chat/completions",
+    "auth": "none",
+    "status": 200,
+    "headers": {
+      "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers, Access-Control-Request-Private-Network",
+      "access-control-allow-origin": "*",
+      "access-control-allow-methods": "GET, POST, PATCH, DELETE, OPTIONS",
+      "access-control-max-age": "600",
+      "access-control-allow-headers": "authorization,content-type",
+      "content-type": "text/plain; charset=utf-8"
+    },
+    "blob_sha256": "565339bc4d33d72817b583024112eb7f5cdf3e5eef0252d6ec1b9c9a94e12bb3",
+    "blob_len": 2,
+    "blob_head": "OK"
+  },
+  "__meta__": {
+    "port": 18610,
+    "has_api_key": true,
+    "n_cases": 70,
+    "fails": []
+  }
+}
