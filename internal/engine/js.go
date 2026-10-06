@@ -205,7 +205,7 @@ const (
 )
 
 // engine.py:1202 处由字面量与变量拼接而成的模板
-func undefined() string {
+func assembleDebugDumpL1202() string {
 	return `JSON.stringify({atts:[...document.querySelectorAll('` +
 		attSel +
 		`')].map(function(a){var m=a.querySelector('img,video');return {tid:a.getAttribute('data-testid'),src:m?(m.currentSrc||m.src||'').slice(0,60):''};}),buttons:[...document.querySelectorAll('button,[role=button]')].filter(b=>b.offsetParent!==null).map(b=>b.getAttribute('aria-label')||b.innerText.trim().slice(0,20)).filter(Boolean).slice(-40),tail:document.body.innerText.slice(-500)})`
@@ -244,5 +244,5 @@ var jsCatalog = map[string]string{
 
 // jsAssembled 是拼接模板的还原函数表，测试逐个与金样本比对。
 var jsAssembled = map[string]func() string{
-	"undefined": undefined,
+	"assembleDebugDumpL1202": assembleDebugDumpL1202,
 }

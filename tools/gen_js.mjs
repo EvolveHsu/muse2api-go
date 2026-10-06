@@ -130,12 +130,12 @@ for (const e of entries) {
 }
 out += `)\n\n`;
 for (const a of asm) {
-  out += `// engine.py:${a.line} 处由字面量与变量拼接而成的模板\nfunc ${a.go}() string {\n\treturn ${a.expr}\n}\n\n`;
+  out += `// engine.py:${a.line} 处由字面量与变量拼接而成的模板\nfunc ${a.goFn}() string {\n\treturn ${a.expr}\n}\n\n`;
 }
 out += `// jsCatalog 让测试能按名字遍历所有独立常量。\nvar jsCatalog = map[string]string{\n`;
 for (const e of entries) out += `\t"${e.go}": ${e.go},\n`;
 out += `}\n\n// jsAssembled 是拼接模板的还原函数表，测试逐个与金样本比对。\nvar jsAssembled = map[string]func() string{\n`;
-for (const a of asm) out += `\t"${a.go}": ${a.go},\n`;
+for (const a of asm) out += `\t"${a.goFn}": ${a.goFn},\n`;
 out += `}\n`;
 
 fs.writeFileSync(GOSRC, out);
