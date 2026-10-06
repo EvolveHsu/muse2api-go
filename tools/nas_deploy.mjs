@@ -68,9 +68,11 @@ const steps = {
   ],
   run: [
     `mkdir -p ${REMOTE_DIR}/data-go`,
-    `docker rm -f ${CONTAINER} 2>/dev/null; docker run -d --name ${CONTAINER} --restart unless-stopped ` +
+    // --init：让 docker 自带的最小 init 当 PID 1。Go 进程当 PID 1 时会收养 chromium 的孤儿子孙，
+    // 而我们只 Wait() 自己那个直接子进程 —— 每「起一次浏览器再释放」就攒一排僵尸进程。
+    `docker rm -f ${CONTAINER} 2>/dev/null; docker run -d --name ${CONTAINER} --restart unless-stopped --init ` +
       `-p ${HOST_PORT}:18610 -v ${REMOTE_DIR}/data-go:/app/data --shm-size=2gb ` +
-      `-e MUSE2API_BROWSER_IDLE_MINUTES=30 -e MUSE2API_WARM_TAB=0 ${IMG} && sleep 3 && docker ps --filter name=${CONTAINER} --format "{{.Names}} {{.Status}}"`,
+      `-e MUSE2API_BROWSER_IDLE_MINUTES=${process.env.BROWSER_IDLE_MINUTES || 30} -e MUSE2API_WARM_TAB=0 ${IMG} && sleep 3 && docker ps --filter name=${CONTAINER} --format "{{.Names}} {{.Status}}"`,
     `docker logs --tail 20 ${CONTAINER} 2>&1`,
   ],
   stats: [

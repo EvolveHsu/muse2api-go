@@ -22,6 +22,10 @@ services:
     image: muse2api-go:1.5.3
     container_name: muse2api-go
     restart: unless-stopped
+    # init: true —— 让 docker 自带的最小 init 当 PID 1 负责收尸。
+    # Go 进程自己是 PID 1 时会收养 chromium 孤儿化的子孙进程，而代码只 Wait() 自己那个直接子进程；
+    # 每「起一次浏览器再释放」就会攒下一排僵尸进程（实测一次循环留下 8 个）。
+    init: true
     ports:
       - "38467:18610"
     environment:

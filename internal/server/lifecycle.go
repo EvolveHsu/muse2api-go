@@ -108,14 +108,16 @@ func (a *App) idleEvictor(stop <-chan struct{}) {
 		if !sleepOrStop(time.Minute, stop) {
 			return
 		}
-		if !shouldEvict(a.browser.busy(), a.Engine.BrowserProcUp(), a.browser.idleFor(), idle) {
+		quiet := a.browser.idleFor()
+		if !shouldEvict(a.browser.busy(), a.Engine.BrowserProcUp(), quiet, idle) {
 			continue
 		}
 		// tryRun 在放开锁时自己会 touch 一次，所以下一轮至少要再等满 idle 才会再关一遍。
 		a.browser.tryRun(func() {
 			if a.Engine.BrowserProcUp() {
+				// 静默时长按抢锁之前的读数报：tryRun 一拿到锁就会刷新它，抢完再读永远是 0s。
 				log.Printf("【空闲回收】已静默 %v，关闭浏览器释放内存（下条请求会冷启动）",
-					a.browser.idleFor().Truncate(time.Second))
+					quiet.Truncate(time.Second))
 				a.Engine.Stop()
 			}
 		})
