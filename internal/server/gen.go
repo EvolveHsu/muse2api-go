@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"muse2api-go/internal/engine"
@@ -20,10 +21,33 @@ import (
 // 三种语义在这里分开给名字，避免调用点混用。
 type browserLock struct {
 	ch chan struct{}
+	// DEVIATION: Python 的 GEN_LOCK 就是一把裸锁，没有 last 这个字段。
+	// 它只为空闲回收（lifecycle.go 的 idleEvictor）服务：记录最近一次用过浏览器的时刻。
+	// 存的是带单调读数的 time.Time，所以 idleFor 不受系统校时拉动。
+	mu   sync.Mutex
+	last time.Time
 }
 
 func newBrowserLock() *browserLock {
-	return &browserLock{ch: make(chan struct{}, 1)}
+	return &browserLock{ch: make(chan struct{}, 1), last: time.Now()}
+}
+
+// touch 记一次「用过浏览器」。拿到和放开的时候都记，
+// 于是一段长任务跑完之后的静默期才是从「跑完」起算，而不是从「开始」起算。
+func (b *browserLock) touch() {
+	b.mu.Lock()
+	b.last = time.Now()
+	b.mu.Unlock()
+}
+
+// busy 看锁现在有没有人被占着（容量 1 的 channel，len>0 就是被占）。
+func (b *browserLock) busy() bool { return len(b.ch) > 0 }
+
+// idleFor 是距离上次用浏览器过去了多久。
+func (b *browserLock) idleFor() time.Duration {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return time.Since(b.last)
 }
 
 // run 对应 `acquire(timeout=...)`：等不到就报「等待浏览器队列超时，请稍后重试」。
@@ -38,7 +62,8 @@ func (b *browserLock) run(timeout time.Duration, fn func() error) error {
 	case <-timer.C:
 		return &engine.ErrGeneration{Msg: "等待浏览器队列超时，请稍后重试"}
 	}
-	defer func() { <-b.ch }()
+	b.touch()
+	defer func() { <-b.ch; b.touch() }()
 	return fn()
 }
 
@@ -46,7 +71,8 @@ func (b *browserLock) run(timeout time.Duration, fn func() error) error {
 func (b *browserLock) runBlocking(stop <-chan struct{}, fn func()) error {
 	if stop == nil {
 		b.ch <- struct{}{}
-		defer func() { <-b.ch }()
+		b.touch()
+		defer func() { <-b.ch; b.touch() }()
 		fn()
 		return nil
 	}
@@ -55,7 +81,8 @@ func (b *browserLock) runBlocking(stop <-chan struct{}, fn func()) error {
 	case <-stop:
 		return errStopped
 	}
-	defer func() { <-b.ch }()
+	b.touch()
+	defer func() { <-b.ch; b.touch() }()
 	fn()
 	return nil
 }
@@ -64,7 +91,8 @@ func (b *browserLock) runBlocking(stop <-chan struct{}, fn func()) error {
 func (b *browserLock) tryRun(fn func()) bool {
 	select {
 	case b.ch <- struct{}{}:
-		defer func() { <-b.ch }()
+		b.touch()
+		defer func() { <-b.ch; b.touch() }()
 		fn()
 		return true
 	default:

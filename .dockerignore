@@ -1,0 +1,17 @@
+# 镜像只需要 build/muse2api-go 与 deploy/version.json，其余全部排除。
+# 尤其是各包的 testdata：那是给 Go 测试用的金样本，不进镜像。
+.git
+.gitattributes
+.gitignore
+.reference
+.remote
+.tmp
+docs
+internal
+cmd
+tools
+go.mod
+go.sum
+*.exe
+Dockerfile
+deploy/docker-compose.go.yml

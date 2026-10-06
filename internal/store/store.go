@@ -774,6 +774,29 @@ func (s *Store) UpdateTask(tid string, kw map[string]any) map[string]any {
 	return t
 }
 
+// FailInterruptedTasks 对应 app.py 的 @app.on_event("startup") 里那段循环：
+// 进程重启时还挂在 queued/processing 的生图任务永远等不到结果（队列是内存态的），
+// 当场判失败落盘，客户端才会看到「请重新提交」而不是一直 pending。
+// 只处理 kind=="image"：视频任务的结果挂在 muse.ai 侧，重启后按 id 还能查回来。
+func (s *Store) FailInterruptedTasks(message string) int {
+	var ids []string
+	s.mu.Lock()
+	for tid, t := range s.tasks {
+		if t["kind"] != "image" {
+			continue
+		}
+		switch t["status"] {
+		case "queued", "processing":
+			ids = append(ids, tid)
+		}
+	}
+	s.mu.Unlock()
+	for _, tid := range ids {
+		s.UpdateTask(tid, map[string]any{"status": "failed", "error": message})
+	}
+	return len(ids)
+}
+
 // GetTask 对应 get_task()。
 func (s *Store) GetTask(tid string) map[string]any {
 	s.mu.Lock()

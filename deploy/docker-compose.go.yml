@@ -1,0 +1,41 @@
+version: '3.8'
+
+# Go 版与 Python 版并行双跑用的 compose 文件。
+# Python 版继续占宿主 38465，这份起在 38467，数据目录 ./data-go 完全独立 ——
+# 两边各自的账号库/任务/媒体互不干扰，验证通过后再决定切流量还是长期并存。
+#
+# 在 NAS 上的目录准备（build 上下文只需要这三样）：
+#   /opt/muse2api-go/
+#     ├── Dockerfile              ← 仓库根的 Dockerfile
+#     ├── build/muse2api-go       ← 本地交叉编译产物（GOOS=linux CGO_ENABLED=0）
+#     └── deploy/version.json     ← /admin/status 与 /admin/update/check 读它报版本
+#   再把本文件复制成 docker-compose.yml，然后 docker compose up -d。
+#
+# 想把现有账号带过来（cookie 快照导入，两边 accounts.json 的格式是同一套）：
+#   docker cp muse2api:/app/data/accounts.json /opt/muse2api-go/data-go/accounts.json
+#   docker compose restart          # 导入前先停一次，别让两边的保活同时续签同一批 cookie
+services:
+  muse2api-go:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: muse2api-go:1.5.3
+    container_name: muse2api-go
+    restart: unless-stopped
+    ports:
+      - "38467:18610"
+    environment:
+      # 留空则首次启动自动生成一把写进 data-go/.env（与 Python 版同一条路径）
+      - MUSE2API_KEY=${MUSE2API_KEY:-}
+      - MUSE2API_PUBLIC_BASE=
+      - MUSE2API_IMAGE_TIMEOUT=240
+      - MUSE2API_VIDEO_TIMEOUT=600
+      - MUSE2API_CHAT_TIMEOUT=300
+      # Go 版新增的两条（Python 没有）：空闲多久释放浏览器 / 要不要常驻热标签页
+      - MUSE2API_BROWSER_IDLE_MINUTES=30
+      - MUSE2API_WARM_TAB=0
+    volumes:
+      - ./data-go:/app/data
+    shm_size: '2gb' # Chromium 渲染大图时 /dev/shm 不够会直接崩，这条与 Python 版一致
+    # 不加 mem_limit：空闲内存是靠「空闲释放浏览器」达成的，不是靠限制压出来的。
+    # 限死了只会在生图高峰时把容器 OOM 掉，达不到验收口径也解释不了数据。
