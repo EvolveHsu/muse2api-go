@@ -1,7 +1,8 @@
 // 把 tools/golden 下的某个录制脚本送进 NAS 上的 muse2api 容器里跑（真 Python 当 oracle），
 // 再把 stdout 里 @@JSON@@ 后面那段 base64 落成 testdata 的金样本文件。
 //
-//   NAS_PW=*** node tools/golden/run_on_nas.mjs golden_generate internal/engine/testdata/generate_golden.json
+//   export NAS_HOST=… NAS_USER=… NAS_PW=…   # 三个都只进环境，不写文件
+//   node tools/golden/run_on_nas.mjs golden_generate internal/engine/testdata/generate_golden.json
 //
 // 密码只从环境变量读，绝不落盘。依赖 ssh2（一次性装在临时目录里，用完卸载）：
 //   若 import 'ssh2' 失败，脚本会打印安装指引然后退出。
@@ -37,6 +38,19 @@ if (!PW) {
   console.error('缺 NAS_PW 环境变量（只从环境读，不写文件）');
   process.exit(2);
 }
+// 主机与用户名同样只从环境读：这份脚本会随源码发布，不该把家里的内网地址写死在里面。
+// 地址允许写成 `http://1.2.3.4/` 这种形式（ssh 只吃裸主机名，这里统一剥掉协议与尾部斜杠）。
+function needEnv(key) {
+  const v = (process.env[key] || '').trim();
+  if (!v) {
+    console.error(`缺 ${key} 环境变量（与 NAS_PW 一样只从环境读）`);
+    process.exit(2);
+  }
+  return v;
+}
+const NAS_HOST = needEnv('NAS_HOST').replace(/^[a-zA-Z]+:\/\//, '').replace(/\/+$/, '');
+const NAS_USER = needEnv('NAS_USER');
+const NAS_PORT = Number(process.env.NAS_PORT || 22);
 
 const { Client } = await loadSSH2();
 
@@ -64,7 +78,7 @@ const run = (cmd) => new Promise((res) => {
       s.on('close', (code) => { c.end(); res({ code, out: o }); });
     });
   }).on('error', (e) => res({ code: -1, out: 'CONNECT ' + e.message }))
-    .connect({ host: '192.0.2.10', port: 22, username: 'nasuser', password: PW, readyTimeout: 20000 });
+    .connect({ host: NAS_HOST, port: NAS_PORT, username: NAS_USER, password: PW, readyTimeout: 20000 });
 });
 
 const r = await run(remote);

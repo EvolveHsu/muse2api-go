@@ -1,0 +1,67 @@
+NOTICE
+======
+
+This repository is a Go port of **muse2api**, an OpenAI-compatible proxy that
+drives muse.ai through a headless Chromium instance controlled over CDP.
+
+Upstream
+--------
+
+- Project: muse2api
+- Repository: https://github.com/czg86389-hub/muse2api
+- Upstream license: MIT (see `LICENSE`), copyright (c) 2026 MUSE2API Authors
+- Ported baseline: upstream commit `42ee039` (version 1.5.4). The reference
+  snapshots used while porting were taken from the deployed container running
+  version 1.5.3 (`2374061`), then reconciled against 1.5.4.
+
+What is derived from upstream
+-----------------------------
+
+- The injected JavaScript is reproduced verbatim from upstream `engine.py`.
+  It is not hand-copied: `tools/gen_js.mjs` extracts it programmatically from
+  the deployed source into `internal/engine/js.go`, and the golden
+  `internal/engine/testdata/engine_js.json` records the rendered strings so the
+  extraction itself is checked.
+- The HTTP contract (routes, status codes, error shells, SSE framing, response
+  key order, header behaviour) mirrors upstream `app.py` request for request.
+- Golden files under `internal/*/testdata/` were **recorded from a running
+  Python instance** rather than written by hand, and the Go tests replay them
+  byte-for-byte. Recording scripts live in `tools/golden/`.
+- `internal/webui/admin.html`, `internal/webui/assets/openapi.json` and
+  `internal/webui/assets/oauth2-redirect.html` are byte-exact snapshots
+  captured from the deployed upstream service, not re-implemented markup.
+
+Intentional deviations
+----------------------
+
+The port is not byte-identical in behaviour. Every deviation is enumerated in
+`docs/superpowers/specs/2026-10-06-muse2api-go-design.md` section 8 (20 items),
+each also tagged `DEVIATION:` at the place in the code where it happens. The
+main ones:
+
+- Idle browser release plus opt-out of the keepalive warm tab, so an idle
+  container stays in the single-digit MiB range (`MUSE2API_BROWSER_IDLE_MINUTES`,
+  `MUSE2API_WARM_TAB`).
+- No in-container git self-update: `/admin/repo/pull`, `/admin/repo/push` and
+  `/admin/update/upgrade` report the version and the manual steps instead.
+- `/openapi.json` and the admin panel are embedded snapshots rather than
+  generated at runtime; a test reconciles the route table against the
+  document so drift fails loudly.
+
+Operational notes before publishing
+-----------------------------------
+
+- Nothing here contains credentials. Deployment host, user and password are
+  read from the environment by `tools/nas_deploy.mjs` and
+  `tools/golden/run_on_nas.mjs` (`NAS_HOST`, `NAS_USER`, `NAS_PW`) and are
+  never written to the repository.
+- Recorded secrets in goldens are redacted (`<REDACTED>`), cookie values in
+  engine goldens are fakes (`s`, `g`, `NEWVML`), and client addresses in the
+  access-log golden are replaced with RFC 5737 documentation addresses.
+- The upstream Python source used as the porting reference is deliberately
+  excluded via `.gitignore` (`.reference/`) and is not part of this repository.
+
+MIT requires that the copyright notice and permission notice accompany
+substantial copies of the software; `LICENSE` carries upstream's text. If you
+also claim copyright on the Go port, add your own line above it rather than
+replacing it.

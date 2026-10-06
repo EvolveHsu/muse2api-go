@@ -1,22 +1,46 @@
 // NAS 部署小工具：把 Go 版的构建产物送上去、出镜像、起容器、量空闲内存。
 //
-//   NAS_PW=*** node tools/nas_deploy.mjs probe    # 只读体检：磁盘、docker、端口、线上 chromium 版本
-//   NAS_PW=*** node tools/nas_deploy.mjs push     # 上传 Dockerfile / version.json / build/muse2api-go
-//   NAS_PW=*** node tools/nas_deploy.mjs build    # docker build
-//   NAS_PW=*** node tools/nas_deploy.mjs run      # docker run -d 起在 38467，独立 data-go
-//   NAS_PW=*** node tools/nas_deploy.mjs stats    # 采一次空闲内存（docker stats + cgroup + 进程树）
-//   NAS_PW=*** node tools/nas_deploy.mjs logs     # 容器日志尾部
-//   NAS_PW=*** node tools/nas_deploy.mjs exec '<只读命令>'
+// 三个必填环境变量：NAS_HOST（地址）、NAS_USER（登录名）、NAS_PW（密码，只进环境）。
+// 下面统一写成 `NAS_ENV`：
+//   export NAS_HOST="$(awk -F': *' '/^NAS_IP/{print $2}' ~/nas.env)"
+//   export NAS_USER="$(awk -F': *' '/^NAS_USERNAME/{print $2}' ~/nas.env)"
+//   export NAS_PW="$(awk -F': *' '/^NAS_PWD/{print $2}' ~/nas.env)"
+//
+//   node tools/nas_deploy.mjs probe    # 只读体检：磁盘、docker、端口、线上 chromium 版本
+//   node tools/nas_deploy.mjs push     # 上传 Dockerfile / version.json / build/muse2api-go
+//   node tools/nas_deploy.mjs build    # docker build
+//   node tools/nas_deploy.mjs run      # docker run -d 起在 38467，独立 data-go
+//   node tools/nas_deploy.mjs stats    # 采一次空闲内存（docker stats + cgroup + 进程树）
+//   node tools/nas_deploy.mjs logs     # 容器日志尾部
+//   node tools/nas_deploy.mjs exec '<只读命令>'
 //
 // 规矩：
 //   - 密码只从环境变量读，绝不写文件、绝不进命令行回显。
+//   - 主机与用户名同样只从环境读（NAS_HOST / NAS_USER）：这两个脚本会随源码一起发布，
+//     家里内网地址与账号名不该写死在里面。用法是在仓库外放一个 nas.env（NAS_IP / NAS_USERNAME / NAS_PWD），
+//     取用：export NAS_HOST="$(awk -F': *' '/^NAS_IP/{print $2}' …/nas.env)"，以此类推。
 //   - 全程只在**新建**的 /opt/muse2api-go 里动作；现役 muse2api 容器只读不写。
 //   - probe/exec 是只读的；push/build/run 会在 NAS 上新增目录、镜像与容器（不动既有服务）。
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-const HOST = '192.0.2.10', USER = 'nasuser', PORT = 22;
+function needEnv(key) {
+  const v = (process.env[key] || '').trim();
+  if (!v) {
+    console.error(`缺 ${key} 环境变量（与 NAS_PW 一样，只从环境读，不写进代码或文件）`);
+    process.exit(2);
+  }
+  return v;
+}
+
+// 有人会把地址写成 `http://192.0.2.10/` 这种形式（家里 nas.env 就是这么存的），
+// ssh 只吃裸主机名，所以这里统一剥掉协议与尾部斜杠。
+function hostOnly(v) {
+  return v.replace(/^[a-zA-Z]+:\/\//, '').replace(/\/+$/, '');
+}
+
+const HOST = hostOnly(needEnv('NAS_HOST')), USER = needEnv('NAS_USER'), PORT = Number(process.env.NAS_PORT || 22);
 const REMOTE_DIR = '/opt/muse2api-go';
 const IMG = 'muse2api-go:1.5.4';
 const CONTAINER = 'muse2api-go';

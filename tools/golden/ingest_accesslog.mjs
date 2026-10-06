@@ -46,6 +46,8 @@ const SENT = {
 };
 
 const LINE = /^(\S+: *)(\S+:\d+) - "([A-Z]+) (\S+) (HTTP\/[\d.]+)" (\d{3}) (.*)$/;
+// 文档保留地址（RFC 5737），用来替换录制里出现的真实 client。
+const CLIENT_REDACT = '203.0.113.10:40000';
 const entries = [];
 const seen = new Map();
 let prefix = null;
@@ -60,6 +62,11 @@ for (const raw of fs.readFileSync(inPath, 'utf8').split('\n')) {
   if (!sent) continue;
   if (prefix === null) prefix = pfx;
   else if (prefix !== pfx) console.error('前缀不一致：' + JSON.stringify(pfx) + ' vs ' + JSON.stringify(prefix));
+  // client 地址一律换成 RFC 5737 的文档地址：金样本会随源码发布，不该带上家里的内网/网桥地址。
+  // 回放只比 ` - ` 之后的部分，client 由各自的请求给出，所以这个替换不影响校验强度
+  // （IPv6 那条另有 TestAccessLineIPv6 专门钉写法）。原始形态记在 client_addr_shape 里。
+  const shape = /^\d+\.\d+\.\d+\.\d+:\d+$/.test(addr) ? 'ipv4:port'
+    : (/^\[[0-9a-fA-F:]+\]:\d+$/.test(addr) ? 'ipv6-bracketed:port' : String(addr));
   const entry = {
     probe: pm[1],
     sent_method: sent[0],
@@ -71,8 +78,8 @@ for (const raw of fs.readFileSync(inPath, 'utf8').split('\n')) {
     logged_proto: proto,
     logged_status: Number(status),
     logged_phrase: phrase,
-    client_addr_shape: /^\d+\.\d+\.\d+\.\d+:\d+$/.test(addr) ? 'ipv4:port' : String(addr),
-    line,
+    client_addr_shape: shape,
+    line: line.replace(addr, CLIENT_REDACT),
   };
   // 同一个探针可能被多轮抓取重复命中（docker logs --since 的窗口会重叠）：
   // 只留第一条，否则回放表里出现同名两条用例，台账也数不清。
