@@ -4,3 +4,6 @@ build/
 .qoder*
 .remote/
 .tmp/
+
+# 设计文档与实测记录只在本地维护，不随仓库发布（docs/ 已从历史中移除）。
+docs/

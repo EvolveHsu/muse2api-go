@@ -34,10 +34,11 @@ What is derived from upstream
 Intentional deviations
 ----------------------
 
-The port is not byte-identical in behaviour. Every deviation is enumerated in
-`docs/superpowers/specs/2026-10-06-muse2api-go-design.md` section 8 (20 items),
-each also tagged `DEVIATION:` at the place in the code where it happens. The
-main ones:
+The port is not byte-identical in behaviour. Every deviation is tagged
+`DEVIATION:` at the place in the code where it happens, with a number (#1..#20)
+that indexes the design note kept alongside this project (that note is
+maintained locally and is not published in this repository — search the code
+for `DEVIATION:` for the authoritative inline record). The main ones:
 
 - Idle browser release plus opt-out of the keepalive warm tab, so an idle
   container stays in the single-digit MiB range (`MUSE2API_BROWSER_IDLE_MINUTES`,
