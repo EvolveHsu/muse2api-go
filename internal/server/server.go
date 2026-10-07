@@ -182,7 +182,7 @@ var llhttpMethods = map[string]bool{
 }
 
 func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// 协议层的方法表先拦一道：线上 uvicorn 用的解析器是 httptools（llhttp），不是 h11，
+	// DEVIATION(#20): 协议层的方法表先拦一道：线上 uvicorn 用的解析器是 httptools（llhttp），不是 h11，
 	// 表外的方法连 ASGI 都进不去 —— 直接 400 纯文本，既不过 CORS 中间件，也不打 access log。
 	// Go 的 net/http 不设这张表，不拦就会把 `post /v1/images/generations` 这种请求当 POST 受理，
 	// 于是客户端少打一个大小写都算不上的错，我们却替它花掉一次额度。
