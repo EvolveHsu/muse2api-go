@@ -285,7 +285,7 @@ func (a *App) queryAnyQuota(c *reqCtx) (any, error) {
 
 // reloginAll 对应 relogin()。
 //
-// DEVIATION: Python 这一条**不持 GEN_LOCK**（是 6 个取锁点之外的路径），Go 改成按
+// DEVIATION(#15): Python 这一条**不持 GEN_LOCK**（是 6 个取锁点之外的路径），Go 改成按
 // test_account 那样 `with GEN_LOCK` 排队，理由有两条：
 //
 //	① 内存安全 —— Refresh 会换掉 e.page/e.browser，而并发的生成任务正在无锁读它们，

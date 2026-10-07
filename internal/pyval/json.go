@@ -67,7 +67,8 @@ func writeJSON(b *strings.Builder, v any, ascii bool, itemSep, kvSep string) {
 		}
 		// Python dict 保插入序，Go map 没有序，这里一律排序：
 		// 只有 sort_keys=True 的调用（幂等哈希）因此能与 Python 逐字节一致，
-		// 其余有序输出必须显式用 Obj。见设计文档偏离清单第 6 / 13 条。
+		// 其余有序输出必须显式用 Obj。键序这一类差异不编号（见 README 差异一节开头的说明）：
+		// 两侧读方都按键取值，不影响对外行为。
 		sort.Strings(keys)
 		b.WriteByte('{')
 		for i, k := range keys {

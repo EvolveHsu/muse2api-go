@@ -73,7 +73,7 @@ func TestGoldenDump(t *testing.T) {
 // 必须与真 Python store.py 在相同输入下的产物语义一致、顶层键序一致、格式风格一致。
 //
 // 唯一被允许的差别是嵌套 map 的键序（Go 的 map 无序，Python 的 dict 保序）——
-// 那是 JSON 对象成员顺序，两个读方都按键取值，不影响任何行为。见设计文档偏离 #6。
+// 那是 JSON 对象成员顺序，两个读方都按键取值，不影响任何行为（键序类差异不编号，见 README 差异一节说明）。
 func TestGoldenAgainstPython(t *testing.T) {
 	dir := t.TempDir()
 	stats, pickedSame := runGoldenSequence(t, dir)

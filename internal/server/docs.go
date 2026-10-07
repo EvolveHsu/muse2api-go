@@ -12,9 +12,9 @@ package server
 // openapi_url 就是 "/openapi.json"；app 的 title="muse2api"，version="1.5.3"；
 // 未设 swagger_ui_parameters / swagger_ui_init_oauth，所以走 fastapi 的那套默认参数。
 //
-// DEVIATION: /openapi.json 走内嵌快照，不在运行时生成（Python 是 pydantic 现算）——
-// 见设计文档偏离 13，路由表对账测试兜漂移。
-// DEVIATION: /redoc 与 /docs/oauth2-redirect 的字节还没被线上录制钉住（偏离 14），
+// DEVIATION(#13): /openapi.json 走内嵌快照，不在运行时生成（Python 是 pydantic 现算）——
+// 路由表对账测试 TestRouteTableMatchesOpenAPIDoc 兜漂移。
+// DEVIATION(#14): /redoc 与 /docs/oauth2-redirect 的字节还没被线上录制钉住，
 // 与已校验通过的 /docs 同源同版本，补录探针已排进 golden_routes.py。
 
 import (

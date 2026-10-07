@@ -39,7 +39,7 @@ func (a *App) Shutdown() { a.Engine.Stop() }
 
 // keepaliveLoop 对应 _keepalive_loop()：先睡 1 秒再预热一次，之后每 900 秒一轮。
 // 每一轮 Python 是「保活 → 热标签页没了就复活」；Go 默认**只做纯 HTTP 保活**，
-// 复活那半段挂在 MUSE2API_WARM_TAB 上（这是全项目唯一一处有意新增的行为，见设计文档 §3）。
+// 复活那半段挂在 MUSE2API_WARM_TAB 上（这是全项目唯一一处有意新增的行为，即 README 差异清单的 #1）。
 func (a *App) keepaliveLoop(stop <-chan struct{}) {
 	log.Printf("【自动保活守护进程】已启动，检测周期: 15 分钟")
 	if !sleepOrStop(time.Second, stop) {

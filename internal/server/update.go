@@ -17,7 +17,8 @@ import (
 
 // update.go 对应 app.py 的「仓库实时更新检测」那一节，以及保活协程的状态壳。
 //
-// 按设计文档偏离清单第 4 条：Go 版不做 git 拉取与镜像重建，
+// 按登记的偏离 #4（见 admin.go 路由表处的 DEVIATION(#4) 与 README 差异清单）：
+// Go 版不做 git 拉取与镜像重建，
 // /admin/update/check 与 /admin/repo/status 仍然照抄（只是读 GitHub，不改磁盘），
 // upgrade / pull / push 三条改为返回版本信息 + 手动更新提示。
 
@@ -200,7 +201,7 @@ func (a *App) checkUpdate(c *reqCtx) (any, error) {
 	return data, nil
 }
 
-// upgradeManual / repoPushManual 是偏离清单第 4 条的落地点：不做在线升级、不推仓库。
+// upgradeManual / repoPushManual 是偏离 #4 的落地点：不做在线升级、不推仓库。
 func (a *App) upgradeManual(c *reqCtx) (any, error) {
 	if _, err := decodeBodyDictDefault(c.R); err != nil {
 		return nil, err

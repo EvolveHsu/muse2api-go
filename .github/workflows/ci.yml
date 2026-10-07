@@ -23,7 +23,7 @@ jobs:
           if [ -n "$bad" ]; then echo "未格式化：$bad"; exit 1; fi
 
       # -composites=false：internal/pyval 的有序对象字面量 `{"key", v}` 是刻意的写法（374 处），
-      # 改成 keyed 会让每一处响应构造变成长噪声，登记在偏离清单的待办里；其余 vet 检查必须干净。
+      # 改成 keyed 会让每一处响应构造变成长噪声 —— 作为已知待办写在 README 的 CI 一节；其余 vet 检查必须干净。
       - name: vet
         run: go vet -composites=false ./...
 

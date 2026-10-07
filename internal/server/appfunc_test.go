@@ -436,7 +436,7 @@ func TestRequestDefaultsGolden(t *testing.T) {
 // --- 小工具 ---
 
 // samePrompt：tool_calls 那两条用例把客户端原样的 JSON 结构再 dumps 进提示词，
-// Go 的 map 无序 → 键序与 Python 的插入序不同（偏离清单第 13 条）。
+// Go 的 map 无序 → 键序与 Python 的插入序不同（键序类差异不编号，见 README 差异一节说明）。
 // 只对这两条把内嵌 JSON 归一成排序后的写法再比，其余用例仍逐字节比。
 func samePrompt(got any, want any, idx int) bool {
 	if s, ok := want.(string); ok && (idx == 8 || idx == 9) {

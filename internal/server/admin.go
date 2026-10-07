@@ -47,6 +47,9 @@ func (a *App) registerAdmin() {
 	a.add("GET", "/admin/update/check", false, a.checkUpdate)
 	a.add("GET", "/admin/repo/status", false, a.checkUpdate)
 	a.add("GET", "/", false, a.indexPage)
+	// DEVIATION(#4): 上游这三条是「容器里 git pull / push，然后 os._exit(0) 靠重启策略拉起来」，
+	// 而本项目的部署方式是编译产物 + docker build，容器内没有带 .git 的工作副本，没有对应物。
+	// 所以路由与响应壳都保留（面板按钮不会 404），但只回版本信息与手动更新步骤。
 	a.add("POST", "/admin/update/upgrade", true, a.upgradeManual)
 	a.add("POST", "/admin/repo/pull", true, a.upgradeManual)
 	a.add("POST", "/admin/repo/push", true, a.repoPushManual)
@@ -278,7 +281,7 @@ func accountSansCookies(acc map[string]any) pyval.Obj {
 			keys = append(keys, k)
 		}
 	}
-	// Python 保留 dict 插入序；Go map 无序，这里按字母排（偏离清单第 6 条）。
+	// Python 保留 dict 插入序；Go map 无序，这里按字母排（键序类差异不编号，见 README 差异一节说明）。
 	sort.Strings(keys)
 	out := make(pyval.Obj, 0, len(keys)+1)
 	for _, k := range keys {

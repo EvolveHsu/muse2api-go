@@ -474,6 +474,10 @@ func (a *App) writeError(w http.ResponseWriter, r *http.Request, status int, det
 
 const corsMethods = "GET, POST, PATCH, DELETE, OPTIONS"
 
+// DEVIATION(#17): 代码里的头名字面量一律写成全小写，是为了**读起来**与上游一致（Starlette 直接
+// 按你给的键发出去，线上就是 `content-length` / `vary` 这种小写）。Go 的 net/http 在写 socket 前
+// 会把它规范化成标题式（`Content-Length` / `Vary`），HTTP/1.1 头名大小写不敏感，实测**值**逐字相同。
+// 金样本比对响应头时忽略大小写，正是为了不把这条差异算成契约不一致。
 func applyCORS(w http.ResponseWriter, r *http.Request) {
 	h := w.Header()
 	h.Add("vary", "Origin")

@@ -50,7 +50,7 @@ type Engine struct {
 	// 而金样本录制时这一步是被打桩跳过的。nil 时用真实的 EnsurePage。
 	EnsurePageFn func(cookies map[string]string, expires map[string]int, accountID string) (Session, error)
 
-	// DEVIATION: Python 没有 visible / renewMu，它靠 GIL 保证「一次赋值/一次查表」的原子性。
+	// DEVIATION(#16): Python 没有 visible / renewMu，它靠 GIL 保证「一次赋值/一次查表」的原子性。
 	// Go 里这两个字段会被**不持 GEN_LOCK 的读者**看到：面板每几秒打 /admin/status 与 /readyz
 	// （BrowserProcUp），保活协程读写 lastHTTPRenew（renewAndPersist 在锁外也走）。
 	// 不加锁的并发读写在 Go 里是数据竞争，最坏 `fatal error: concurrent map writes` 直接带走进程。
