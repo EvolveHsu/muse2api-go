@@ -9,7 +9,7 @@
 //   node tools/nas_deploy.mjs probe    # 只读体检：磁盘、docker、端口、线上 chromium 版本
 //   node tools/nas_deploy.mjs push     # 上传 Dockerfile / version.json / build/muse2api-go
 //   node tools/nas_deploy.mjs build    # docker build
-//   node tools/nas_deploy.mjs run      # docker run -d 起在 38467，独立 data-go
+//   node tools/nas_deploy.mjs run      # docker run -d 起在 NAS_HOST_PORT（默认 8080），独立 data-go
 //   node tools/nas_deploy.mjs stats    # 采一次空闲内存（docker stats + cgroup + 进程树）
 //   node tools/nas_deploy.mjs logs     # 容器日志尾部
 //   node tools/nas_deploy.mjs exec '<只读命令>'
@@ -23,6 +23,8 @@
 //   - probe/exec 是只读的；push/build/run 会在 NAS 上新增目录、镜像与容器（不动既有服务）。
 import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { execSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 
 function needEnv(key) {
@@ -41,10 +43,12 @@ function hostOnly(v) {
 }
 
 const HOST = hostOnly(needEnv('NAS_HOST')), USER = needEnv('NAS_USER'), PORT = Number(process.env.NAS_PORT || 22);
-const REMOTE_DIR = '/opt/muse2api-go';
+// NAS_REMOTE_DIR 是构建上下文与 data-go 的落点，默认给一个中性路径；
+// 各家 NAS 的挂载点不同（例如飞牛是 /vol1/1000/docker/…），按需用自己的那个，别写进仓库。
+const REMOTE_DIR = (process.env.NAS_REMOTE_DIR || '/opt/muse2api-go').trim().replace(/\/+$/, '');
 const IMG = 'muse2api-go:1.5.4';
 const CONTAINER = 'muse2api-go';
-const HOST_PORT = '38467';
+const HOST_PORT = process.env.NAS_HOST_PORT || '8080';
 
 const PW = process.env.NAS_PW;
 if (!PW) {
@@ -77,7 +81,7 @@ const steps = {
     'df -h /vol1 | tail -2',
     'docker --version; docker compose version 2>&1 | head -2',
     'docker ps --format "{{.Names}} {{.Image}} {{.Status}} {{.Ports}}"',
-    'ss -ltnp 2>/dev/null | grep -c ":38467" || echo "38467 空闲"',
+    `ss -ltnp 2>/dev/null | grep -c ":${HOST_PORT}" || echo "${HOST_PORT} 空闲"`,
     // 线上那套的 chromium 版本：Go 镜像必须拿到同一个包，DOM 行为才可比
     'docker exec muse2api chromium --version 2>/dev/null || echo "读不到"',
     'docker exec muse2api python3 -c "import fastapi,starlette,sys;print(f\'py {sys.version.split()[0]} fastapi {fastapi.__version__} starlette {starlette.__version__}\')" 2>&1 | tail -1',
@@ -85,9 +89,12 @@ const steps = {
     `ls -la ${REMOTE_DIR} 2>/dev/null || echo "目标目录还不存在（正常）"`,
     'nproc; free -m | head -2',
   ],
-  push: [],
+  push: [],   // 走下面 upload 分支：把 git 跟踪的源码打成 ctx.tar 送上去
   build: [
-    `cd ${REMOTE_DIR} && docker build -t ${IMG} . 2>&1 | tail -25`,
+    // 上下文是 push 解出来的源码树，Dockerfile 在第一步里用官方 golang 镜像编译 ——
+    // 与外部用户 `docker build .` 走的是同一条路径，公开的东西和我们实际跑的东西不会漂移。
+    `test -f ${REMOTE_DIR}/ctx/Dockerfile || { echo "先跑 push（ctx 还没上传）"; exit 1; }`,
+    `cd ${REMOTE_DIR}/ctx && docker build -t ${IMG} . 2>&1 | tail -30`,
     `docker images ${IMG} --format "{{.Repository}}:{{.Tag}} {{.Size}}"`,
   ],
   run: [
@@ -156,37 +163,43 @@ const upload = (local, remote) => new Promise((res, rej) => {
 
 c.on('ready', async () => {
   if (mode === 'push') {
-    const files = [
-      ['Dockerfile', 'Dockerfile'],
-      ['deploy/version.json', 'deploy/version.json'],
-      ['build/muse2api-go', 'build/muse2api-go'],
-    ];
-    for (const [, rel] of files) {
-      if (!fs.existsSync(rel)) {
-        console.error(`本地缺 ${rel} —— 先跑：GOOS=linux GOARCH=amd64 CGO_ENABLED=0 ` +
-          'go build -trimpath -ldflags="-s -w" -o build/muse2api-go ./cmd/muse2api');
-        c.end();
-        process.exit(1);
-      }
-    }
-    const dirs = [REMOTE_DIR, `${REMOTE_DIR}/build`, `${REMOTE_DIR}/deploy`];
-    const mk = await exec('mkdir -p ' + dirs.map((d) => JSON.stringify(d)).join(' '));
+    // 上传的是「git 跟踪的源码」打成的 tar，而不是预编译二进制：镜像改为多阶段构建后，
+    // 远端要能独立 `docker build`，与外人 clone 后跑的完全同一条路径。
+    // 只取 git ls-files，天然排除了 .remote/、docs/、build/ 这些本地脚手架与个人痕迹。
+    console.log(`远端目录 ${REMOTE_DIR}（NAS_REMOTE_DIR 没设时用默认值；Git Bash 会把 / 开头的值改写成 D:/Program Files/Git/…，传路径务必带 MSYS_NO_PATHCONV=1）`);
+    const list = execSync('git ls-files -z', { encoding: 'buffer' }).toString('latin1').split('\0').filter(Boolean);
+    if (!list.length) { console.error('git ls-files 为空'); c.end(); process.exit(1); }
+    const TARBALL = '.remote/ctx.tar';
+    fs.mkdirSync('.remote', { recursive: true });
+    fs.rmSync(TARBALL, { force: true });
+    // GNU tar 的 --null 是位置性选项，必须在 -T 之前，否则"读到 NUL 字节"直接报错。
+    execSync('tar --null --format=gnu -cf ' + JSON.stringify(TARBALL) + ' --no-recursion -T -',
+      { input: Buffer.from(list.join('\0') + '\0', 'latin1'), stdio: ['pipe', 'ignore', 'inherit'] });
+    const bytes = fs.statSync(TARBALL).size;
+    const localSha = createHash('sha256').update(fs.readFileSync(TARBALL)).digest('hex');
+    console.log(`打包 ${list.length} 个文件 / ${(bytes / 1048576).toFixed(2)} MB，sha256 ${localSha.slice(0, 16)}…`);
+
+    const mk = await exec(`mkdir -p ${JSON.stringify(REMOTE_DIR)}`);
     if (mk.code !== 0) { console.error('mkdir 失败：' + mk.out); c.end(); process.exit(1); }
-    for (const [local, rel] of files) {
-      process.stdout.write(`上传 ${rel} (${(fs.statSync(local).size / 1048576).toFixed(2)} MB)…\n`);
-      const r = await upload(local, `${REMOTE_DIR}/${rel}`);
-      if (!r.out.includes('WROTE_OK')) {
-        console.error(`  写入失败：${r.out}`);
-        c.end();
-        process.exit(1);
-      }
-      const bytes = fs.statSync(local).size;
-      const verify = await exec(`wc -c < ${JSON.stringify(`${REMOTE_DIR}/${rel}`)}`);
-      const got = Number(String(verify.out).trim());
-      console.log(`  本地=${bytes} 远端=${got} ${got === bytes ? 'OK' : '字节不符!'}`);
-      if (got !== bytes) { c.end(); process.exit(1); }
+    const up = await upload(TARBALL, `${REMOTE_DIR}/ctx.tar`);
+    if (!up.out.includes('WROTE_OK')) { console.error('写入失败：' + up.out); c.end(); process.exit(1); }
+
+    // 先按摘要确认送达无损，再解包 —— 别解出一个半截的上下文去构建。
+    const sum = await exec(`sha256sum ${JSON.stringify(`${REMOTE_DIR}/ctx.tar`)} 2>&1`);
+    const remoteSha = (sum.out.match(/^[0-9a-f]{64}/) || [''])[0];
+    if (remoteSha !== localSha) {
+      console.error(`上下文摘要不符：本地 ${localSha.slice(0, 16)}… 远端 ${remoteSha.slice(0, 16)}…`);
+      c.end();
+      process.exit(1);
     }
-    console.log((await exec(`sha256sum ${REMOTE_DIR}/build/muse2api-go`)).out);
+    console.log('远端摘要一致 ✓');
+
+    const ext = await exec(`cd ${JSON.stringify(REMOTE_DIR)} && rm -rf ctx && mkdir ctx ` +
+      `&& tar -xf ctx.tar -C ctx && rm -f ctx.tar ` +
+      `&& test -f ctx/Dockerfile && test -f ctx/go.mod && echo "Dockerfile 与 go.mod 就位 ✓" ` +
+      `&& echo "解包 $(find ctx -type f | wc -l) 个文件"`);
+    console.log(ext.out.trim());
+    if (ext.code !== 0) { console.error('解包失败：' + ext.out); c.end(); process.exit(1); }
   } else {
     for (const cmd of cmds) {
       const r = await exec(cmd);

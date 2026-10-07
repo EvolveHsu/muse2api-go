@@ -1,17 +1,19 @@
-# 镜像只需要 build/muse2api-go 与 deploy/version.json，其余全部排除。
-# 尤其是各包的 testdata：那是给 Go 测试用的金样本，不进镜像。
+# 多阶段构建：builder 阶段要编译，所以源码、go.mod/go.sum 与内嵌资源（面板 HTML、
+# openapi 快照、各包 testdata）都必须在上下文里 —— 别再排除 internal/ 或 testdata/，
+# 那会让 `docker build .` 直接编不过。
+#
+# 最终镜像只从 builder 里取二进制、再 COPY deploy/version.json，所以被排除的东西
+# 不会进镜像；这里排除的是"根本不该发给 daemon"的东西：本地脚手架与个人痕迹。
 .git
 .gitattributes
 .gitignore
+.dockerignore
 .reference
 .remote
 .tmp
+.qoder*
 docs
-internal
-cmd
-tools
-go.mod
-go.sum
+build
 *.exe
-Dockerfile
 deploy/docker-compose.go.yml
+node_modules

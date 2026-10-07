@@ -1,21 +1,18 @@
 version: '3.8'
 
-# Go 版与 Python 版并行双跑用的 compose 文件。
-# Python 版继续占宿主 38465，这份起在 38467，数据目录 ./data-go 完全独立 ——
+# Go 版与 Python 版并行双跑用的 compose 样例：数据目录 ./data-go 完全独立，
 # 两边各自的账号库/任务/媒体互不干扰，验证通过后再决定切流量还是长期并存。
+# 宿主端口（这里是 8080）随你挑，只要不与其他服务撞；容器内固定监听 18610。
 #
-# 在 NAS 上的目录准备（build 上下文只需要这三样）：
-#   /opt/muse2api-go/
-#     ├── Dockerfile              ← 仓库根的 Dockerfile
-#     ├── build/muse2api-go       ← 本地交叉编译产物（GOOS=linux CGO_ENABLED=0）
-#     └── deploy/version.json     ← /admin/status 与 /admin/update/check 读它报版本
-#   再把本文件复制成 docker-compose.yml；旁边放一份 .env（600 权限）写 MUSE2API_KEY=…，
-#   与 Python 侧共用同一把密钥 —— 客户端只改端口就够用，重建容器也不会再换 key。
-#   然后 docker compose up -d。
+# 构建：Dockerfile 是两阶段的（builder 用官方 golang 镜像编译，运行时只留二进制 + chromium），
+# 所以上下文就是仓库根，不需要预先编译任何东西：
+#   git clone <本仓库> && cd <本仓库> && docker compose -f deploy/docker-compose.go.yml up -d --build
+# 密钥放旁边一份 .env（600 权限）写 MUSE2API_KEY=…；若与 Python 版共用同一把密钥，
+# 客户端只改端口就够用，且重建容器也不会再换 key。
 #
 # 想把现有账号带过来（cookie 快照导入，两边 accounts.json 的格式是同一套）：
-#   docker cp muse2api:/app/data/accounts.json /opt/muse2api-go/data-go/accounts.json
-#   docker compose restart          # 导入前先停一次，别让两边的保活同时续签同一批 cookie
+#   docker cp <python容器>:/app/data/accounts.json ./data-go/accounts.json
+#   docker compose -f deploy/docker-compose.go.yml restart   # 导入前先停一次，别让两边保活同时续签同一批 cookie
 services:
   muse2api-go:
     build:
@@ -29,7 +26,7 @@ services:
     # 每「起一次浏览器再释放」就会攒下一排僵尸进程（实测一次循环留下 8 个）。
     init: true
     ports:
-      - "38467:18610"
+      - "8080:18610"
     environment:
       # 留空则首次启动自动生成一把写进 data-go/.env（与 Python 版同一条路径）
       - MUSE2API_KEY=${MUSE2API_KEY:-}

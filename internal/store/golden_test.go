@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-// runGoldenSequence 用固定 uuid/时间走一遍与 .remote/golden.py（真 Python store.py）
+// runGoldenSequence 用固定 uuid/时间走一遍与 tools/golden/golden.py（真 Python store.py）
 // 完全相同的调用序列，产物落在 dir 下。
 func runGoldenSequence(t *testing.T, dir string) (stats map[string]any, pickedSame bool) {
 	t.Helper()

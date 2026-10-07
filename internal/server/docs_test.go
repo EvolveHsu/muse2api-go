@@ -16,9 +16,9 @@ import (
 	"muse2api-go/internal/webui"
 )
 
-// pendingDocPaths 是「代码已经对齐 1.5.4、内嵌的 openapi.json 还是 1.5.3 录的」那几条。
-// 38465 升到 1.5.4 之后重录一次文档，这张表就该清空 —— 测试会检查它是否还有残留，
-// 不允许它悄悄长成一个逃生口。
+// pendingDocPaths 是"代码已同步上游、但内嵌的 openapi.json 快照还没重录"时用来临时放行
+// 那几条路由的白名单。它必须保持为空：对账测试会检查残留，不允许它悄悄长成一个逃生口。
+// 真要同步上游新版本，正确顺序是先跑 tools/golden 重录 openapi.json，再改路由。
 var pendingDocPaths = map[string]bool{}
 
 // docsAutoRoutes 是 FastAPI 装配时白挂出来的四条：它们不出现在自己生成的 openapi.json 里

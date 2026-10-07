@@ -25,7 +25,7 @@
 
 我们实测过容器内存构成（同一台机器、同一时刻）：523MB 常驻里 Python 应用层只有 **57MB**，其余约 465MB 全是 Chromium 进程树。所以换语言并不能把内存压下去 —— 真正有效的是**空闲释放浏览器**，这也是本移植版的头号行为差异。
 
-早期还做过一次协议嗅探（只读 CDP 会话挂在热标签页上录 WS 报文），结论是浏览器**去不掉**：结果字节是以约 22KB 的分片从一条 `wss://…/v1/noise` 的加密隧道里流回来的，票据由页面内 JS 生成（ES256 JWT + ed25519 公钥参与的 notary 准入），没有任何 REST 端点可以替代。想做无浏览器客户端等于要从压缩后的 JS 里复刻密钥交换与隧道内私有协议，且对方每次发版都可能变。
+早期还做过一次协议嗅探（只读 CDP 会话挂在热标签页上录 WS 报文），结论是浏览器**去不掉**：生成结果是从一条**加密的私有协议隧道**里流回页面的，准入票据由页面内 JS 现场计算，没有任何 REST 端点可以替代。想做"无浏览器客户端"等于要从压缩后的前端代码里复刻整套密钥交换与隧道内协议，而对方每次发版都可能变 —— 这条路判死刑，别再试第二次。
 
 ---
 
@@ -56,23 +56,35 @@ curl -X POST http://<host>:<port>/v1/videos/generations \
 
 ## 快速开始
 
-### 1. 编译二进制（镜像只拷产物，构建机上不需要装 Docker）
+### 1. 构建镜像
 
-```bash
-# 需要 Go ≥ 1.27；CGO_ENABLED=0 是必须的：静态链接后运行时不依赖 glibc 之外的东西
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
-  go build -trimpath -ldflags="-s -w" -o build/muse2api-go ./cmd/muse2api
-```
-
-### 2. 出镜像并起容器
-
-镜像基于 `debian:bookworm-slim` + 发行版自带的 `chromium`（**与上游同一发行版、同一浏览器包**，否则 DOM 行为不可比）。`deploy/docker-compose.go.yml` 是并行双跑用的样例：独立数据目录 `./data-go`、`init: true`、`shm_size: 2gb`，宿主端口自选（示例里我们用 38467，上游 Python 占 38465）。
+`Dockerfile` 是两阶段的：builder 用官方 `golang` 镜像把唯一的入口命令静态编出来（`CGO_ENABLED=0`，运行时不依赖 glibc 之外的东西），runtime 阶段只留二进制 + chromium。**clone 下来直接构建就行，宿主机不用装 Go。**
 
 ```bash
 docker build -t muse2api-go:1.5.4 .
+```
+
+运行阶段基于 `debian:bookworm-slim` + 发行版自带的 `chromium`（**与上游同一发行版、同一浏览器包**，否则 DOM 行为不可比；换 chromium 版本等于换了被测对象）。
+
+### 2. 起容器
+
+```bash
 docker run -d --name muse2api-go --restart unless-stopped --init \
   -p 8080:18610 -v $PWD/data-go:/app/data --shm-size=2gb \
-  -e MUSE2API_KEY=... muse2api-go:1.5.4
+  -e MUSE2API_KEY=<你的密钥> muse2api-go:1.5.4
+```
+
+三个参数都不是可选的装饰：
+- `--init`：Go 进程当 PID 1 时会收养 chromium 孤儿子孙，而代码只 `Wait()` 自己那个直接子进程 —— 实测一轮"起浏览器再释放"会留下 8 个僵尸进程，得让 init 收尸。
+- `--shm-size=2gb`：Chromium 渲染大图时 `/dev/shm` 不够会直接崩。
+- `-v ./data-go:/app/data`：账号库、任务与生成的媒体都在这一棵树下，换容器不必重导 cookie。
+
+想与 Python 版并行双跑，`deploy/docker-compose.go.yml` 是现成样例（独立数据目录、宿主端口自选）。
+
+想在裸机上跑（不要 Docker），自己编一份即可：
+
+```bash
+go build -trimpath -ldflags="-s -w" -o build/muse2api-go ./cmd/muse2api   # 需要 Go ≥ 1.27
 ```
 
 ### 3. 导入账号（cookie）

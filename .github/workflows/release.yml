@@ -1,0 +1,76 @@
+name: release
+
+# 打 tag 才出包（例如 `git tag v1.5.4 && git push origin v1.5.4`）。
+# 产物是**静态编译的入口二进制**，给"没有 Go 工具链的机器"用：NAS 上直接
+#   ./muse2api-go   或   docker run -v 方式挂进去
+# 都行；有 Docker 的更省事的路径是 `docker build .`（两阶段，宿主机不需要 Go）。
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  binaries:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: '0'
+        run: |
+          # 注意：GitHub 默认 shell 是 bash -e，用 `[ cond ] && x=` 在不命中时会以非零码中断构建
+          ext=""
+          case "$GOOS" in windows) ext=".exe" ;; esac
+          name="muse2api-go-${GOOS}-${GOARCH}${ext}"
+          go build -trimpath -ldflags="-s -w" -o "$name" ./cmd/muse2api
+          sha256sum "$name" > "${name}.sha256"
+          echo "ASSET=$name" >> "$GITHUB_ENV"
+          echo "ASSET_SHA=${name}.sha256" >> "$GITHUB_ENV"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ASSET }}
+          path: |
+            ${{ env.ASSET }}
+            ${{ env.ASSET_SHA }}
+
+  release:
+    needs: binaries
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: 生成校验清单
+        run: sha256sum muse2api-go-* > SHA256SUMS
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            muse2api-go-*
+            SHA256SUMS
+          body: |
+            二进制按 `CGO_ENABLED=0` 静态编译，运行时不依赖 glibc 之外的东西。
+            校验：`sha256sum -c SHA256SUMS`。
+            容器方式（推荐，宿主机不需要 Go）：clone 仓库后 `docker build -t muse2api-go:<标签> .`。
+          generate_release_notes: true
