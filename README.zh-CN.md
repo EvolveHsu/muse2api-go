@@ -136,7 +136,7 @@ curl -s -H "Authorization: Bearer $MUSE2API_KEY" localhost:8080/v1/models
 
 ## 与上游的差异
 
-差异点在代码里都带 `DEVIATION` 注释，`grep -rn DEVIATION internal/ cmd/` 能全列出来（23 处）。下面这 9 条编了号（#1、#4、#13–#17、#19、#20），序号来自移植时逐条登记的差异台账；台账里其余那些属于措辞、键序、数值宽容度级别，不影响你怎么用，所以只留了不带编号的注释。
+差异点在代码里都带 `DEVIATION` 注释，`grep -rn DEVIATION internal/ cmd/` 出来是 24 行：19 条是注释本体，5 条是指向它们的交叉引用。下面这 9 条编了号（#1、#4、#13–#17、#19、#20），序号来自移植时逐条登记的差异台账；台账里其余那些属于措辞、键序、数值宽容度级别，不影响你怎么用，所以只留了不带编号的注释。
 
 1. **空闲释放浏览器 + 取消自动预热**（#1）—— 达成低常驻内存的唯一手段，`MUSE2API_BROWSER_IDLE_MINUTES` / `MUSE2API_WARM_TAB` 可关。
 2. **不做容器内 git 自更新**（#4）—— `/admin/repo/pull`、`/admin/repo/push`、`/admin/update/upgrade` 只返回版本信息与手动更新步骤，面板对应按钮置灰。上游那两个端点是"在容器里 git pull 然后 `os._exit(0)` 靠重启策略拉起来"，而本项目的部署方式是"编译产物 + docker build"，容器内没有带 `.git` 的工作副本，没有对应物。
