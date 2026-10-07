@@ -12,6 +12,7 @@ list 型接口只记「类型 + 键集合」不记真实内容，免得把线上
 """
 import base64
 import hashlib
+import re
 import json
 import sys
 
@@ -21,12 +22,17 @@ import requests  # noqa: E402
 import config as C  # noqa: E402
 
 CFG = C.CFG
+
+# 12 位十六进制的账号 id 与带横线的 UUID：录进金样本时一律换成占位（见下面 shape()）。
+_ID_RE = re.compile(r"^(?:[0-9a-f]{12}|[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})$", re.I)
 BASE = "http://127.0.0.1:%d" % CFG.port
 GOOD = {"Authorization": "Bearer " + (CFG.api_key or "")}
 BAD = {"Authorization": "Bearer definitely-not-the-key"}
 
 SECRET_KEYS = {"cookies", "cookies_exp", "api_key", "cookie_header",
-               "authorization", "token", "key", "batch"}
+               "authorization", "token", "key", "batch",
+               # 账号身份：label 是人给账号起的名字，vm_id 是云端实例号，都不该随仓库发布
+               "label", "vm_id", "account"}
 # date 每次都不同；content-length 由 body 决定。两边都不进比对。
 DROP_HEADERS = {"date", "content-length", "connection", "server"}
 
@@ -48,8 +54,11 @@ def shape(v):
     if isinstance(v, list):
         return {"__type__": "array", "__n__": len(v),
                 "__first__": shape(v[0]) if v else None}
-    return {"__type__": type(v).__name__, "__value__": v if not isinstance(v, str)
-            else v[:60]}
+    # shape 不比标量值（Go 侧 sameShape 只比类型名），所以这里可以放开手把身份类字符串打掉：
+    # 12 位十六进制的账号 id、带横线的 uuid 都换成占位，媒体文件那种 32 位十六进制名不受影响。
+    masked = isinstance(v, str) and bool(_ID_RE.match(v))
+    return {"__type__": type(v).__name__,
+            "__value__": "<ID>" if masked else (v if not isinstance(v, str) else v[:60])}
 
 
 CASES = []
