@@ -3,6 +3,7 @@ package engine
 import (
 	"encoding/json"
 	"path/filepath"
+	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -173,7 +174,9 @@ func TestOpenPageMatchesGolden(t *testing.T) {
 		}
 	}
 
-	if _, err := e.openPage(); err != nil {
+	// 这个场景没有 browser 级会话（e.browser == nil），走的是上游的"关掉旧页面再开"回退路径；
+	// 1.6.0 新增的 Incognito 隔离路径由 TestOpenPageIsolatedContext 单独覆盖。
+	if _, err := e.openPage(e.NewPageCtx()); err != nil {
 		t.Fatal(err)
 	}
 
@@ -226,5 +229,99 @@ func TestOpenPageMatchesGolden(t *testing.T) {
 		if !jsonEquivalent([]any{w[0], w[1]}, []any{g.Method, gp}) {
 			t.Errorf("第 %d 个 enable 不一致\n py=%v\n go=%v %v", i, w, g.Method, g.Params)
 		}
+	}
+}
+
+// TestOpenPageIsolatedContextMatchesGolden 校验 1.6.0 新增的隔离上下文开页路径：
+// 浏览器级连接上恰好两条 Target.* 调用、页面 CDP 四个 enable、上下文登记到 active 集合。
+func TestOpenPageIsolatedContextMatchesGolden(t *testing.T) {
+	g := loadEngineGolden(t)
+	sec := g.OpenPageIsolated
+	cfg := testCfg(t)
+
+	browser := &fakeSession{}
+	browser.sendRet = func(method string, params map[string]any) (map[string]any, error) {
+		switch method {
+		case "Target.createBrowserContext":
+			return map[string]any{"result": map[string]any{"browserContextId": "CTX-1"}}, nil
+		case "Target.createTarget":
+			return map[string]any{"result": map[string]any{"targetId": "T7"}}, nil
+		}
+		return map[string]any{"result": map[string]any{}}, nil
+	}
+	var made *fakeSession
+	var madeWS string
+	e := NewEngine(cfg, &fakeHTTP{}, func(wsURL string, timeout time.Duration) (Session, error) {
+		madeWS = wsURL
+		made = &fakeSession{}
+		return made, nil
+	})
+	e.now = func() time.Time { return fixedTime }
+	e.sleep = func(time.Duration) {}
+	e.setBrowser(browser)
+
+	ctx := e.NewPageCtx()
+	if _, err := e.openPage(ctx); err != nil {
+		t.Fatal(err)
+	}
+
+	gb, _ := json.Marshal(browser.sendsAsPairs())
+	var gotBrowser any
+	_ = json.Unmarshal(gb, &gotBrowser)
+	if !jsonEquivalent(sec["browser"], gotBrowser) {
+		t.Errorf("浏览器级调用不同:\n py=%v\n go=%v", sec["browser"], gotBrowser)
+	}
+
+	ge, _ := json.Marshal(made.sendsAsPairs())
+	var gotEnables []any
+	_ = json.Unmarshal(ge, &gotEnables)
+	// downloadPath 跟本机临时目录走：把金样本里的那一条换成 Go 的实际值，只校验其它字段。
+	rawWant, _ := json.Marshal(sec["enables"])
+	var wantEnables []any
+	_ = json.Unmarshal(rawWant, &wantEnables)
+	for i, raw := range wantEnables {
+		pair, _ := raw.([]any)
+		if len(pair) != 2 {
+			continue
+		}
+		pm, _ := pair[1].(map[string]any)
+		if pm == nil {
+			continue
+		}
+		if _, has := pm["downloadPath"]; !has {
+			continue
+		}
+		gotPair, _ := gotEnables[i].([]any)
+		if len(gotPair) == 2 {
+			if gpm, ok := gotPair[1].(map[string]any); ok {
+				pm["downloadPath"] = gpm["downloadPath"]
+			}
+		}
+	}
+	if !jsonEquivalent(wantEnables, gotEnables) {
+		t.Errorf("页面 enable 不同:\n py=%v\n go=%v", wantEnables, gotEnables)
+	}
+	if madeWS != asString2(sec["ws_url"]) {
+		t.Errorf("页面 CDP 的 ws URL 不同: go=%q py=%v", madeWS, sec["ws_url"])
+	}
+	if ctx.ContextID != asString2(sec["context_id"]) {
+		t.Errorf("ctx.ContextID 不同: go=%q py=%v", ctx.ContextID, sec["context_id"])
+	}
+	e.contextsMu.Lock()
+	active := make([]string, 0, len(e.activeContexts))
+	for id := range e.activeContexts {
+		active = append(active, id)
+	}
+	e.contextsMu.Unlock()
+	sort.Strings(active)
+	var wantActive []any
+	rawA, _ := json.Marshal(sec["active_contexts"])
+	_ = json.Unmarshal(rawA, &wantActive)
+	gotActive := make([]any, 0, len(active))
+	for _, id := range active {
+		gotActive = append(gotActive, id)
+	}
+	if !jsonEquivalent(wantActive, gotActive) {
+		t.Errorf("active_contexts 不同: go=%v py=%v", gotActive, wantActive)
 	}
 }

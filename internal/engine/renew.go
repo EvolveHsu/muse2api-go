@@ -88,6 +88,7 @@ func (e *Engine) RenewSessionHTTP(cookies map[string]string, expires map[string]
 	vmID := asString(obj["vm_id"])
 	vmState := asString(obj["vm_state"])
 	wakeOK := false
+	wakeRequested := false
 	if wakeVM && vmID != "" && vmState != "DISABLED" {
 		headers["Cookie"] = cookieHeader(curCookies)
 		body := map[string]any{
@@ -96,18 +97,33 @@ func (e *Engine) RenewSessionHTTP(cookies map[string]string, expires map[string]
 			"connect_attempt_id": newUUID(),
 		}
 		if rw, err := e.HTTP.Post(vmWakeURL, headers, body, 8*time.Second); err == nil {
-			wakeOK = rw.StatusCode == 200
+			wakeRequested = rw.StatusCode == 200
+			// HTTP 200 只代表"请求已受理"；只有会话状态确认 VM 真的在跑，才算唤醒成功（上游 1.6.0）。
+			if wakeRequested {
+				if verify, err := e.HTTP.Get(sessionURL, headers, 12*time.Second, false); err == nil &&
+					verify.StatusCode == 200 {
+					var vs map[string]any
+					if json.Unmarshal(verify.Body, &vs) == nil &&
+						asString(vs["status"]) == "assigned" {
+						if s := asString(vs["vm_state"]); s != "" {
+							vmState = s
+						}
+						wakeOK = vmState == "RUNNING"
+					}
+				}
+			}
 		}
 	}
 
 	return &RenewResult{
-		OK:         asString(obj["status"]) == "assigned",
-		Status:     asString(obj["status"]),
-		VMID:       vmID,
-		VMState:    vmState,
-		WakeOK:     wakeOK,
-		Cookies:    curCookies,
-		CookiesExp: curExp,
+		OK:            asString(obj["status"]) == "assigned",
+		Status:        asString(obj["status"]),
+		VMID:          vmID,
+		VMState:       vmState,
+		WakeOK:        wakeOK,
+		WakeRequested: wakeRequested,
+		Cookies:       curCookies,
+		CookiesExp:    curExp,
 	}, nil
 }
 

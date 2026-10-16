@@ -25,21 +25,21 @@ type Attachment struct {
 }
 
 // clickPoint 对应 _click_point()。
-func (e *Engine) clickPoint(x, y int) {
+func (e *Engine) clickPoint(page Session, x, y int) {
 	for _, t := range [2]string{"mousePressed", "mouseReleased"} {
-		_, _ = e.page.Send("Input.dispatchMouseEvent", map[string]any{
+		_, _ = page.Send("Input.dispatchMouseEvent", map[string]any{
 			"type": t, "x": x, "y": y, "button": "left", "clickCount": 1}, 0)
 	}
 }
 
 // Attachments 对应 attachments()：任何异常都退回空列表（与 Python 一致）。
-func (e *Engine) Attachments() []Attachment {
+func (e *Engine) Attachments(page Session) []Attachment {
 	// Python 异常路径返回的是 []（不是 None），落盘/判空语义不同，必须保持一致。
 	out := []Attachment{}
-	if e.page == nil {
+	if page == nil {
 		return out
 	}
-	raw, err := e.page.JS(attJS, false, 0)
+	raw, err := page.JS(attJS, false, 0)
 	if err != nil || !raw.Truthy() {
 		return out
 	}
@@ -51,24 +51,24 @@ func (e *Engine) Attachments() []Attachment {
 
 // scrollBottom 对应 _scroll_bottom()：muse.ai 的滚动容器是内层 div，
 // 虚拟列表按滚动位置渲染，不滚到底新消息根本不在 DOM 里。
-func (e *Engine) scrollBottom() {
-	if e.page == nil {
+func (e *Engine) scrollBottom(page Session) {
+	if page == nil {
 		return
 	}
-	_, _ = e.page.JS(jsScrollBottomL649, false, 0)
+	_, _ = page.JS(jsScrollBottom, false, 0)
 }
 
 // send 对应 _send()：先真点一下 textarea 拿焦点，再用 React 原型 setter 注入文字
 // （超长上下文比 Input.insertText 逐字注入快得多），然后等 Send 按钮出现并点击；
 // 失败再退到 Ctrl+Enter / Enter。返回 clicked | enter-sent | no-button。
-func (e *Engine) send(prompt string) (string, error) {
+func (e *Engine) send(page Session, prompt string) (string, error) {
 	// 1. 让输入框进入视口并拿到真实焦点
-	if _, err := e.page.JS(jsSendL559, false, 0); err != nil {
+	if _, err := page.JS(jsFocusInput, false, 0); err != nil {
 		// Python 里这一步被 except 吞掉，继续往下走
 	}
 	e.sleep(100 * time.Millisecond)
 
-	rectVal, err := e.page.JS(jsSendL571, false, 0)
+	rectVal, err := page.JS(jsInputRect, false, 0)
 	if err != nil {
 		return "", err
 	}
@@ -80,7 +80,7 @@ func (e *Engine) send(prompt string) (string, error) {
 		return "", &ErrGeneration{Msg: "找不到聊天输入框"}
 	}
 	for _, t := range [2]string{"mousePressed", "mouseReleased"} {
-		if _, err := e.page.Send("Input.dispatchMouseEvent", map[string]any{
+		if _, err := page.Send("Input.dispatchMouseEvent", map[string]any{
 			"type": t, "x": pt.X, "y": pt.Y, "button": "left", "clickCount": 1}, 0); err != nil {
 			return "", err
 		}
@@ -92,21 +92,21 @@ func (e *Engine) send(prompt string) (string, error) {
 		return "", &ErrGeneration{Msg: err.Error()}
 	}
 	valLen := 0
-	if v, err := e.page.JS(setterExpr, false, 0); err == nil {
+	if v, err := page.JS(setterExpr, false, 0); err == nil {
 		valLen = v.Int()
 	}
 	// Python 用 len(prompt) 判断，那是字符数不是字节数：中文提示词按字节会早一个数量级跳出这条兜底。
 	if valLen == 0 && utf8.RuneCountInString(prompt) < 500 {
-		if _, err := e.page.Send("Input.insertText", map[string]any{"text": prompt}, 0); err != nil {
+		if _, err := page.Send("Input.insertText", map[string]any{"text": prompt}, 0); err != nil {
 			return "", err
 		}
-		_, _ = e.page.JS(setterExpr, false, 0)
+		_, _ = page.JS(setterExpr, false, 0)
 	}
 
 	clicked := "no-button"
 	deadline := e.now().Add(3 * time.Second)
 	for e.now().Before(deadline) {
-		res, err := e.page.JS(jsSendL605, false, 0)
+		res, err := page.JS(jsSendButton, false, 0)
 		if err != nil {
 			return "", err
 		}
@@ -129,12 +129,12 @@ func (e *Engine) send(prompt string) (string, error) {
 					params["text"] = "\r"
 					params["unmodifiedText"] = "\r"
 				}
-				if _, err := e.page.Send("Input.dispatchKeyEvent", params, 0); err != nil {
+				if _, err := page.Send("Input.dispatchKeyEvent", params, 0); err != nil {
 					return "", err
 				}
 			}
 			e.sleep(time.Second)
-			v, err := e.page.JS(jsSendL631, false, 0)
+			v, err := page.JS(jsInputCleared, false, 0)
 			if err == nil && v.Truthy() {
 				clicked = "enter-sent"
 				break
@@ -158,24 +158,18 @@ var (
 	mediaRepoRe = regexp.MustCompile(`(?i)\.(?:webp|png|jpe?g|mp4|webm)|imagine_media|deliverable|generated\s+.*image|verified\s+generated|artifact`)
 )
 
-// score 对应 _wait_attachment 里的 _score()：按期望类型给附件打分。
-func scoreAttachment(a Attachment, expect string) int {
-	tid := strings.ToLower(a.Tid)
-	if expect == "video" {
-		if a.HasVideo || strings.Contains(tid, "video") {
-			return 2
-		}
-		return 1
-	}
-	if strings.Contains(tid, "image") || !a.HasVideo {
-		return 2
-	}
-	return 1
-}
+// videoExtRe 是「这看起来像一条真实视频源」的扩展名判定。
+var videoExtRe = regexp.MustCompile(`\.(mp4|webm|mov)$`)
 
-// WaitAttachment 对应 _wait_attachment()：轮询新附件，附带三条快速失败/宽限逻辑。
+// stillSendingRe 对应上游 1.6.0 新增的「提示词根本没送达网关」快速失败关键词。
+var stillSendingRe = regexp.MustCompile(`Still sending|Delivery not confirmed|正在发送|未确认送达`)
+
+// WaitAttachment 对应上游 1.6.0 重写后的 _wait_attachment()：
+//   - 严格按期望类型挑附件，绝不接受跨模态兜底（视频请求不再用封面静帧冒充成品）；
+//   - 新增「30 秒仍未送达后端（Still sending / Delivery not confirmed）」的快速失败。
+//
 // 返回 (附件, 是否拿到, 错误)；错误对应 Python 的 raise。
-func (e *Engine) WaitAttachment(baselineSrc string, timeout int, expect string,
+func (e *Engine) WaitAttachment(page Session, baselineSrc string, timeout float64, expect string,
 	onProgress func(int), baseAgentCnt, baseAttCnt int, stop <-chan struct{},
 	baselineSources map[string]bool) (Attachment, bool, error) {
 
@@ -183,13 +177,12 @@ func (e *Engine) WaitAttachment(baselineSrc string, timeout int, expect string,
 		baselineSources = map[string]bool{}
 	}
 	baselineSources[baselineSrc] = true
-	deadline := e.now().Add(time.Duration(timeout) * time.Second)
+	deadline := e.now().Add(time.Duration(timeout * float64(time.Second)))
 	tStart := e.now()
 	stableSrc := ""
 	stableN := 0
 	lastTxt := ""
 	txtStable := 0
-	fallbackSince := 0.0
 
 	for e.now().Before(deadline) {
 		if stop != nil {
@@ -200,59 +193,49 @@ func (e *Engine) WaitAttachment(baselineSrc string, timeout int, expect string,
 			}
 		}
 		e.sleep(600 * time.Millisecond)
-		e.scrollBottom()
-		atts := e.Attachments()
+		e.scrollBottom(page)
+		atts := e.Attachments(page)
 
-		// 视频请求优先挑带 video 的附件；muse 有时先渲染封面静帧，所以先记下图当作兜底，
-		// 再给视频节点一段宽限期，避免把封面 img 误当成品返回。
-		var att Attachment
-		var fallbackAtt Attachment
-		haveAtt, haveFallback := false, false
-		if len(atts) > 0 {
-			best := atts[0]
-			bestScore := scoreAttachment(best, expect)
-			for _, a := range atts[1:] {
-				if s := scoreAttachment(a, expect); s > bestScore {
-					best, bestScore = a, s
-				}
-			}
-			if bestScore >= 2 {
-				att, haveAtt = best, true
+		// 严格按期望类型挑候选：视频只认真实视频源（vSrc / hasVideo / 视频扩展名）。
+		// tid 含 "video" 不足以命中 —— muse 会先把 data-testid 标成 ...-presentation-video，
+		// 此时 <video> 可能尚未挂上，_ATT_JS 的 primary = v || img 会退回封面静帧。
+		var matching []Attachment
+		for _, a := range atts {
+			tid := strings.ToLower(a.Tid)
+			src := a.Src
+			vSrc := a.VSrc
+			match := false
+			if expect == "video" {
+				match = a.HasVideo || vSrc != "" || videoExtRe.MatchString(src)
 			} else {
-				fallbackAtt, haveFallback = atts[len(atts)-1], true
+				match = strings.Contains(tid, "image") ||
+					(!a.HasVideo && !videoExtRe.MatchString(src))
+			}
+			if match {
+				matching = append(matching, a)
 			}
 		}
-		if !haveAtt && haveFallback && expect == "video" {
-			if fallbackSince == 0.0 {
-				fallbackSince = float64(e.now().UnixNano()) / 1e9
-			}
-			if float64(e.now().UnixNano())/1e9-fallbackSince >= 15.0 {
-				att, haveAtt = fallbackAtt, true
-			}
+		var att Attachment
+		haveAtt := false
+		if len(matching) > 0 {
+			att, haveAtt = matching[len(matching)-1], true
 		}
 		if haveAtt {
 			src := att.Src
 			vSrc := att.VSrc
-			tid := att.Tid
-			isFallback := haveFallback && att == fallbackAtt &&
-				!(att.HasVideo || strings.Contains(strings.ToLower(tid), "video")) && expect == "video"
-			var want bool
-			switch {
-			case isFallback:
-				want = true // 宽限期已过，接受图片兜底结果
-			case expect == "video":
-				want = att.HasVideo || strings.Contains(tid, "video") ||
-					strings.Contains(src, "video") || strings.Contains(vSrc, "video") ||
-					strings.HasSuffix(src, ".mp4") || strings.HasSuffix(src, ".webm") ||
-					strings.HasSuffix(src, ".mov")
-			default:
-				want = strings.Contains(tid, "image") || !att.HasVideo
-			}
+			// 视频任务禁止用封面 src 冒充成品；无 vSrc 时只接受显式视频后缀的 src。
 			checkSrc := src
-			if expect == "video" && vSrc != "" {
-				checkSrc = vSrc
+			if expect == "video" {
+				switch {
+				case vSrc != "":
+					checkSrc = vSrc
+				case videoExtRe.MatchString(src):
+					checkSrc = src
+				default:
+					checkSrc = ""
+				}
 			}
-			if checkSrc != "" && !baselineSources[checkSrc] && want {
+			if checkSrc != "" && !baselineSources[checkSrc] {
 				if att.W > 0 && att.H > 0 {
 					return att, true, nil
 				}
@@ -276,25 +259,41 @@ func (e *Engine) WaitAttachment(baselineSrc string, timeout int, expect string,
 			onProgress(prog)
 		}
 
+		// 探测变量先给默认值：JS 探测失败时后面的判定按「没有新消息」处理（上游 1.6.0 同义）。
+		curCnt := baseAgentCnt
+		curTxt := ""
+		hasStop := false
+		tail := ""
 		var st chatState
-		raw, err := e.page.JS(jsWaitAttachmentL735, false, 0)
+		raw, err := page.JS(jsWaitAttachmentState, false, 0)
 		if err == nil && raw.Truthy() {
-			_ = json.Unmarshal([]byte(raw.Str2()), &st)
+			if json.Unmarshal([]byte(raw.Str2()), &st) != nil {
+				st = chatState{}
+			}
 		}
-		if creditsRe.MatchString(st.Tail) {
+		tail = st.Tail
+		if creditsRe.MatchString(tail) {
 			return Attachment{}, false, &ErrGeneration{Msg: "账号额度不足"}
 		}
-		// 侧边栏/失效连接的文案不足以判定本次生成失败，仍然由调用方的 timeout 兜底。
+		// A Stop button is also shown for messages never acknowledged by the gateway.
+		// 注意：上游这一条比较的 cur_cnt 还没被 st 覆盖（= base_agent_cnt），
+		// 因此事实条件就是 elapsed>30 且 tail 命中关键词；这里照抄，不自作主张"修正"。
+		if elapsed > 30.0 && curCnt == baseAgentCnt && stillSendingRe.MatchString(tail) {
+			return Attachment{}, false, &ErrGeneration{Msg: "提示词未成功送达后端（Still sending / Delivery not confirmed），终止等待并重试"}
+		}
+		curCnt = st.Cnt
+		curTxt = st.Txt
+		hasStop = st.Stop
 		// 快速失败：助手已完成纯文字回复（无 Stop 按钮且无新附件），且不是正在产出媒体的报告。
-		if st.Cnt > baseAgentCnt && st.Txt != "" && !st.Stop && len(atts) <= baseAttCnt {
-			if !mediaRepoRe.MatchString(st.Txt) {
-				if st.Txt == lastTxt {
+		if curCnt > baseAgentCnt && curTxt != "" && !hasStop && len(atts) <= baseAttCnt {
+			if !mediaRepoRe.MatchString(curTxt) {
+				if curTxt == lastTxt {
 					txtStable++
 				} else {
-					lastTxt, txtStable = st.Txt, 0
+					lastTxt, txtStable = curTxt, 0
 				}
 				if txtStable >= 15 && elapsed > 8.0 {
-					clip := []rune(st.Txt)
+					clip := []rune(curTxt)
 					if len(clip) > 120 {
 						clip = clip[:120]
 					}
@@ -313,11 +312,11 @@ func (e *Engine) WaitAttachment(baselineSrc string, timeout int, expect string,
 var debugFileRe = regexp.MustCompile(`debug-(.*)\.json$`)
 
 // debugDump 对应 _debug_dump()：失败时把 DOM 现状写到 data/debug-<tag>.json，任何异常都吞掉。
-func (e *Engine) debugDump(tag string) {
-	if e.page == nil {
+func (e *Engine) debugDump(page Session, tag string) {
+	if page == nil {
 		return
 	}
-	info, err := e.page.JS(assembleDebugDumpL1202(), false, 0)
+	info, err := page.JS(assembleDebugDump(), false, 0)
 	if err != nil {
 		return
 	}

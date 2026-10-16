@@ -80,6 +80,8 @@ type App struct {
 	// browser 对应 GEN_LOCK（全局串行），imgTaskLock 对应 IMAGE_TASK_LOCK（只管入队那一段）。
 	browser     *browserLock
 	imgTaskLock *sync.Mutex
+	// accounts 对应 AccountPoolManager：并发任务对账号的独占持有。
+	accounts *accountPool
 
 	routes []*route
 
@@ -102,9 +104,14 @@ type App struct {
 }
 
 func NewApp(cfg *config.Config, st *store.Store, eng *engine.Engine) *App {
+	limit := 1
+	if cfg != nil {
+		limit = cfg.MaxConcurrency
+	}
 	a := &App{
 		CFG: cfg, Store: st, Engine: eng,
-		browser:     newBrowserLock(),
+		browser:     newBrowserLock(limit),
+		accounts:    newAccountPool(st),
 		imgTaskLock: &sync.Mutex{},
 		now:         time.Now,
 		mono:        time.Now,

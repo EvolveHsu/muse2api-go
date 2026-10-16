@@ -16,7 +16,7 @@ import (
 //	③ 拉起后台保活守护任务。
 func (a *App) Startup(stop <-chan struct{}) {
 	if n := a.Store.FailInterruptedTasks("服务重启中断了任务，请重新提交"); n > 0 {
-		log.Printf("【启动】%d 个被重启打断的生图任务已置为失败", n)
+		log.Printf("【启动】%d 个被重启打断的任务已置为失败", n)
 	}
 	if a.apiKey() == "" {
 		newKey := "m2a_" + randHex(24) // 与 secrets.token_hex(24) 同宽：48 位十六进制
@@ -45,14 +45,11 @@ func (a *App) keepaliveLoop(stop <-chan struct{}) {
 	if !sleepOrStop(time.Second, stop) {
 		return
 	}
-	a.warmupBrowser()
+	a.safeRound(a.warmupBrowser)
 	for {
 		// Python 整段包在 try/except 里：单轮出错只记日志，守护任务不能因此退出。
 		a.safeRound(func() {
 			a.runKeepaliveAll(false)
-			if a.CFG.WarmTab && (a.Engine.CurrentAccountID() == "" || a.Engine.Page() == nil) {
-				a.warmupBrowser()
-			}
 		})
 		if !sleepOrStop(900*time.Second, stop) {
 			return
@@ -66,30 +63,39 @@ func (a *App) warmupBrowser() {
 	if !a.CFG.WarmTab {
 		return
 	}
-	if a.Engine.CurrentAccountID() != "" && a.Engine.Page() != nil {
-		return
-	}
-	acc := a.Store.PickAccount("", false, false, "")
-	if acc == nil || !truthy(acc["cookies"]) {
-		return
-	}
-	accID := strOf(acc["id"])
-	label := strOf(acc["label"])
+	// 上游 1.6.1 里这段预热先抢浏览器槽位，再从账号池里租一个空闲账号
+	// （record_use=False：预热不改变账号轮换计数），最后无论成败都清场归还。
 	a.browser.tryRun(func() {
+		ctx := a.Engine.NewPageCtx()
+		accID := ""
+		defer func() {
+			// 预热跑在独立 worker 线程/goroutine 里：不要把它的页面与账号租约留在这里。
+			a.Engine.CloseCurrentPage(ctx)
+			if accID != "" {
+				a.accounts.release(accID)
+			}
+		}()
+		acc, err := a.accounts.acquire("", "", false, false, 100*time.Millisecond, false)
+		if err != nil {
+			log.Printf("【浏览器预热】预热异常: %v", err)
+			return
+		}
+		accID = strOf(acc["id"])
+		label := strOf(acc["label"])
 		log.Printf("【浏览器预热】正在后台预热账号 %s (%s) 的热备标签页...", label, accID)
 		refreshed, err := a.renewAndPersist(accID, true, false)
 		if err != nil {
-			log.Printf("【浏览器预热】续签异常: %v", err)
+			log.Printf("【浏览器预热】预热异常: %v", err)
 			return
 		}
 		if refreshed != nil {
 			acc = refreshed
 		}
 		if err := a.Engine.Start(); err != nil {
-			log.Printf("【浏览器预热】启动浏览器失败: %v", err)
+			log.Printf("【浏览器预热】预热异常: %v", err)
 			return
 		}
-		if _, err := a.Engine.EnsurePage(toStringMap(acc["cookies"]),
+		if _, err := a.Engine.EnsurePage(ctx, toStringMap(acc["cookies"]),
 			cookieIntMap(acc["cookies_exp"]), accID); err != nil {
 			log.Printf("【浏览器预热】预热异常: %v", err)
 			return

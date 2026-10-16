@@ -83,6 +83,7 @@ section("argv", do_argv)
 # ---------- 2) cookie 注入参数 ----------
 class FakeCDP:
     def __init__(self, *a, **k):
+        self.args = a
         self.calls = []
 
     def send(self, method, params=None, timeout=None):
@@ -161,6 +162,43 @@ def do_open_page():
 
 
 section("open_page", do_open_page)
+
+
+# ---------- 3b) _open_page 的隔离上下文路径（1.6.0 新增） ----------
+class FakeBrowser:
+    """浏览器级 CDP 会话的最小桩：只实现 _open_page 用到的两条 Target.*。"""
+
+    def __init__(self):
+        self.calls = []
+
+    def send(self, method, params=None, timeout=None):
+        self.calls.append((method, params))
+        if method == "Target.createBrowserContext":
+            return {"result": {"browserContextId": "CTX-1"}}
+        if method == "Target.createTarget":
+            return {"result": {"targetId": "T7"}}
+        return {"result": {}}
+
+    def close(self):
+        self.calls.append(("CLOSE", None))
+
+
+def do_open_page_isolated():
+    real_cdp = E.CDP
+    E.CDP = FakeCDP
+    eng = E.MuseEngine(FakeCfg())
+    eng.browser = FakeBrowser()
+    try:
+        page = eng._open_page()
+    finally:
+        E.CDP = real_cdp
+    return {"browser": eng.browser.calls, "enables": getattr(page, "calls", []),
+            "ws_url": getattr(page, "args", ("",))[0],
+            "context_id": eng.current_context_id,
+            "active_contexts": sorted(eng._active_contexts)}
+
+
+section("open_page_isolated", do_open_page_isolated)
 
 
 # ---------- 4) renew_session_http ----------

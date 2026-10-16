@@ -28,12 +28,18 @@ type fakeSession struct {
 	closed int
 
 	jsRet func(expr string) (Value, error)
+	// sendRet 给需要按方法返回不同结果的用例用（如 Target.createBrowserContext/Target.createTarget）。
+	sendRet func(method string, params map[string]any) (map[string]any, error)
 }
 
 func (f *fakeSession) Send(method string, params map[string]any, timeout time.Duration) (map[string]any, error) {
 	f.mu.Lock()
-	defer f.mu.Unlock()
 	f.sends = append(f.sends, sendCall{method, params})
+	fn := f.sendRet
+	f.mu.Unlock()
+	if fn != nil {
+		return fn(method, params)
+	}
 	return map[string]any{"result": map[string]any{}}, nil
 }
 
@@ -173,17 +179,18 @@ type engineGolden struct {
 		Cwd             string   `json:"cwd"`
 		StdoutIsLogFile bool     `json:"stdout_is_logfile"`
 	} `json:"argv"`
-	ApplyCookies [][]any           `json:"apply_cookies"`
-	OpenPage     map[string]any    `json:"open_page"`
-	Renew        map[string]any    `json:"renew_ok"`
-	Renew401     map[string]any    `json:"renew_401"`
-	Renew403     map[string]any    `json:"renew_403"`
-	RenewNoJSON  map[string]any    `json:"renew_200_notjson"`
-	RenewPending map[string]any    `json:"renew_unassigned"`
-	RenewNoWake  map[string]any    `json:"renew_no_wake"`
-	RenewVMOFF   map[string]any    `json:"renew_vm_disabled"`
-	Renew500     map[string]any    `json:"renew_500"`
-	Errors       map[string]string `json:"errors"`
+	ApplyCookies     [][]any           `json:"apply_cookies"`
+	OpenPage         map[string]any    `json:"open_page"`
+	OpenPageIsolated map[string]any    `json:"open_page_isolated"`
+	Renew            map[string]any    `json:"renew_ok"`
+	Renew401         map[string]any    `json:"renew_401"`
+	Renew403         map[string]any    `json:"renew_403"`
+	RenewNoJSON      map[string]any    `json:"renew_200_notjson"`
+	RenewPending     map[string]any    `json:"renew_unassigned"`
+	RenewNoWake      map[string]any    `json:"renew_no_wake"`
+	RenewVMOFF       map[string]any    `json:"renew_vm_disabled"`
+	Renew500         map[string]any    `json:"renew_500"`
+	Errors           map[string]string `json:"errors"`
 }
 
 func sectionServed(section map[string]any) servedResp {

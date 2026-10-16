@@ -20,7 +20,7 @@ import (
 )
 
 // extractBytes 对应 extract_bytes()：在页面里 fetch 成 base64 取回字节，失败重试 4 次。
-func (e *Engine) extractBytes(src string, expect string, retries int) ([]byte, string, string, error) {
+func (e *Engine) extractBytes(page Session, src string, expect string, retries int) ([]byte, string, string, error) {
 	if retries <= 0 {
 		retries = 4
 	}
@@ -30,7 +30,7 @@ func (e *Engine) extractBytes(src string, expect string, retries int) ([]byte, s
 		return nil, "", "", &ErrGeneration{Msg: err.Error()}
 	}
 	for i := 0; i < retries; i++ {
-		raw, err := e.page.JS(expr, true, 600*time.Second)
+		raw, err := page.JS(expr, true, 600*time.Second)
 		if err != nil {
 			return nil, "", "", err
 		}
@@ -81,18 +81,18 @@ func clipStr(s string, n int) string {
 
 // downloadFallback 对应 _download_fallback()：只点"这个结果自己的"下载按钮，
 // 找不到就返回 nil —— 绝不点全局按钮，否则会把上传的原图当结果拿回来。
-func (e *Engine) downloadFallback(src string, timeout int) (string, error) {
+func (e *Engine) downloadFallback(page Session, src string, timeout int) (string, error) {
 	dir := e.CFG.DownloadDir()
 	// Python 这里没有 try：下载目录不存在就直接抛，Go 也不能吞掉当作空目录。
 	before, err := listNames(dir)
 	if err != nil {
 		return "", err
 	}
-	expr, err := pyFormat(jsDownloadFallbackL965, jsonString(src))
+	expr, err := pyFormat(jsDownloadButton, jsonString(src))
 	if err != nil {
 		return "", &ErrGeneration{Msg: err.Error()}
 	}
-	clicked, err := e.page.JS(expr, false, 0)
+	clicked, err := page.JS(expr, false, 0)
 	if err != nil {
 		return "", err
 	}
@@ -228,15 +228,15 @@ func (e *Engine) normalizeImage(img string) (string, string) {
 }
 
 // clearAttachments 对应 _clear_attachments()（兼容中/英文 UI）。
-func (e *Engine) clearAttachments() {
-	if _, err := e.page.JS(jsClearAttachmentsL1027, false, 0); err != nil {
+func (e *Engine) clearAttachments(page Session) {
+	if _, err := page.JS(jsClearAttachments, false, 0); err != nil {
 		return
 	}
 	e.sleep(300 * time.Millisecond)
 }
 
 // attachImage 对应 _attach_image()：用 DataTransfer 把参考图塞进 composer 的 file input。
-func (e *Engine) attachImage(imageData string) error {
+func (e *Engine) attachImage(page Session, imageData string) error {
 	if imageData == "" {
 		return nil
 	}
@@ -244,13 +244,13 @@ func (e *Engine) attachImage(imageData string) error {
 	if b64 == "" {
 		return &ErrGeneration{Msg: "参考图读取失败，已停止生成"}
 	}
-	e.clearAttachments()
+	e.clearAttachments(page)
 
 	expr, err := pyFormat(injectJS, jsonString(b64), jsonString(mimeType))
 	if err != nil {
 		return &ErrGeneration{Msg: "附加参考图失败，已停止生成"}
 	}
-	raw, err := e.page.JS(expr, false, 0)
+	raw, err := page.JS(expr, false, 0)
 	if err != nil {
 		return &ErrGeneration{Msg: "附加参考图失败，已停止生成"}
 	}
@@ -273,7 +273,7 @@ func (e *Engine) attachImage(imageData string) error {
 	deadline := e.now().Add(15 * time.Second)
 	gotConfirm := false
 	for e.now().Before(deadline) {
-		v, err := e.page.JS(jsAttachImageL1105, false, 0)
+		v, err := page.JS(jsAttachConfirm, false, 0)
 		if err != nil {
 			return &ErrGeneration{Msg: "参考图上传未确认，已停止生成"}
 		}
@@ -326,26 +326,33 @@ type GenResult struct {
 }
 
 // Generate 对应 generate()：重置会话 → 挂参考图 → 记基线 → 发送 → 等新附件 → 取字节 → 落盘。
-func (e *Engine) Generate(cookies map[string]string, prompt, expect string, timeout int,
+//
+// 上游 1.6.x 的两处行为变化：
+//   - 截止线从 generate() 入口开始算，准备阶段吃掉的秒数会从等待里扣掉；
+//   - 视频任务拒绝以图片冒充成品：提取/下载得到的 kind 不是 video 就报错。
+func (e *Engine) Generate(ctx *PageCtx, cookies map[string]string, prompt, expect string, timeout int,
 	expires map[string]int, accountID string, onProgress func(int),
 	referenceImage string, stop <-chan struct{}) (*GenResult, error) {
 
+	deadline := e.now().Add(time.Duration(timeout) * time.Second)
+
 	// Python 的 240 是形参默认值，调用方一律显式传 timeout（路由层已经用 `or` 兜过底），
 	// 所以这里不能再自作主张把 0 或负数改成 240 —— 负数在 Python 那边就是「立刻超时」。
-	if _, err := e.ensurePage(cookies, expires, accountID); err != nil {
+	if _, err := e.ensurePage(ctx, cookies, expires, accountID); err != nil {
 		return nil, err
 	}
-	e.ResetThread(false)
-	e.scrollBottom()
+	e.ResetThread(ctx, false)
+	page := ctx.Page
+	e.scrollBottom(page)
 	if referenceImage != "" {
-		if err := e.attachImage(referenceImage); err != nil {
+		if err := e.attachImage(page, referenceImage); err != nil {
 			return nil, err
 		}
 	} else {
-		e.clearAttachments()
+		e.clearAttachments(page)
 	}
 
-	attsBefore := e.Attachments()
+	attsBefore := e.Attachments(page)
 	baselineSources := map[string]bool{}
 	for _, a := range attsBefore {
 		for _, v := range []string{a.Src, a.VSrc, a.ISrc} {
@@ -358,21 +365,28 @@ func (e *Engine) Generate(cookies map[string]string, prompt, expect string, time
 	if len(attsBefore) > 0 {
 		baselineSrc = attsBefore[len(attsBefore)-1].Src
 	}
-	baseAgentCnt := e.agentCount()
-	sent, err := e.send(prompt)
+	baseAgentCnt := e.agentCount(page)
+	if !e.now().Before(deadline) {
+		return nil, &ErrGeneration{Msg: "任务准备超时，已停止发送"}
+	}
+	sent, err := e.send(page, prompt)
 	if err != nil {
 		return nil, err
 	}
 	if sent != "clicked" && sent != "enter-sent" {
 		return nil, &ErrGeneration{Msg: "提示词发送未确认，已停止生成"}
 	}
-	att, found, err := e.WaitAttachment(baselineSrc, timeout, expect, onProgress,
+	remaining := deadline.Sub(e.now()).Seconds()
+	if remaining < 0 {
+		remaining = 0
+	}
+	att, found, err := e.WaitAttachment(page, baselineSrc, remaining, expect, onProgress,
 		baseAgentCnt, len(attsBefore), stop, baselineSources)
 	if err != nil {
 		return nil, err
 	}
 	if !found {
-		e.debugDump("no-attachment")
+		e.debugDump(page, "no-attachment")
 		return nil, &ErrGeneration{Msg: "等待生成超时，未出现新的生成结果"}
 	}
 
@@ -385,25 +399,30 @@ func (e *Engine) Generate(cookies map[string]string, prompt, expect string, time
 	}
 	var data []byte
 	var mimeType, url string
-	if b, m, u, err := e.extractBytes(selectedSrc, expect, 4); err == nil {
+	if b, m, u, err := e.extractBytes(page, selectedSrc, expect, 4); err == nil {
 		data, mimeType, url = b, m, u
 	} else {
-		e.debugDump("extract-fail")
+		e.debugDump(page, "extract-fail")
 	}
 
 	if len(data) > 0 {
 		ext := pickExt(mimeType, url, expect)
+		kind := kindOfExt(ext)
+		if expect == "video" && kind != "video" {
+			return nil, &ErrGeneration{Msg: fmt.Sprintf(
+				"期望生成视频，但提取成品类型为图片 (%s)，拒绝以图片冒充视频交付", ext)}
+		}
 		name := uuid4Hex() + ext
 		dst := filepath.Join(e.CFG.MediaDir(), name)
 		if err := os.WriteFile(dst, data, 0o644); err != nil {
 			return nil, &ErrGeneration{Msg: err.Error()}
 		}
 		return &GenResult{Path: dst, Filename: name, Size: int64(len(data)), Ext: ext,
-			MimeType: mimeType, Kind: kindOfExt(ext), Via: "blob",
+			MimeType: mimeType, Kind: kind, Via: "blob",
 			Attachment: att.Tid, W: att.W, H: att.H}, nil
 	}
 
-	path, err := e.downloadFallback(selectedSrc, 180)
+	path, err := e.downloadFallback(page, selectedSrc, 180)
 	if err != nil {
 		return nil, err
 	}
@@ -413,6 +432,11 @@ func (e *Engine) Generate(cookies map[string]string, prompt, expect string, time
 	ext := strings.ToLower(filepath.Ext(path))
 	if ext == "" {
 		ext = ".bin"
+	}
+	kind := kindOfExt(ext)
+	if expect == "video" && kind != "video" {
+		return nil, &ErrGeneration{Msg: fmt.Sprintf(
+			"期望生成视频，但下载成品类型为图片 (%s)，拒绝以图片冒充视频交付", ext)}
 	}
 	name := uuid4Hex() + ext
 	dst := filepath.Join(e.CFG.MediaDir(), name)
@@ -425,7 +449,7 @@ func (e *Engine) Generate(cookies map[string]string, prompt, expect string, time
 		size = st.Size()
 	}
 	return &GenResult{Path: dst, Filename: name, Size: size, Ext: ext,
-		MimeType: "", Kind: kindOfExt(ext), Via: "download",
+		MimeType: "", Kind: kind, Via: "download",
 		Attachment: att.Tid, W: att.W, H: att.H}, nil
 }
 
@@ -448,11 +472,13 @@ func uuid4Hex() string {
 }
 
 // Quota 对应 quota()：打开 Settings 面板读额度。返回结构化结果；读不到时 raise。
-func (e *Engine) Quota(cookies map[string]string, expires map[string]int) (map[string]any, error) {
-	if _, err := e.ensurePage(cookies, expires, ""); err != nil {
+// account_id 传入后额度面板必须绑定到对应账号的页面（上游 1.6.1 的多账号额度隔离修复）。
+func (e *Engine) Quota(ctx *PageCtx, cookies map[string]string, expires map[string]int,
+	accountID string) (map[string]any, error) {
+	if _, err := e.ensurePage(ctx, cookies, expires, accountID); err != nil {
 		return nil, err
 	}
-	p := e.page
+	p := ctx.Page
 	e.sleep(time.Second)
 
 	clickExpr, err := pyFormat(clickJS, jsonString(`button[aria-label="Settings"]`))
@@ -470,10 +496,10 @@ func (e *Engine) Quota(cookies map[string]string, expires map[string]int) (map[s
 	if err != nil {
 		return nil, &ErrGeneration{Msg: err.Error()}
 	}
-	e.clickPoint(pt[0], pt[1])
+	e.clickPoint(p, pt[0], pt[1])
 	e.sleep(1600 * time.Millisecond)
 
-	raw, err = p.JS(jsQuotaL438, false, 0)
+	raw, err = p.JS(jsQuotaMenuItem, false, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -484,12 +510,12 @@ func (e *Engine) Quota(cookies map[string]string, expires map[string]int) (map[s
 	if err != nil {
 		return nil, &ErrGeneration{Msg: err.Error()}
 	}
-	e.clickPoint(pt[0], pt[1])
+	e.clickPoint(p, pt[0], pt[1])
 	e.sleep(3 * time.Second)
 
 	txt := ""
 	for i := 0; i < 6; i++ {
-		v, err := p.JS(jsQuotaL458, false, 0)
+		v, err := p.JS(jsQuotaDialog, false, 0)
 		if err != nil {
 			return nil, err
 		}

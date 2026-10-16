@@ -14,7 +14,7 @@ The goal was **same logic, different language**: routes, status codes, error env
 |---|---|
 | Original project | https://github.com/czg86389-hub/muse2api |
 | Upstream license | MIT (`LICENSE` is upstream's text verbatim; derivation notes in `NOTICE`) |
-| Port baseline | started from upstream `2374061` (1.5.3), synced to `42ee039` (1.5.4) |
+| Port baseline | started from upstream `2374061` (1.5.3); synced to upstream `v1.6.1` (`662f51a`) — includes the 1.6.0 multi-account concurrency rework |
 | This repository | the Go port; contains no upstream Python source |
 
 The port deliberately avoids "read it, understand it, retype it". The JavaScript injected into the browser is **extracted programmatically** from the deployed `engine.py` via AST by `tools/gen_js.mjs`, which generates `internal/engine/js.go`; the admin panel HTML, `/openapi.json` and `oauth2-redirect.html` are **byte snapshots** taken from the running service (`internal/webui/`). None of that was rewritten, so it cannot be "close enough but subtly different".
@@ -52,7 +52,7 @@ curl -X POST http://<host>:<port>/v1/videos/generations \
   -d '{"prompt":"a red ball bounces once on a white table","duration":6,"async":true}'
 ```
 
-> `duration` / `size` / `aspect_ratio` are **folded into the prompt** and handed to muse.ai (e.g. `时长严格为 2 秒` — "duration strictly 2 seconds"); the upstream model decides what actually comes out. If muse.ai renders only a cover still, this service returns a `.jpg` with `kind:"image"`, exactly as upstream does — clients that require real video should treat that as failure by checking `kind`.
+> `duration` / `size` / `aspect_ratio` are **folded into the prompt** and handed to muse.ai (e.g. `时长严格为 2 秒` — "duration strictly 2 seconds"); the upstream model decides what actually comes out. Since upstream 1.6.0 a video request is never fulfilled with a cover still: only real video sources are accepted, and if the fetched/downloaded artifact turns out to be an image the task fails with an explicit error (`期望生成视频…拒绝以图片冒充视频交付`) instead of returning a `.jpg`.
 
 ---
 
@@ -63,7 +63,7 @@ curl -X POST http://<host>:<port>/v1/videos/generations \
 `Dockerfile` is two-stage: the builder stage compiles the single entrypoint statically with the official `golang` image (`CGO_ENABLED=0`, so runtime depends on nothing beyond glibc), and the runtime stage keeps only the binary plus chromium. **Clone and build — Go is not needed on the host.**
 
 ```bash
-docker build -t muse2api-go:1.5.4 .
+docker build -t muse2api-go:1.6.1 .
 ```
 
 The runtime image is `debian:bookworm-slim` plus the distribution's own `chromium` — **same distro and same browser package as upstream**, otherwise DOM behaviour is not comparable; changing the chromium version means changing the thing under test.
@@ -73,7 +73,7 @@ The runtime image is `debian:bookworm-slim` plus the distribution's own `chromiu
 ```bash
 docker run -d --name muse2api-go --restart unless-stopped --init \
   -p 8080:18610 -v $PWD/data-go:/app/data --shm-size=2gb \
-  -e MUSE2API_KEY=<your key> muse2api-go:1.5.4
+  -e MUSE2API_KEY=<your key> muse2api-go:1.6.1
 ```
 
 None of those three flags is decoration:
@@ -118,7 +118,7 @@ curl -s -H "Authorization: Bearer $MUSE2API_KEY" localhost:8080/v1/models
 
 ## Configuration
 
-Environment variables keep upstream's names and semantics. Below are the ones this port **adds**, or that you are most likely to touch (full list in `internal/config/config.go`, 21 in total):
+Environment variables keep upstream's names and semantics. Below are the ones this port **adds**, or that you are most likely to touch (full list in `internal/config/config.go`, 22 in total):
 
 | Variable | Default | Notes |
 |---|---|---|
@@ -127,6 +127,7 @@ Environment variables keep upstream's names and semantics. Below are the ones th
 | `MUSE2API_WARM_TAB` | `0` | **Go-only**: `1` restores upstream's "keep one warm tab resident" behaviour (memory in exchange for cold starts) |
 | `MUSE2API_ACCESS_LOG` | `1` | **Go-only**: one log line per request in uvicorn's exact format; `0` turns it off |
 | `MUSE2API_IMAGE_TIMEOUT` / `VIDEO_TIMEOUT` / `CHAT_TIMEOUT` | `240` / `600` / `300` | timeouts for the three task types |
+| `MUSE2API_CONCURRENCY` | `2` | **upstream 1.6.0**: how many generation tasks may run in parallel. Each task gets its own Incognito BrowserContext; the same account is never used by two tasks at once |
 | `MUSE2API_PUBLIC_BASE` | empty | when set, `data[].url` becomes absolute; otherwise it returns the relative `/v1/media/…` |
 | `MUSE2API_CORS_ORIGINS` | `https://muse.ai,https://www.muse.ai` | same as upstream |
 

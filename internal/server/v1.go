@@ -55,7 +55,7 @@ func (a *App) imagesGenerations(c *reqCtx) (any, error) {
 	if req.Async {
 		return a.queueImage(c, req, prompt, ref, nil)
 	}
-	res, _, err := a.runGeneration(prompt, "image", timeout, "", nil, ref, c.R.Context().Done())
+	res, _, err := a.runGeneration(prompt, "image", timeout, "", nil, ref, c.R.Context().Done(), nil)
 	if err != nil {
 		return nil, mapGenErr(err)
 	}
@@ -142,7 +142,7 @@ func (a *App) imagesEdits(c *reqCtx) (any, error) {
 	if !ok {
 		return nil, errMaxType
 	}
-	res, _, err := a.runGeneration(full, "image", int(genTimeout), "", nil, ref, c.R.Context().Done())
+	res, _, err := a.runGeneration(full, "image", int(genTimeout), "", nil, ref, c.R.Context().Done(), nil)
 	if err != nil {
 		return nil, mapGenErr(err)
 	}
@@ -288,9 +288,13 @@ func (a *App) createVideo(c *reqCtx) (any, error) {
 
 	go func() {
 		t0 := a.now()
-		a.Store.UpdateTask(tid, map[string]any{"status": "processing", "progress": 15})
+		onAcquired := func() {
+			// 拿到浏览器槽位才开始计时/进 processing：排队等待不算任务耗时（上游 1.6.1）。
+			t0 = a.now()
+			a.Store.UpdateTask(tid, map[string]any{"status": "processing", "progress": 15})
+		}
 		res, accID, err := a.runGeneration(prompt, "video", timeout, "",
-			func(p int) { a.Store.UpdateTask(tid, map[string]any{"progress": p}) }, ref, nil)
+			func(p int) { a.Store.UpdateTask(tid, map[string]any{"progress": p}) }, ref, nil, onAcquired)
 		if err != nil {
 			a.Store.UpdateTask(tid, map[string]any{"status": "failed",
 				"elapsed": round1(a.now().Sub(t0).Seconds()), "error": err.Error()})
@@ -378,7 +382,7 @@ func (a *App) chatCompletions(c *reqCtx) (any, error) {
 	}
 	model := resolveModel(optStr(req.Model), "muse-spark")
 	timeout := int(pyNumOr(req.Timeout, int64(a.CFG.ChatTimeout)))
-	acc := a.Store.PickAccount(a.Engine.CurrentAccountID(), true, false, "")
+	acc := a.Store.PickAccount(a.Engine.CurrentAccountID(), true, false, "", nil, true)
 	if acc == nil {
 		return nil, httpError(400, "没有可用账号，请先在管理页面导入 cookie")
 	}
@@ -566,7 +570,9 @@ func sseErrChunk(err error, accID string, a *App) pyval.Obj {
 			{"message", ae.Error()}, {"type", "auth_error"}, {"code", 401}}}}
 	case errors.As(err, &ge):
 		a.Store.Mark(accID, true, "助手超时: "+truncate(ge.Error(), 60))
-		a.Engine.ResetThread(false)
+		// Python 这里跑在流式生成器所在线程，该线程的 thread-local page 与本任务无关，
+		// 相当于空上下文上的 no-op。Go 用空 PageCtx 复刻，绝不能去动别的任务的页面。
+		a.Engine.ResetThread(a.Engine.NewPageCtx(), false)
 		return pyval.Obj{{"error", pyval.Obj{
 			{"message", ge.Error()}, {"type", "server_error"}, {"code", 502}}}}
 	}
@@ -632,7 +638,7 @@ func (a *App) responsesAPI(c *reqCtx) (any, error) {
 	}
 	model := resolveModel(optStr(req.Model), "muse-spark")
 	timeout := int(pyNumOr(req.Timeout, int64(a.CFG.ChatTimeout)))
-	acc := a.Store.PickAccount(a.Engine.CurrentAccountID(), true, false, "")
+	acc := a.Store.PickAccount(a.Engine.CurrentAccountID(), true, false, "", nil, true)
 	if acc == nil {
 		return nil, httpError(400, "没有可用账号，请先在管理页面导入 cookie")
 	}

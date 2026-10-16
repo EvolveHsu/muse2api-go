@@ -1,13 +1,13 @@
 {
-  "version": "1.5.4",
-  "updated_at": "2026-10-06",
+  "version": "1.6.1",
+  "updated_at": "2026-10-16",
   "repo": "https://github.com/czg86389-hub/muse2api",
   "port": "go",
   "highlights": [
-    "Go 复刻版：45 条对外路由、错误壳与 SSE 帧按 Python 1.5.4 的线上契约逐条回放校验（120 条金样本）",
-    "媒体库删除：POST /admin/media/delete 批量 + DELETE /admin/media/{name} 单删，穿越路径逐个挡下",
-    "空闲 30 分钟自动释放 Chromium（MUSE2API_BROWSER_IDLE_MINUTES，设 0 关闭这条）",
-    "默认不常驻热标签页；要恢复 Python 的常驻行为设 MUSE2API_WARM_TAB=1",
-    "不做容器内 git 自更新：/admin/update/upgrade 只报版本与手动更新步骤"
+    "跟进上游 1.6.0：多账号并发（MUSE2API_CONCURRENCY，默认 2）——每个任务独立 Incognito BrowserContext，同一账号不并发、跨账号可并行",
+    "跟进上游 1.6.0：视频只认真实视频源，封面静帧不再冒充成品；提取/下载得到图片时明确报错",
+    "跟进上游 1.6.0：提示词 30 秒未送达（Still sending / Delivery not confirmed）快速失败；任务耗时不再包含排队等待",
+    "跟进上游 1.6.1：VM 唤醒复核（HTTP 200 不算数，会话状态 RUNNING 才算）；额度查询绑定对应账号页面，读不到时保留旧缓存并回报 quota_error",
+    "跟进上游 1.6.1：后台保活探测改为 6 小时节流；重启时连视频任务一起清理"
   ]
 }

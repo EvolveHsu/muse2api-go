@@ -103,7 +103,7 @@ func TestLabelFallsBackToID(t *testing.T) {
 func TestPickAccountSkipsEmptyCookies(t *testing.T) {
 	s, _ := newStore(t)
 	s.AddAccount(map[string]any{}, "no-cookies", nil)
-	if got := s.PickAccount("", true, false, ""); got != nil {
+	if got := s.PickAccount("", true, false, "", nil, true); got != nil {
 		t.Fatalf("空 cookie 账号不应被选中: %v", got)
 	}
 }
@@ -115,7 +115,7 @@ func TestPickAccountTriStateHealth(t *testing.T) {
 	b := s.AddAccount(map[string]any{"hatch_sess": "2"}, "B", nil)
 	s.Mark(a["id"].(string), false, "坏了")
 
-	got := s.PickAccount("", true, false, "")
+	got := s.PickAccount("", true, false, "", nil, true)
 	if got["id"] != b["id"] {
 		t.Fatalf("应跳过 ok=False 的账号，得到 %v", got["id"])
 	}
@@ -124,7 +124,7 @@ func TestPickAccountTriStateHealth(t *testing.T) {
 	s.Mark(b["id"].(string), false, "也坏了")
 	s.Mark(c["id"].(string), false, "全坏了")
 	// 全坏时 Python 退回 live 全集，不返回 None。
-	if got := s.PickAccount("", true, false, ""); got == nil {
+	if got := s.PickAccount("", true, false, "", nil, true); got == nil {
 		t.Fatal("全坏时应有兜底候选")
 	}
 }
@@ -137,15 +137,58 @@ func TestPickAccountStickyFifteen(t *testing.T) {
 	aID, bID := a["id"].(string), b["id"].(string)
 
 	for i := 1; i <= 15; i++ {
-		if got := s.PickAccount(aID, true, false, ""); got["id"] != aID {
+		if got := s.PickAccount(aID, true, false, "", nil, true); got["id"] != aID {
 			t.Fatalf("第 %d 次仍应粘在 A，得到 %v", i, got["id"])
 		}
 	}
-	if got := s.PickAccount(aID, true, false, ""); got["id"] == aID {
+	if got := s.PickAccount(aID, true, false, "", nil, true); got["id"] == aID {
 		t.Fatal("第 16 次应轮转走")
 	}
-	if got := s.PickAccount(aID, true, true, ""); got["id"] != bID && got["id"] != aID {
+	if got := s.PickAccount(aID, true, true, "", nil, true); got["id"] != bID && got["id"] != aID {
 		t.Fatalf("force_rotate 也要能选出账号，得到 %v", got["id"])
+	}
+}
+
+// 1.6.0 的并发语义：exclude_ids 给过（非 nil）时，「全部被占用」必须返回 None 去等待；
+// 只有旧的 exclude_id（exclude_ids=nil）才允许在全是同一个账号时兜底复用。
+func TestPickAccountExcludeIDsSemantics(t *testing.T) {
+	s, _ := newStore(t)
+	a := s.AddAccount(map[string]any{"hatch_sess": "1"}, "A", nil)
+	b := s.AddAccount(map[string]any{"hatch_sess": "2"}, "B", nil)
+	aID, bID := a["id"].(string), b["id"].(string)
+
+	if got := s.PickAccount("", true, false, "", []string{aID}, true); got == nil || got["id"] != bID {
+		t.Fatalf("应避开 A 选 B，得到 %v", got)
+	}
+	if got := s.PickAccount("", true, false, "", []string{aID, bID}, true); got != nil {
+		t.Fatalf("全繁忙时应返回 None，得到 %v", got["id"])
+	}
+	if got := s.PickAccount("", true, false, "", []string{}, true); got == nil {
+		t.Fatal("空排除集应能选到账号")
+	}
+
+	// 旧调用（exclude_ids=nil + exclude_id）：只有一个账号时仍兜底返回它。
+	s2, _ := newStore(t)
+	only := s2.AddAccount(map[string]any{"hatch_sess": "9"}, "Only", nil)
+	onlyID := only["id"].(string)
+	if got := s2.PickAccount("", true, true, onlyID, nil, true); got == nil || got["id"] != onlyID {
+		t.Fatalf("旧语义下应兜底给唯一账号，得到 %v", got)
+	}
+}
+
+// record_use=false 只做选择，不更新 last_used/use_count（预热任务不改变轮换计数）。
+func TestPickAccountRecordUseFalse(t *testing.T) {
+	s, _ := newStore(t)
+	a := s.AddAccount(map[string]any{"hatch_sess": "1"}, "A", nil)
+	aID := a["id"].(string)
+	before := s.GetAccount(aID)
+	if got := s.PickAccount("", false, false, "", nil, false); got == nil || got["id"] != aID {
+		t.Fatalf("应选到唯一账号，得到 %v", got)
+	}
+	after := s.GetAccount(aID)
+	if after["use_count"] != before["use_count"] || after["last_used"] != before["last_used"] {
+		t.Fatalf("record_use=false 不该改计数: before=%v/%v after=%v/%v",
+			before["use_count"], before["last_used"], after["use_count"], after["last_used"])
 	}
 }
 

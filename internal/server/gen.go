@@ -5,8 +5,10 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -15,10 +17,10 @@ import (
 	"muse2api-go/internal/pyval"
 )
 
-// browserLock 对应 GEN_LOCK（全局一把，串行）。
-// Python 用的是 threading.Lock 的三种取法：带 timeout 的、阻塞的、blocking=False 的；
-// sync.Mutex 没有带超时的阻塞取法，也不保证等待者顺序，所以用容量 1 的 channel 实现，
-// 三种语义在这里分开给名字，避免调用点混用。
+// browserLock 对应 GEN_LOCK。上游 1.6.0 把它从「全局一把串行锁」升级成
+// ConcurrencyLock（信号量，槽位数 MUSE2API_CONCURRENCY，默认 2，下限 1）。
+// Python 用的是三种取法：带 timeout 的、阻塞的、blocking=False 的；
+// Go 用容量 N 的 channel 实现，三种语义在这里分开给名字，避免调用点混用。
 type browserLock struct {
 	ch chan struct{}
 	// DEVIATION: Python 的 GEN_LOCK 就是一把裸锁，没有 last 这个字段。
@@ -28,9 +30,15 @@ type browserLock struct {
 	last time.Time
 }
 
-func newBrowserLock() *browserLock {
-	return &browserLock{ch: make(chan struct{}, 1), last: time.Now()}
+func newBrowserLock(limit int) *browserLock {
+	if limit < 1 {
+		limit = 1
+	}
+	return &browserLock{ch: make(chan struct{}, limit), last: time.Now()}
 }
+
+// locked 对应 ConcurrencyLock.locked()：有任意槽位在用即为真。
+func (b *browserLock) locked() bool { return len(b.ch) > 0 }
 
 // touch 记一次「用过浏览器」。拿到和放开的时候都记，
 // 于是一段长任务跑完之后的静默期才是从「跑完」起算，而不是从「开始」起算。
@@ -145,8 +153,8 @@ func (a *App) renewAndPersist(accID string, wakeVM, force bool) (map[string]any,
 // 注意：生成已经成功了，这里纯粹锦上添花，出任何问题都只记一条日志，绝不能把生成搞失败。
 // syncCookies 的返回值是要原样吐给客户端的，所以用有序对象：Python 那边是 dict 字面量，
 // 键序 synced → changed → expires_at（用 map 会被 encoding/json 按字母排）。
-func (a *App) syncCookies(accID string) pyval.Obj {
-	live := a.Engine.ReadCookies()
+func (a *App) syncCookies(ctx *engine.PageCtx, accID string) pyval.Obj {
+	live := a.Engine.ReadCookies(ctx)
 	if len(live) == 0 {
 		return pyval.Obj{{"synced", 0}}
 	}
@@ -193,15 +201,25 @@ func (a *App) syncCookies(accID string) pyval.Obj {
 	return out
 }
 
-// runGeneration 对应 _run_generation()：浏览器所有权覆盖选号、重试与清理，不只是 generate。
+// runGeneration 对应 _run_generation()：浏览器槽位所有权覆盖选号、重试与清理，不只是 generate。
+// onAcquired 对应上游 1.6.1 新增的 on_acquired 回调：拿到槽位后先回调（给任务打 processing
+// 并重置计时起点），排队等待的时间不计入任务耗时。
 func (a *App) runGeneration(prompt, kind string, timeout int, accountID string,
-	onProgress func(int), referenceImage string, stop <-chan struct{}) (*engine.GenResult, string, error) {
+	onProgress func(int), referenceImage string, stop <-chan struct{},
+	onAcquired func()) (*engine.GenResult, string, error) {
 
 	wait := time.Duration(max1(timeout)) * time.Second
 	deadline := a.mono().Add(wait)
 	var res *engine.GenResult
 	var accID string
 	err := a.browser.run(wait, func() error {
+		if onAcquired != nil {
+			// Python：`try: on_acquired() except Exception: pass`。
+			func() {
+				defer func() { _ = recover() }()
+				onAcquired()
+			}()
+		}
 		var e error
 		res, accID, e = a.runGenerationLocked(prompt, kind, timeout, accountID,
 			onProgress, referenceImage, deadline, stop)
@@ -213,28 +231,54 @@ func (a *App) runGeneration(prompt, kind string, timeout int, accountID string,
 	return res, accID, nil
 }
 
+// preferVideoAccount 对应上游 1.6.1：视频任务优先复用「上一次真正完成过视频」的账号 ——
+// 光看会话健康度不够，能出片才是硬标准。
+func (a *App) preferVideoAccount() string {
+	recent := a.Store.ListTasks(-1)
+	sort.SliceStable(recent, func(i, j int) bool {
+		return numOr(recent[i]["created_at"]) > numOr(recent[j]["created_at"])
+	})
+	for _, task := range recent {
+		if task["kind"] != "video" || task["status"] != "completed" || !truthy(task["account"]) {
+			continue
+		}
+		candidate := a.Store.GetAccount(strOf(task["account"]))
+		if candidate != nil && accountEnabled(candidate) && !okIsFalse(candidate["ok"]) {
+			return strOf(candidate["id"])
+		}
+	}
+	return ""
+}
+
 func (a *App) runGenerationLocked(prompt, kind string, timeout int, accountID string,
 	onProgress func(int), referenceImage string, deadline time.Time,
 	stop <-chan struct{}) (*engine.GenResult, string, error) {
 
-	acc := a.Store.GetAccount(accountID)
-	if accountID == "" {
-		acc = nil
-	}
-	if acc != nil {
-		if en, ok := acc["enabled"].(bool); ok && !en {
-			acc = nil
+	remainingWait := int(deadline.Sub(a.mono()).Seconds())
+	preferredID := a.Engine.CurrentAccountID()
+	if kind == "video" && accountID == "" {
+		if vidID := a.preferVideoAccount(); vidID != "" {
+			preferredID = vidID
 		}
 	}
-	if acc == nil {
-		acc = a.Store.PickAccount(a.Engine.CurrentAccountID(), true, false, "")
+	if remainingWait < 1 {
+		remainingWait = 1
 	}
-	if acc == nil {
-		return nil, "", &engine.ErrAuth{Msg: "没有可用账号，请先在管理页面导入 cookie"}
+	acc, err := a.accounts.acquire(accountID, preferredID, true, false,
+		time.Duration(remainingWait)*time.Second, true)
+	if err != nil {
+		return nil, "", err
 	}
-
-	var lastErr error
 	cur := acc
+	ctx := a.Engine.NewPageCtx()
+	var lastErr error
+	defer func() {
+		if cur != nil {
+			a.accounts.release(strOf(cur["id"]))
+		}
+		a.Engine.CloseCurrentPage(ctx)
+	}()
+
 	for attempt := 0; attempt < 2; attempt++ {
 		if !a.mono().Before(deadline) {
 			return nil, "", &engine.ErrGeneration{Msg: "任务总等待时限已到，停止重试"}
@@ -243,13 +287,34 @@ func (a *App) runGenerationLocked(prompt, kind string, timeout int, accountID st
 			if lastErr != nil && strings.Contains(lastErr.Error(), "未产出媒体附件，仅返回了文本回复") {
 				break
 			}
-			alt := a.Store.PickAccount("", true, true, strOf(cur["id"]))
-			if alt == nil || strOf(alt["id"]) == strOf(cur["id"]) {
+			oldID := ""
+			if cur != nil {
+				oldID = strOf(cur["id"])
+			}
+			if oldID != "" {
+				a.accounts.release(oldID)
+			}
+			cur = nil
+			rem := int(deadline.Sub(a.mono()).Seconds())
+			if rem <= 0 {
+				break
+			}
+			alt, aerr := a.accounts.acquire("", "", true, true,
+				time.Duration(rem)*time.Second, true)
+			if aerr != nil {
+				break
+			}
+			if alt == nil || (oldID != "" && strOf(alt["id"]) == oldID) {
+				if alt != nil {
+					cur = alt
+				}
 				break
 			}
 			cur = alt
+			log.Printf("【生图/视频自动切号】切换到备用账号 %s (%s) 重试...",
+				strOf(cur["label"]), strOf(cur["id"]))
 		}
-		res, accID, err := a.attemptGenerate(cur, prompt, kind, timeout, onProgress,
+		res, accID, err := a.attemptGenerate(ctx, cur, prompt, kind, timeout, onProgress,
 			referenceImage, deadline, attempt > 0, stop)
 		if err == nil {
 			return res, accID, nil
@@ -260,13 +325,13 @@ func (a *App) runGenerationLocked(prompt, kind string, timeout int, accountID st
 		switch {
 		case errors.As(err, &ae):
 			a.Store.Mark(strOf(cur["id"]), false, ae.Error())
-			a.Engine.Stop()
+			a.Engine.CloseCurrentPage(ctx)
 		case errors.As(err, &ge):
 			a.Store.Mark(strOf(cur["id"]), true,
 				"任务异常: "+truncate(ge.Error(), 60))
-			a.Engine.ResetThread(false)
+			a.Engine.ResetThread(ctx, false)
 		default:
-			a.Engine.Stop()
+			a.Engine.CloseCurrentPage(ctx)
 			lastErr = &engine.ErrGeneration{Msg: "生成失败: " + err.Error()}
 		}
 	}
@@ -276,7 +341,7 @@ func (a *App) runGenerationLocked(prompt, kind string, timeout int, accountID st
 	return nil, "", lastErr
 }
 
-func (a *App) attemptGenerate(acc map[string]any, prompt, kind string, timeout int,
+func (a *App) attemptGenerate(ctx *engine.PageCtx, acc map[string]any, prompt, kind string, timeout int,
 	onProgress func(int), referenceImage string, deadline time.Time, force bool,
 	stop <-chan struct{}) (*engine.GenResult, string, error) {
 
@@ -296,13 +361,13 @@ func (a *App) attemptGenerate(acc map[string]any, prompt, kind string, timeout i
 	if remaining <= 0 {
 		return nil, "", &engine.ErrGeneration{Msg: "任务总等待时限已到，停止重试"}
 	}
-	res, err := a.Engine.Generate(toStringMap(acc["cookies"]), prompt, kind, remaining,
+	res, err := a.Engine.Generate(ctx, toStringMap(acc["cookies"]), prompt, kind, remaining,
 		cookieIntMap(acc["cookies_exp"]), accID, onProgress, referenceImage, stop)
 	if err != nil {
 		return nil, "", err
 	}
 	a.Store.Mark(accID, true, "")
-	a.syncCookies(accID)
+	a.syncCookies(ctx, accID)
 	return res, accID, nil
 }
 
@@ -410,11 +475,15 @@ func (a *App) queueImage(c *reqCtx, req *ImageRequest, prompt, referenceImage st
 	createdAt := task["created_at"]
 	go func() {
 		t0 := a.now()
-		a.Store.UpdateTask(tid, map[string]any{"status": "processing", "progress": 5})
+		onAcquired := func() {
+			// 拿到浏览器槽位才开始计时/进 processing：排队等待不算任务耗时（上游 1.6.1）。
+			t0 = a.now()
+			a.Store.UpdateTask(tid, map[string]any{"status": "processing", "progress": 5})
+		}
 		res, accID, err := a.runGeneration(prompt, "image",
 			int(pyNumOr(req.Timeout, int64(a.CFG.ImageTimeout))), "",
 			func(p int) { a.Store.UpdateTask(tid, map[string]any{"progress": p}) },
-			referenceImage, nil)
+			referenceImage, nil, onAcquired)
 		if err != nil {
 			a.Store.UpdateTask(tid, map[string]any{
 				"status": "failed", "error": err.Error(),

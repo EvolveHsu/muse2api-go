@@ -1,595 +1,642 @@
 {
- "argv": {
-  "argv": [
-   "/usr/bin/chromium",
-   "--headless=new",
-   "--no-sandbox",
-   "--disable-gpu",
-   "--disable-dev-shm-usage",
-   "--disable-background-networking",
-   "--no-first-run",
-   "--no-default-browser-check",
-   "--autoplay-policy=no-user-gesture-required",
-   "--window-size=1440,2400",
-   "--remote-debugging-port=19210",
-   "--remote-allow-origins=*",
-   "--user-data-dir=/tmp/gengold/profile",
-   "about:blank"
+  "argv": {
+    "argv": [
+      "/usr/bin/chromium",
+      "--headless=new",
+      "--no-sandbox",
+      "--disable-gpu",
+      "--disable-dev-shm-usage",
+      "--disable-background-networking",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--autoplay-policy=no-user-gesture-required",
+      "--window-size=1440,2400",
+      "--remote-debugging-port=19210",
+      "--remote-allow-origins=*",
+      "--user-data-dir=/tmp/gengold/profile",
+      "about:blank"
+    ],
+    "env_PATH_head": "/snap/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:",
+    "cwd": "/root",
+    "stdout_is_logfile": true
+  },
+  "apply_cookies": [
+    [
+      "Network.clearBrowserCookies",
+      null
+    ],
+    [
+      "Network.setCookie",
+      {
+        "name": "hatch_sess",
+        "value": "s",
+        "domain": ".muse.ai",
+        "path": "/",
+        "secure": true,
+        "expires": 1700604800.5
+      }
+    ],
+    [
+      "Network.setCookie",
+      {
+        "name": "hatch_sess",
+        "value": "s",
+        "domain": "muse.ai",
+        "path": "/",
+        "secure": true,
+        "expires": 1700604800.5
+      }
+    ],
+    [
+      "Network.setCookie",
+      {
+        "name": "hatch_vml",
+        "value": "v",
+        "domain": ".muse.ai",
+        "path": "/",
+        "secure": true,
+        "expires": 1700604800.5
+      }
+    ],
+    [
+      "Network.setCookie",
+      {
+        "name": "hatch_vml",
+        "value": "v",
+        "domain": "muse.ai",
+        "path": "/",
+        "secure": true,
+        "expires": 1700604800.5
+      }
+    ],
+    [
+      "Network.setCookie",
+      {
+        "name": "hatch_native_auth_device",
+        "value": "d",
+        "domain": ".muse.ai",
+        "path": "/",
+        "secure": true,
+        "expires": 1700604800.5
+      }
+    ],
+    [
+      "Network.setCookie",
+      {
+        "name": "hatch_native_auth_device",
+        "value": "d",
+        "domain": "muse.ai",
+        "path": "/",
+        "secure": true,
+        "expires": 1700604800.5
+      }
+    ],
+    [
+      "Network.setCookie",
+      {
+        "name": "extra",
+        "value": "e",
+        "domain": ".muse.ai",
+        "path": "/",
+        "secure": true,
+        "expires": 1700604800.5
+      }
+    ],
+    [
+      "Network.setCookie",
+      {
+        "name": "extra",
+        "value": "e",
+        "domain": "muse.ai",
+        "path": "/",
+        "secure": true,
+        "expires": 1700604800.5
+      }
+    ]
   ],
-  "env_PATH_head": "/snap/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr",
-  "cwd": "/root",
-  "stdout_is_logfile": true
- },
- "apply_cookies": [
-  [
-   "Network.clearBrowserCookies",
-   null
-  ],
-  [
-   "Network.setCookie",
-   {
-    "name": "hatch_sess",
-    "value": "s",
-    "domain": ".muse.ai",
-    "path": "/",
-    "secure": true,
-    "expires": 1700604800.5
-   }
-  ],
-  [
-   "Network.setCookie",
-   {
-    "name": "hatch_sess",
-    "value": "s",
-    "domain": "muse.ai",
-    "path": "/",
-    "secure": true,
-    "expires": 1700604800.5
-   }
-  ],
-  [
-   "Network.setCookie",
-   {
-    "name": "hatch_vml",
-    "value": "v",
-    "domain": ".muse.ai",
-    "path": "/",
-    "secure": true,
-    "expires": 1700604800.5
-   }
-  ],
-  [
-   "Network.setCookie",
-   {
-    "name": "hatch_vml",
-    "value": "v",
-    "domain": "muse.ai",
-    "path": "/",
-    "secure": true,
-    "expires": 1700604800.5
-   }
-  ],
-  [
-   "Network.setCookie",
-   {
-    "name": "hatch_native_auth_device",
-    "value": "d",
-    "domain": ".muse.ai",
-    "path": "/",
-    "secure": true,
-    "expires": 1700604800.5
-   }
-  ],
-  [
-   "Network.setCookie",
-   {
-    "name": "hatch_native_auth_device",
-    "value": "d",
-    "domain": "muse.ai",
-    "path": "/",
-    "secure": true,
-    "expires": 1700604800.5
-   }
-  ],
-  [
-   "Network.setCookie",
-   {
-    "name": "extra",
-    "value": "e",
-    "domain": ".muse.ai",
-    "path": "/",
-    "secure": true,
-    "expires": 1700604800.5
-   }
-  ],
-  [
-   "Network.setCookie",
-   {
-    "name": "extra",
-    "value": "e",
-    "domain": "muse.ai",
-    "path": "/",
-    "secure": true,
-    "expires": 1700604800.5
-   }
-  ]
- ],
- "open_page": {
-  "calls": [
-   {
-    "m": "GET",
-    "url": "http://127.0.0.1:19210/json/list",
-    "kw": {},
-    "timeout": 3
-   },
-   {
-    "m": "GET",
-    "url": "http://127.0.0.1:19210/json/close/T1",
-    "kw": {},
-    "timeout": 2
-   },
-   {
-    "m": "PUT",
-    "url": "http://127.0.0.1:19210/json/new?about:blank",
-    "kw": {},
-    "timeout": 10
-   }
-  ],
-  "enables": [
-   [
-    "Network.enable",
-    null
-   ],
-   [
-    "Page.enable",
-    null
-   ],
-   [
-    "Runtime.enable",
-    null
-   ],
-   [
-    "Browser.setDownloadBehavior",
-    {
-     "behavior": "allow",
-     "downloadPath": "/tmp/gengold/data/downloads"
+  "open_page": {
+    "calls": [
+      {
+        "m": "PUT",
+        "url": "http://127.0.0.1:19210/json/new?about:blank",
+        "kw": {},
+        "timeout": 10
+      }
+    ],
+    "enables": [
+      [
+        "Network.enable",
+        null
+      ],
+      [
+        "Page.enable",
+        null
+      ],
+      [
+        "Runtime.enable",
+        null
+      ],
+      [
+        "Browser.setDownloadBehavior",
+        {
+          "behavior": "allow",
+          "downloadPath": "/tmp/gengold/data/downloads"
+        }
+      ]
+    ],
+    "served": {
+      "list": [
+        [
+          "T1",
+          "page"
+        ],
+        [
+          "T2",
+          "other"
+        ]
+      ],
+      "new_id": "T3",
+      "ws": "ws://127.0.0.1:19210/devtools/page/T3"
     }
-   ]
-  ],
-  "served": {
-   "list": [
-    [
-     "T1",
-     "page"
-    ],
-    [
-     "T2",
-     "other"
-    ]
-   ],
-   "new_id": "T3",
-   "ws": "ws://127.0.0.1:19210/devtools/page/T3"
-  }
- },
- "renew_ok": {
-  "calls": [
-   {
-    "m": "GET",
-    "url": "https://muse.ai/api/session",
-    "headers": {
-     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
-     "Origin": "https://muse.ai",
-     "Referer": "https://muse.ai/thread/new",
-     "Sec-Fetch-Site": "same-origin",
-     "Sec-Fetch-Mode": "cors",
-     "Sec-Fetch-Dest": "empty",
-     "Cookie": "hatch_sess=s; hatch_gw=g; hatch_vml=NEWVML"
-    },
-    "timeout": 12,
-    "allow_redirects": false
-   },
-   {
-    "m": "POST",
-    "url": "https://muse.ai/api/hatch/vm/wake",
-    "headers": {
-     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
-     "Origin": "https://muse.ai",
-     "Referer": "https://muse.ai/thread/new",
-     "Sec-Fetch-Site": "same-origin",
-     "Sec-Fetch-Mode": "cors",
-     "Sec-Fetch-Dest": "empty",
-     "Cookie": "hatch_sess=s; hatch_gw=g; hatch_vml=NEWVML"
-    },
-    "json": {
-     "vm_id": "vm-1",
-     "retry_count": 0,
-     "connect_attempt_id": "d0fca8a6-aaef-4bac-91a1-b35a279e6126"
-    },
-    "timeout": 8
-   }
-  ],
-  "result": {
-   "ok": true,
-   "status": "assigned",
-   "vm_id": "vm-1",
-   "vm_state": "SLEEPING",
-   "wake_ok": true,
-   "cookies": {
-    "hatch_sess": "s",
-    "hatch_gw": "g",
-    "hatch_vml": "NEWVML"
-   },
-   "cookies_exp": {
-    "hatch_sess": 1800000000,
-    "hatch_vml": 1700086400
-   }
   },
-  "error": null,
-  "served": {
-   "status": 200,
-   "payload": null,
-   "cookies": [
-    [
-     "hatch_vml",
-     "NEWVML",
-     1700086400
+  "open_page_isolated": {
+    "browser": [
+      [
+        "Target.createBrowserContext",
+        null
+      ],
+      [
+        "Target.createTarget",
+        {
+          "url": "about:blank",
+          "browserContextId": "CTX-1"
+        }
+      ]
     ],
-    [
-     "hatch_empty",
-     "",
-     0
+    "enables": [
+      [
+        "Network.enable",
+        null
+      ],
+      [
+        "Page.enable",
+        null
+      ],
+      [
+        "Runtime.enable",
+        null
+      ],
+      [
+        "Browser.setDownloadBehavior",
+        {
+          "behavior": "allow",
+          "downloadPath": "/tmp/gengold/data/downloads"
+        }
+      ]
+    ],
+    "ws_url": "ws://127.0.0.1:19210/devtools/page/T7",
+    "context_id": "CTX-1",
+    "active_contexts": [
+      "CTX-1"
     ]
-   ],
-   "raise_json": false
-  }
- },
- "renew_401": {
-  "calls": [
-   {
-    "m": "GET",
-    "url": "https://muse.ai/api/session",
-    "headers": {
-     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
-     "Origin": "https://muse.ai",
-     "Referer": "https://muse.ai/thread/new",
-     "Sec-Fetch-Site": "same-origin",
-     "Sec-Fetch-Mode": "cors",
-     "Sec-Fetch-Dest": "empty",
-     "Cookie": "hatch_sess=s; hatch_gw=g"
-    },
-    "timeout": 12,
-    "allow_redirects": false
-   }
-  ],
-  "result": null,
-  "error": "MuseAuthError:会话认证失败 (/api/session HTTP 401)，请在官网确认登录后重新导入 cookie",
-  "served": {
-   "status": 401,
-   "payload": null,
-   "cookies": [],
-   "raise_json": false
-  }
- },
- "renew_403": {
-  "calls": [
-   {
-    "m": "GET",
-    "url": "https://muse.ai/api/session",
-    "headers": {
-     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
-     "Origin": "https://muse.ai",
-     "Referer": "https://muse.ai/thread/new",
-     "Sec-Fetch-Site": "same-origin",
-     "Sec-Fetch-Mode": "cors",
-     "Sec-Fetch-Dest": "empty",
-     "Cookie": "hatch_sess=s; hatch_gw=g"
-    },
-    "timeout": 12,
-    "allow_redirects": false
-   }
-  ],
-  "result": null,
-  "error": "MuseGenerationError:/api/session HTTP 403：访问被拒绝，请检查服务器出口/地区/访问限制；不能据此判定 Cookie 失效",
-  "served": {
-   "status": 403,
-   "payload": null,
-   "cookies": [],
-   "raise_json": false
-  }
- },
- "renew_200_notjson": {
-  "calls": [
-   {
-    "m": "GET",
-    "url": "https://muse.ai/api/session",
-    "headers": {
-     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
-     "Origin": "https://muse.ai",
-     "Referer": "https://muse.ai/thread/new",
-     "Sec-Fetch-Site": "same-origin",
-     "Sec-Fetch-Mode": "cors",
-     "Sec-Fetch-Dest": "empty",
-     "Cookie": "hatch_sess=s; hatch_gw=g"
-    },
-    "timeout": 12,
-    "allow_redirects": false
-   }
-  ],
-  "result": null,
-  "error": "MuseGenerationError:/api/session HTTP 200 返回非 JSON；会话状态未确认",
-  "served": {
-   "status": 200,
-   "payload": null,
-   "cookies": [],
-   "raise_json": true
-  }
- },
- "renew_unassigned": {
-  "calls": [
-   {
-    "m": "GET",
-    "url": "https://muse.ai/api/session",
-    "headers": {
-     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
-     "Origin": "https://muse.ai",
-     "Referer": "https://muse.ai/thread/new",
-     "Sec-Fetch-Site": "same-origin",
-     "Sec-Fetch-Mode": "cors",
-     "Sec-Fetch-Dest": "empty",
-     "Cookie": "hatch_sess=s; hatch_gw=g"
-    },
-    "timeout": 12,
-    "allow_redirects": false
-   }
-  ],
-  "result": null,
-  "error": "MuseGenerationError:/api/session HTTP 200 未返回 assigned 会话；请在官网检查账号/工作区状态",
-  "served": {
-   "status": 200,
-   "payload": {
-    "status": "pending"
-   },
-   "cookies": [],
-   "raise_json": false
-  }
- },
- "renew_no_wake": {
-  "calls": [
-   {
-    "m": "GET",
-    "url": "https://muse.ai/api/session",
-    "headers": {
-     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
-     "Origin": "https://muse.ai",
-     "Referer": "https://muse.ai/thread/new",
-     "Sec-Fetch-Site": "same-origin",
-     "Sec-Fetch-Mode": "cors",
-     "Sec-Fetch-Dest": "empty",
-     "Cookie": "hatch_sess=s; hatch_gw=g"
-    },
-    "timeout": 12,
-    "allow_redirects": false
-   }
-  ],
-  "result": {
-   "ok": true,
-   "status": "assigned",
-   "vm_id": "vm-1",
-   "vm_state": "SLEEPING",
-   "wake_ok": false,
-   "cookies": {
-    "hatch_sess": "s",
-    "hatch_gw": "g",
-    "hatch_vml": "NEWVML"
-   },
-   "cookies_exp": {
-    "hatch_sess": 1800000000,
-    "hatch_vml": 1700086400
-   }
   },
-  "error": null,
-  "served": {
-   "status": 200,
-   "payload": null,
-   "cookies": [
-    [
-     "hatch_vml",
-     "NEWVML",
-     1700086400
+  "renew_ok": {
+    "calls": [
+      {
+        "m": "GET",
+        "url": "https://muse.ai/api/session",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+          "Origin": "https://muse.ai",
+          "Referer": "https://muse.ai/thread/new",
+          "Sec-Fetch-Site": "same-origin",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Dest": "empty",
+          "Cookie": "hatch_sess=s; hatch_gw=g; hatch_vml=NEWVML"
+        },
+        "timeout": 12,
+        "allow_redirects": false
+      },
+      {
+        "m": "POST",
+        "url": "https://muse.ai/api/hatch/vm/wake",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+          "Origin": "https://muse.ai",
+          "Referer": "https://muse.ai/thread/new",
+          "Sec-Fetch-Site": "same-origin",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Dest": "empty",
+          "Cookie": "hatch_sess=s; hatch_gw=g; hatch_vml=NEWVML"
+        },
+        "json": {
+          "vm_id": "vm-1",
+          "retry_count": 0,
+          "connect_attempt_id": "d7d8edec-a5e3-4c51-8ea2-1275d5fcb5bc"
+        },
+        "timeout": 8
+      },
+      {
+        "m": "GET",
+        "url": "https://muse.ai/api/session",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+          "Origin": "https://muse.ai",
+          "Referer": "https://muse.ai/thread/new",
+          "Sec-Fetch-Site": "same-origin",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Dest": "empty",
+          "Cookie": "hatch_sess=s; hatch_gw=g; hatch_vml=NEWVML"
+        },
+        "timeout": 12,
+        "allow_redirects": false
+      }
     ],
-    [
-     "hatch_empty",
-     "",
-     0
-    ]
-   ],
-   "raise_json": false
-  }
- },
- "renew_vm_disabled": {
-  "calls": [
-   {
-    "m": "GET",
-    "url": "https://muse.ai/api/session",
-    "headers": {
-     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
-     "Origin": "https://muse.ai",
-     "Referer": "https://muse.ai/thread/new",
-     "Sec-Fetch-Site": "same-origin",
-     "Sec-Fetch-Mode": "cors",
-     "Sec-Fetch-Dest": "empty",
-     "Cookie": "hatch_sess=s; hatch_gw=g"
+    "result": {
+      "ok": true,
+      "status": "assigned",
+      "vm_id": "vm-1",
+      "vm_state": "SLEEPING",
+      "wake_ok": false,
+      "wake_requested": true,
+      "cookies": {
+        "hatch_sess": "s",
+        "hatch_gw": "g",
+        "hatch_vml": "NEWVML"
+      },
+      "cookies_exp": {
+        "hatch_sess": 1800000000,
+        "hatch_vml": 1700086400
+      }
     },
-    "timeout": 12,
-    "allow_redirects": false
-   }
-  ],
-  "result": {
-   "ok": true,
-   "status": "assigned",
-   "vm_id": "vm-1",
-   "vm_state": "DISABLED",
-   "wake_ok": false,
-   "cookies": {
-    "hatch_sess": "s",
-    "hatch_gw": "g",
-    "hatch_vml": "NEWVML"
-   },
-   "cookies_exp": {
-    "hatch_sess": 1800000000,
-    "hatch_vml": 1700086400
-   }
+    "error": null,
+    "served": {
+      "status": 200,
+      "payload": null,
+      "cookies": [
+        [
+          "hatch_vml",
+          "NEWVML",
+          1700086400
+        ],
+        [
+          "hatch_empty",
+          "",
+          0
+        ]
+      ],
+      "raise_json": false
+    }
   },
-  "error": null,
-  "served": {
-   "status": 200,
-   "payload": {
-    "status": "assigned",
-    "vm_id": "vm-1",
-    "vm_state": "DISABLED"
-   },
-   "cookies": [
+  "renew_401": {
+    "calls": [
+      {
+        "m": "GET",
+        "url": "https://muse.ai/api/session",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+          "Origin": "https://muse.ai",
+          "Referer": "https://muse.ai/thread/new",
+          "Sec-Fetch-Site": "same-origin",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Dest": "empty",
+          "Cookie": "hatch_sess=s; hatch_gw=g"
+        },
+        "timeout": 12,
+        "allow_redirects": false
+      }
+    ],
+    "result": null,
+    "error": "MuseAuthError:会话认证失败 (/api/session HTTP 401)，请在官网确认登录后重新导入 cookie",
+    "served": {
+      "status": 401,
+      "payload": null,
+      "cookies": [],
+      "raise_json": false
+    }
+  },
+  "renew_403": {
+    "calls": [
+      {
+        "m": "GET",
+        "url": "https://muse.ai/api/session",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+          "Origin": "https://muse.ai",
+          "Referer": "https://muse.ai/thread/new",
+          "Sec-Fetch-Site": "same-origin",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Dest": "empty",
+          "Cookie": "hatch_sess=s; hatch_gw=g"
+        },
+        "timeout": 12,
+        "allow_redirects": false
+      }
+    ],
+    "result": null,
+    "error": "MuseGenerationError:/api/session HTTP 403：访问被拒绝，请检查服务器出口/地区/访问限制；不能据此判定 Cookie 失效",
+    "served": {
+      "status": 403,
+      "payload": null,
+      "cookies": [],
+      "raise_json": false
+    }
+  },
+  "renew_200_notjson": {
+    "calls": [
+      {
+        "m": "GET",
+        "url": "https://muse.ai/api/session",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+          "Origin": "https://muse.ai",
+          "Referer": "https://muse.ai/thread/new",
+          "Sec-Fetch-Site": "same-origin",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Dest": "empty",
+          "Cookie": "hatch_sess=s; hatch_gw=g"
+        },
+        "timeout": 12,
+        "allow_redirects": false
+      }
+    ],
+    "result": null,
+    "error": "MuseGenerationError:/api/session HTTP 200 返回非 JSON；会话状态未确认",
+    "served": {
+      "status": 200,
+      "payload": null,
+      "cookies": [],
+      "raise_json": true
+    }
+  },
+  "renew_unassigned": {
+    "calls": [
+      {
+        "m": "GET",
+        "url": "https://muse.ai/api/session",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+          "Origin": "https://muse.ai",
+          "Referer": "https://muse.ai/thread/new",
+          "Sec-Fetch-Site": "same-origin",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Dest": "empty",
+          "Cookie": "hatch_sess=s; hatch_gw=g"
+        },
+        "timeout": 12,
+        "allow_redirects": false
+      }
+    ],
+    "result": null,
+    "error": "MuseGenerationError:/api/session HTTP 200 未返回 assigned 会话；请在官网检查账号/工作区状态",
+    "served": {
+      "status": 200,
+      "payload": {
+        "status": "pending"
+      },
+      "cookies": [],
+      "raise_json": false
+    }
+  },
+  "renew_no_wake": {
+    "calls": [
+      {
+        "m": "GET",
+        "url": "https://muse.ai/api/session",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+          "Origin": "https://muse.ai",
+          "Referer": "https://muse.ai/thread/new",
+          "Sec-Fetch-Site": "same-origin",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Dest": "empty",
+          "Cookie": "hatch_sess=s; hatch_gw=g"
+        },
+        "timeout": 12,
+        "allow_redirects": false
+      }
+    ],
+    "result": {
+      "ok": true,
+      "status": "assigned",
+      "vm_id": "vm-1",
+      "vm_state": "SLEEPING",
+      "wake_ok": false,
+      "wake_requested": false,
+      "cookies": {
+        "hatch_sess": "s",
+        "hatch_gw": "g",
+        "hatch_vml": "NEWVML"
+      },
+      "cookies_exp": {
+        "hatch_sess": 1800000000,
+        "hatch_vml": 1700086400
+      }
+    },
+    "error": null,
+    "served": {
+      "status": 200,
+      "payload": null,
+      "cookies": [
+        [
+          "hatch_vml",
+          "NEWVML",
+          1700086400
+        ],
+        [
+          "hatch_empty",
+          "",
+          0
+        ]
+      ],
+      "raise_json": false
+    }
+  },
+  "renew_vm_disabled": {
+    "calls": [
+      {
+        "m": "GET",
+        "url": "https://muse.ai/api/session",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+          "Origin": "https://muse.ai",
+          "Referer": "https://muse.ai/thread/new",
+          "Sec-Fetch-Site": "same-origin",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Dest": "empty",
+          "Cookie": "hatch_sess=s; hatch_gw=g"
+        },
+        "timeout": 12,
+        "allow_redirects": false
+      }
+    ],
+    "result": {
+      "ok": true,
+      "status": "assigned",
+      "vm_id": "vm-1",
+      "vm_state": "DISABLED",
+      "wake_ok": false,
+      "wake_requested": false,
+      "cookies": {
+        "hatch_sess": "s",
+        "hatch_gw": "g",
+        "hatch_vml": "NEWVML"
+      },
+      "cookies_exp": {
+        "hatch_sess": 1800000000,
+        "hatch_vml": 1700086400
+      }
+    },
+    "error": null,
+    "served": {
+      "status": 200,
+      "payload": {
+        "status": "assigned",
+        "vm_id": "vm-1",
+        "vm_state": "DISABLED"
+      },
+      "cookies": [
+        [
+          "hatch_vml",
+          "NEWVML",
+          1700086400
+        ],
+        [
+          "hatch_empty",
+          "",
+          0
+        ]
+      ],
+      "raise_json": false
+    }
+  },
+  "renew_500": {
+    "calls": [
+      {
+        "m": "GET",
+        "url": "https://muse.ai/api/session",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
+          "Origin": "https://muse.ai",
+          "Referer": "https://muse.ai/thread/new",
+          "Sec-Fetch-Site": "same-origin",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Dest": "empty",
+          "Cookie": "hatch_sess=s; hatch_gw=g"
+        },
+        "timeout": 12,
+        "allow_redirects": false
+      }
+    ],
+    "result": null,
+    "error": "MuseGenerationError:/api/session HTTP 500：上游请求未成功，请稍后重试并检查服务器网络",
+    "served": {
+      "status": 500,
+      "payload": null,
+      "cookies": [],
+      "raise_json": false
+    }
+  },
+  "pick_ext": [
     [
-     "hatch_vml",
-     "NEWVML",
-     1700086400
+      "image/webp",
+      "",
+      "image",
+      ".webp"
     ],
     [
-     "hatch_empty",
-     "",
-     0
+      "",
+      "https://x/a.mp4",
+      "image",
+      ".mp4"
+    ],
+    [
+      "",
+      "",
+      "video",
+      ".mp4"
+    ],
+    [
+      "video/mp4",
+      "https://x/a.webp",
+      "image",
+      ".mp4"
+    ],
+    [
+      "",
+      "https://x/a.png",
+      "image",
+      ".png"
+    ],
+    [
+      "application/octet-stream",
+      "https://x/a",
+      "image",
+      ".png"
+    ],
+    [
+      "image/jpeg",
+      "https://x/a",
+      "image",
+      ".jpg"
+    ],
+    [
+      "",
+      "https://x/a.WEBM",
+      "video",
+      ".webm"
+    ],
+    [
+      "Image/PNG",
+      "https://x/a",
+      "image",
+      ".png"
     ]
-   ],
-   "raise_json": false
-  }
- },
- "renew_500": {
-  "calls": [
-   {
-    "m": "GET",
-    "url": "https://muse.ai/api/session",
-    "headers": {
-     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36",
-     "Origin": "https://muse.ai",
-     "Referer": "https://muse.ai/thread/new",
-     "Sec-Fetch-Site": "same-origin",
-     "Sec-Fetch-Mode": "cors",
-     "Sec-Fetch-Dest": "empty",
-     "Cookie": "hatch_sess=s; hatch_gw=g"
-    },
-    "timeout": 12,
-    "allow_redirects": false
-   }
   ],
-  "result": null,
-  "error": "MuseGenerationError:/api/session HTTP 500：上游请求未成功，请稍后重试并检查服务器网络",
-  "served": {
-   "status": 500,
-   "payload": null,
-   "cookies": [],
-   "raise_json": false
-  }
- },
- "pick_ext": [
-  [
-   "image/webp",
-   "",
-   "image",
-   ".webp"
-  ],
-  [
-   "",
-   "https://x/a.mp4",
-   "image",
-   ".mp4"
-  ],
-  [
-   "",
-   "",
-   "video",
-   ".mp4"
-  ],
-  [
-   "video/mp4",
-   "https://x/a.webp",
-   "image",
-   ".mp4"
-  ],
-  [
-   "",
-   "https://x/a.png",
-   "image",
-   ".png"
-  ],
-  [
-   "application/octet-stream",
-   "https://x/a",
-   "image",
-   ".png"
-  ],
-  [
-   "image/jpeg",
-   "https://x/a",
-   "image",
-   ".jpg"
-  ],
-  [
-   "",
-   "https://x/a.WEBM",
-   "video",
-   ".webm"
-  ],
-  [
-   "Image/PNG",
-   "https://x/a",
-   "image",
-   ".png"
-  ]
- ],
- "parse_quota": {
-  "raw": "Free plan\nWeekly limit resets on Sep 30\n1% used\nAdditional tokens\nNever expires\n0% used (2B tokens left)",
-  "plan": "Free plan",
-  "weekly_reset": "Sep 30",
-  "weekly_used_pct": 1,
-  "extra_used_pct": 0,
-  "extra_left": "2B tokens left",
-  "extra_expires": "never",
-  "found": true
- },
- "parse_quota_empty": {
-  "raw": "",
-  "found": false
- },
- "parse_quota_weird": {
-  "raw": "Pro plan\n3% used (500M tokens left)\nNever expires\nweekly limit resets on Jan 1",
-  "plan": "Pro plan",
-  "weekly_used_pct": 3,
-  "extra_used_pct": 3,
-  "extra_left": "500M tokens left",
-  "extra_expires": "never",
-  "found": true
- },
- "normalize": {
-  "empty": [
-   "",
-   "image/png"
-  ],
-  "raw_b64": [
-   "iVBORw0KGgo=",
-   "image/png"
-  ],
-  "data_plain": [
-   "abc",
-   "image/png"
-  ],
-  "data_mime": [
-   "R0lGOD",
-   "image/gif"
-  ],
-  "data_mime_nob64": [
-   "XX",
-   "image/png"
-  ]
- },
- "errors": {}
+  "parse_quota": {
+    "raw": "Free plan\nWeekly limit resets on Sep 30\n1% used\nAdditional tokens\nNever expires\n0% used (2B tokens left)",
+    "plan": "Free plan",
+    "weekly_reset": "Sep 30",
+    "weekly_used_pct": 1,
+    "extra_used_pct": 0,
+    "extra_left": "2B tokens left",
+    "extra_expires": "never",
+    "found": true
+  },
+  "parse_quota_empty": {
+    "raw": "",
+    "found": false
+  },
+  "parse_quota_weird": {
+    "raw": "Pro plan\n3% used (500M tokens left)\nNever expires\nweekly limit resets on Jan 1",
+    "plan": "Pro plan",
+    "weekly_used_pct": 3,
+    "extra_used_pct": 3,
+    "extra_left": "500M tokens left",
+    "extra_expires": "never",
+    "found": true
+  },
+  "normalize": {
+    "empty": [
+      "",
+      "image/png"
+    ],
+    "raw_b64": [
+      "iVBORw0KGgo=",
+      "image/png"
+    ],
+    "data_plain": [
+      "abc",
+      "image/png"
+    ],
+    "data_mime": [
+      "R0lGOD",
+      "image/gif"
+    ],
+    "data_mime_nob64": [
+      "XX",
+      "image/png"
+    ]
+  },
+  "errors": {}
 }

@@ -50,6 +50,17 @@ type Engine struct {
 	// 而金样本录制时这一步是被打桩跳过的。nil 时用真实的 EnsurePage。
 	EnsurePageFn func(cookies map[string]string, expires map[string]int, accountID string) (Session, error)
 
+	// startMu 对应上游 1.6.0 给 start()/stop() 加的 _start_lock：
+	// 多任务并发时 Start 可能被多个 goroutine 同时调用，不能各自拉一个 Chromium。
+	startMu sync.Mutex
+	// contextsMu / activeContexts 对应 _contexts_lock / _active_contexts：
+	// 每个并发任务各自持有一个 Incognito BrowserContext，退出时必须全部 dispose。
+	contextsMu     sync.Mutex
+	activeContexts map[string]bool
+	// stateMu 护住下面这几个字段的「读-改-发快照」：并发任务会同时换 page/currentAccID，
+	// 而 visible 快照要求整组一致（见 DEVIATION(#16)）。
+	stateMu sync.Mutex
+
 	// DEVIATION(#16): Python 没有 visible / renewMu，它靠 GIL 保证「一次赋值/一次查表」的原子性。
 	// Go 里这两个字段会被**不持 GEN_LOCK 的读者**看到：面板每几秒打 /admin/status 与 /readyz
 	// （BrowserProcUp），保活协程读写 lastHTTPRenew（renewAndPersist 在锁外也走）。
@@ -77,15 +88,29 @@ func NewEngine(cfg *config.Config, httpClient HTTPClient, newSession SessionFact
 		newSession = defaultSessionFactory
 	}
 	return &Engine{
-		CFG:           cfg,
-		HTTP:          httpClient,
-		New:           newSession,
-		lastHTTPRenew: map[string]float64{},
-		now:           time.Now,
-		sleep:         time.Sleep,
-		waitTimeout:   10 * time.Second,
+		CFG:            cfg,
+		HTTP:           httpClient,
+		New:            newSession,
+		activeContexts: map[string]bool{},
+		lastHTTPRenew:  map[string]float64{},
+		now:            time.Now,
+		sleep:          time.Sleep,
+		waitTimeout:    10 * time.Second,
 	}
 }
+
+// PageCtx 对应 Python engine 里 threading.local() 保存的三件套：
+// page / current_acc_id / current_context_id。
+// Go 没有线程局部存储：每个并发任务显式持有一个 PageCtx，一个任务一条链路，
+// 语义与上游「每线程独立页面 + 独立 Incognito BrowserContext」一一对应。
+type PageCtx struct {
+	Page      Session
+	AccID     string
+	ContextID string
+}
+
+// NewPageCtx 建一个空的任务上下文（对应一个新 worker 线程的 thread-local）。
+func (e *Engine) NewPageCtx() *PageCtx { return &PageCtx{} }
 
 func defaultSessionFactory(wsURL string, timeout time.Duration) (Session, error) {
 	c, err := newRealSession(wsURL, timeout)
@@ -103,8 +128,10 @@ type browserState struct {
 	accID string
 }
 
-// publish 在每次状态变更后调用。调用方此刻持着 GEN_LOCK，读本体字段是安全的。
+// publish 在每次状态变更后调用；读本体字段前先拿 stateMu，因为并发任务都会换这些字段。
 func (e *Engine) publish() {
+	e.stateMu.Lock()
+	defer e.stateMu.Unlock()
 	e.visible.Store(&browserState{proc: e.proc, page: e.page, accID: e.currentAccID})
 }
 
@@ -115,11 +142,43 @@ func (e *Engine) snap() *browserState {
 	return &browserState{}
 }
 
-func (e *Engine) setProc(p Process) { e.proc = p; e.publish() }
-func (e *Engine) setPage(s Session) { e.page = s; e.publish() }
+func (e *Engine) setProc(p Process) {
+	e.stateMu.Lock()
+	e.proc = p
+	e.visible.Store(&browserState{proc: e.proc, page: e.page, accID: e.currentAccID})
+	e.stateMu.Unlock()
+}
+
+func (e *Engine) setBrowser(s Session) {
+	e.stateMu.Lock()
+	e.browser = s
+	e.stateMu.Unlock()
+}
+
+func (e *Engine) browserSession() Session {
+	e.stateMu.Lock()
+	defer e.stateMu.Unlock()
+	return e.browser
+}
+
+func (e *Engine) procHandle() Process {
+	e.stateMu.Lock()
+	defer e.stateMu.Unlock()
+	return e.proc
+}
+
+func (e *Engine) setPage(s Session) {
+	e.stateMu.Lock()
+	e.page = s
+	e.visible.Store(&browserState{proc: e.proc, page: e.page, accID: e.currentAccID})
+	e.stateMu.Unlock()
+}
+
 func (e *Engine) setAccountID(id string) {
+	e.stateMu.Lock()
 	e.currentAccID = id
-	e.publish()
+	e.visible.Store(&browserState{proc: e.proc, page: e.page, accID: e.currentAccID})
+	e.stateMu.Unlock()
 }
 
 // renewAt / setRenewAt 包住 lastHTTPRenew 那张表的单次读写。
@@ -166,16 +225,19 @@ func (e *Engine) chromiumArgs() []string {
 
 // Start 对应 start()：必要时复用已有 CDP，否则清锁、起进程、最多等 90 秒。
 func (e *Engine) Start() error {
-	if e.proc != nil && e.alive() && e.browser != nil {
+	// 对应上游 1.6.0 的 `with self._start_lock:`：并发任务同时冷启动时只能拉一个浏览器。
+	e.startMu.Lock()
+	defer e.startMu.Unlock()
+	if e.procHandle() != nil && e.alive() && e.browserSession() != nil {
 		return nil
 	}
 
 	// 尝试复用已有健康 CDP（Python 里只在 proc 为空时做）
-	if e.proc == nil {
+	if e.procHandle() == nil {
 		if v, err := e.httpJSON(e.debugURL(), time.Second); err == nil {
 			if ws, ok := v["webSocketDebuggerUrl"]; ok {
 				if b, err := e.New(asString(ws), 180*time.Second); err == nil {
-					e.browser = b
+					e.setBrowser(b)
 					return nil
 				}
 			}
@@ -222,7 +284,7 @@ func (e *Engine) Start() error {
 			} else if b, err2 := e.New(asString(ws), 180*time.Second); err2 != nil {
 				err = err2
 			} else {
-				e.browser = b
+				e.setBrowser(b)
 				return nil
 			}
 		}
@@ -233,7 +295,8 @@ func (e *Engine) Start() error {
 }
 
 func (e *Engine) alive() bool {
-	return e.proc != nil && e.proc.Alive()
+	p := e.procHandle()
+	return p != nil && p.Alive()
 }
 
 // childCWD 对应 Python 的 cwd_dir：home_dir 存在且是目录才设，否则不设。
@@ -293,26 +356,38 @@ func (e *Engine) childEnv() []string {
 	return out
 }
 
-// Stop 对应 stop()：先关会话再终止进程，10 秒兜底 KILL。
+// Stop 对应上游 1.6.0 的 stop()：先关当前页面，再 dispose 掉所有活跃的隔离上下文，
+// 关浏览器会话，最后终止进程（10 秒 SIGTERM 兜底 KILL）。
 func (e *Engine) Stop() {
-	for _, c := range []Session{e.page, e.browser} {
-		if c != nil {
-			c.Close()
-		}
-	}
-	e.setPage(nil)
-	e.browser = nil
-	e.publish()
+	e.startMu.Lock()
+	defer e.startMu.Unlock()
 
-	if e.proc != nil && e.alive() {
-		e.proc.Terminate() // proc.terminate()
+	if p := func() Session {
+		e.stateMu.Lock()
+		defer e.stateMu.Unlock()
+		return e.page
+	}(); p != nil {
+		p.Close()
+		e.setPage(nil)
+	}
+	if b := e.browserSession(); b != nil {
+		for _, ctxID := range e.drainContexts() {
+			_, _ = b.Send("Target.disposeBrowserContext",
+				map[string]any{"browserContextId": ctxID}, 0)
+		}
+		b.Close()
+		e.setBrowser(nil)
+	}
+
+	if p := e.procHandle(); p != nil && p.Alive() {
+		p.Terminate() // proc.terminate()
 		timeout := e.waitTimeout
 		if timeout <= 0 {
 			timeout = 10 * time.Second
 		}
-		if !waitProcExit(e.proc, timeout, e.sleep) {
-			e.proc.Kill() // proc.kill()
-			waitProcExit(e.proc, 5*time.Second, e.sleep)
+		if !waitProcExit(p, timeout, e.sleep) {
+			p.Kill() // proc.kill()
+			waitProcExit(p, 5*time.Second, e.sleep)
 		}
 	}
 	e.setProc(nil)
@@ -322,22 +397,124 @@ func (e *Engine) Stop() {
 	}
 }
 
-// openPage 对应 _open_page()：关掉现存 page target，开新页面并 enable 三个域。
-func (e *Engine) openPage() (Session, error) {
-	if resp, err := e.HTTP.Get(e.listURL(), nil, 3*time.Second, true); err == nil {
-		var items []map[string]any
-		if json.Unmarshal(resp.Body, &items) == nil {
-			for _, it := range items {
-				if it["type"] == "page" {
-					if id, ok := it["id"].(string); ok && id != "" {
-						_, _ = e.HTTP.Get(fmt.Sprintf("http://127.0.0.1:%d/json/close/%s", e.CFG.CdpPort, id),
-							nil, 2*time.Second, true)
-					}
-				}
-			}
+// trackContext / untrackContext / drainContexts 维护活跃 BrowserContext 集合。
+func (e *Engine) trackContext(id string) {
+	e.contextsMu.Lock()
+	e.activeContexts[id] = true
+	e.contextsMu.Unlock()
+}
+
+func (e *Engine) untrackContext(id string) {
+	e.contextsMu.Lock()
+	delete(e.activeContexts, id)
+	e.contextsMu.Unlock()
+}
+
+func (e *Engine) drainContexts() []string {
+	e.contextsMu.Lock()
+	defer e.contextsMu.Unlock()
+	out := make([]string, 0, len(e.activeContexts))
+	for id := range e.activeContexts {
+		out = append(out, id)
+	}
+	e.activeContexts = map[string]bool{}
+	return out
+}
+
+// closeCurrentPage 对应上游 1.6.0 的 _close_page()：
+// 关闭本任务页面、dispose 它自己的隔离上下文，并清空任务上下文的账号标记。
+func (e *Engine) closeCurrentPage(ctx *PageCtx) {
+	if ctx == nil {
+		return
+	}
+	if p := ctx.Page; p != nil {
+		p.Close()
+		ctx.Page = nil
+		e.stateMu.Lock()
+		if e.page == p {
+			e.page = nil
+			e.visible.Store(&browserState{proc: e.proc, page: e.page, accID: e.currentAccID})
+		}
+		e.stateMu.Unlock()
+	}
+	if ctx.ContextID != "" {
+		if b := e.browserSession(); b != nil {
+			_, _ = b.Send("Target.disposeBrowserContext",
+				map[string]any{"browserContextId": ctx.ContextID}, 0)
+		}
+		e.untrackContext(ctx.ContextID)
+		ctx.ContextID = ""
+	}
+	ctx.AccID = ""
+}
+
+// CloseCurrentPage 是 closeCurrentPage 的公开入口（app.py 在生成失败/断开时调它清场）。
+func (e *Engine) CloseCurrentPage(ctx *PageCtx) { e.closeCurrentPage(ctx) }
+
+// enablePageDomains 是 _open_page() 两条路径共用的 4 条 domain 启用调用。
+func (e *Engine) enablePageDomains(page Session) error {
+	for _, m := range []struct {
+		method string
+		params map[string]any
+	}{
+		{"Network.enable", nil},
+		{"Page.enable", nil},
+		{"Runtime.enable", nil},
+		{"Browser.setDownloadBehavior", map[string]any{"behavior": "allow", "downloadPath": e.CFG.DownloadDir()}},
+	} {
+		if _, err := page.Send(m.method, m.params, 0); err != nil {
+			return err
 		}
 	}
+	return nil
+}
 
+// openPage 对应上游 1.6.0 的 _open_page()：
+// 浏览器级连接可用时，先建一个任务专属的 Incognito BrowserContext，在其中开页面
+// （多账号 cookie/会话 100% 隔离）；失败则回退到旧路径（关掉现存页面后在默认上下文开新页）。
+func (e *Engine) openPage(ctx *PageCtx) (Session, error) {
+	if b := e.browserSession(); b != nil {
+		ctxID, page, err := func() (string, Session, error) {
+			res, err := b.Send("Target.createBrowserContext", nil, 0)
+			if err != nil {
+				return "", nil, err
+			}
+			result, _ := res["result"].(map[string]any)
+			ctxID := asString(result["browserContextId"])
+			if ctxID == "" {
+				return "", nil, fmt.Errorf("Target.createBrowserContext 未返回 browserContextId")
+			}
+			e.trackContext(ctxID)
+			tRes, err := b.Send("Target.createTarget", map[string]any{
+				"url": "about:blank", "browserContextId": ctxID}, 0)
+			if err != nil {
+				return ctxID, nil, err
+			}
+			tResult, _ := tRes["result"].(map[string]any)
+			targetID := asString(tResult["targetId"])
+			if targetID == "" {
+				return ctxID, nil, fmt.Errorf("Target.createTarget 未返回 targetId")
+			}
+			wsURL := fmt.Sprintf("ws://127.0.0.1:%d/devtools/page/%s", e.CFG.CdpPort, targetID)
+			page, err := e.New(wsURL, 180*time.Second)
+			if err != nil {
+				return ctxID, nil, err
+			}
+			if err := e.enablePageDomains(page); err != nil {
+				return ctxID, nil, err
+			}
+			return ctxID, page, nil
+		}()
+		if err == nil {
+			ctx.ContextID = ctxID
+			return page, nil
+		}
+		log.Printf("Target.createBrowserContext 创建隔离上下文失败，回退到普通标签页: %v", err)
+	}
+
+	// 回退：在默认上下文直接开新页面并 enable 三个域。
+	// 注意：上游 1.6.0 起这里**不再**先 /json/list + /json/close 清场
+	//（并发模型下清别人的页面是错的），只发一次 /json/new。
 	resp, err := e.HTTP.Put(fmt.Sprintf("http://127.0.0.1:%d/json/new?about:blank", e.CFG.CdpPort),
 		nil, 10*time.Second)
 	if err != nil {
@@ -351,18 +528,8 @@ func (e *Engine) openPage() (Session, error) {
 	if err != nil {
 		return nil, &ErrGeneration{Msg: err.Error()}
 	}
-	for _, m := range []struct {
-		method string
-		params map[string]any
-	}{
-		{"Network.enable", nil},
-		{"Page.enable", nil},
-		{"Runtime.enable", nil},
-		{"Browser.setDownloadBehavior", map[string]any{"behavior": "allow", "downloadPath": e.CFG.DownloadDir()}},
-	} {
-		if _, err := page.Send(m.method, m.params, 0); err != nil {
-			return nil, err
-		}
+	if err := e.enablePageDomains(page); err != nil {
+		return nil, err
 	}
 	return page, nil
 }
@@ -403,11 +570,11 @@ func (e *Engine) ApplyCookies(page Session, cookies map[string]string, expires m
 }
 
 // ReadCookies 对应 read_cookies()：含 httpOnly，这是页面 JS 做不到的。
-func (e *Engine) ReadCookies() map[string]CookieEntry {
-	if e.page == nil {
+func (e *Engine) ReadCookies(ctx *PageCtx) map[string]CookieEntry {
+	if ctx == nil || ctx.Page == nil {
 		return map[string]CookieEntry{}
 	}
-	msg, err := e.page.Send("Network.getCookies", map[string]any{"urls": []string{e.CFG.SiteURL}}, 20*time.Second)
+	msg, err := ctx.Page.Send("Network.getCookies", map[string]any{"urls": []string{e.CFG.SiteURL}}, 20*time.Second)
 	if err != nil {
 		return map[string]CookieEntry{}
 	}
@@ -438,60 +605,64 @@ func (e *Engine) ReadCookies() map[string]CookieEntry {
 func (e *Engine) waitWSReady(page Session, timeout time.Duration) bool {
 	deadline := e.now().Add(timeout)
 	for e.now().Before(deadline) {
-		st, err := page.JS(jsWaitWsReadyL272, false, 0)
+		st, err := page.JS(jsWaitWsReady, false, 0)
 		if err == nil && st.Str2() == "ready" {
 			return true
 		}
-		e.sleep(80 * time.Millisecond)
+		// 上游 1.6.0 把这轮轮询从 0.08 秒改成 0.1 秒（配合 textarea-disabled 判定）。
+		e.sleep(100 * time.Millisecond)
 	}
 	return false
 }
 
 // ResetThread 关闭残留弹窗并确保处于干净会话且 WebSocket 已就绪。
 // 纯文本对话（forChat=true）时，若热页面无附件、无卡死且气泡不多，直接复用热连接以实现秒回。
-func (e *Engine) ResetThread(forChat bool) {
-	if e.page == nil {
+func (e *Engine) ResetThread(ctx *PageCtx, forChat bool) {
+	if ctx == nil || ctx.Page == nil {
 		return
 	}
+	page := ctx.Page
 	arg := "false"
 	if forChat {
 		arg = "true"
 	}
-	expr, err := pyFormat(jsResetThreadL294, arg)
+	expr, err := pyFormat(jsResetThread, arg)
 	if err != nil {
 		log.Printf("reset_thread JS 格式化失败: %v", err)
 		return
 	}
-	needsNav, err := e.page.JS(expr, false, 0)
+	needsNav, err := page.JS(expr, false, 0)
 	if err != nil {
 		return
 	}
 	if !needsNav.Truthy() {
 		return
 	}
-	_, _ = e.page.Send("Page.navigate", map[string]any{"url": "https://muse.ai/thread/new"}, 0)
+	_, _ = page.Send("Page.navigate", map[string]any{"url": "https://muse.ai/thread/new"}, 0)
 	end := e.now().Add(10 * time.Second)
 	for e.now().Before(end) {
 		e.sleep(80 * time.Millisecond)
-		ready, err := e.page.JS(jsResetThreadL319, false, 0)
+		ready, err := page.JS(jsResetThreadReady, false, 0)
 		if err == nil && ready.Truthy() {
 			break
 		}
 	}
-	e.waitWSReady(e.page, 12*time.Second)
+	e.waitWSReady(page, 12*time.Second)
 }
 
-// EnsurePage 保证有一个登录态正确的热页面；必要时先纯 HTTP 续签再开页。
-func (e *Engine) EnsurePage(cookies map[string]string, expires map[string]int, accountID string) (Session, error) {
-	if e.page != nil && (accountID == "" || e.currentAccID == accountID) {
-		if ok, err := e.page.JS(jsEnsurePageL377, false, 0); err == nil && ok.Truthy() {
-			return e.page, nil
+// EnsurePage 保证本任务上下文有一个登录态正确的热页面；必要时先纯 HTTP 续签再开页。
+// 对应上游 1.6.0 的重写：热页面复用时多等一次 _wait_ws_ready(8s)，
+// 冷开页改成「先登记页面、等 login_wait、再决定成败」，失败路径显式区分
+// 「网关一直 Connecting...」与「会话失效/页面卡住」。
+func (e *Engine) EnsurePage(ctx *PageCtx, cookies map[string]string, expires map[string]int, accountID string) (Session, error) {
+	if ctx.Page != nil && (accountID == "" || ctx.AccID == accountID) {
+		if ok, err := ctx.Page.JS(jsHasTextarea, false, 0); err == nil && ok.Truthy() {
+			if e.waitWSReady(ctx.Page, 8*time.Second) {
+				return ctx.Page, nil
+			}
 		}
 	}
-	if e.page != nil {
-		e.page.Close()
-		e.setPage(nil)
-	}
+	e.closeCurrentPage(ctx)
 
 	// 仅当距离上次 HTTP 续签超过 10 分钟才在主链路打 /api/session，避免每次切号重复阻塞
 	nowTS := float64(e.now().UnixNano()) / 1e9
@@ -515,7 +686,7 @@ func (e *Engine) EnsurePage(cookies map[string]string, expires map[string]int, a
 		}
 	}
 
-	page, err := e.openPage()
+	page, err := e.openPage(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -523,28 +694,24 @@ func (e *Engine) EnsurePage(cookies map[string]string, expires map[string]int, a
 	if _, err := page.Send("Page.navigate", map[string]any{"url": "https://muse.ai/thread/new"}, 0); err != nil {
 		return nil, err
 	}
-	for i := 0; i < e.CFG.LoginWait*2; i++ {
-		e.sleep(150 * time.Millisecond)
-		if ok, err := page.JS(jsEnsurePageL377, false, 0); err == nil && ok.Truthy() {
-			e.setPage(page)
-			e.setAccountID(accountID)
-			e.waitWSReady(page, 15*time.Second)
-			return page, nil
-		}
-	}
-	if ok, err := page.JS(jsEnsurePageL377, false, 0); err == nil && ok.Truthy() {
-		e.setPage(page)
+	// 先登记进任务上下文：失败路径的清理也要能关掉这个页面（上游注释同义）。
+	ctx.Page = page
+	e.setPage(page)
+	if e.waitWSReady(page, time.Duration(e.CFG.LoginWait)*time.Second) {
+		ctx.AccID = accountID
 		e.setAccountID(accountID)
-		e.waitWSReady(page, 15*time.Second)
 		return page, nil
 	}
 
-	// 区分「会话失效（被踢回登录页）」与「页面加载卡住」，错误提示才能对症
+	// 区分「会话失效（被踢回登录页）」「网关一直 Connecting...」与「页面加载卡住」。
 	body := ""
-	if v, err := page.JS(jsEnsurePageL386, false, 0); err == nil {
+	if v, err := page.JS(jsBodyText, false, 0); err == nil {
 		body = strings.ToLower(v.Str2())
 	}
-	page.Close()
+	e.closeCurrentPage(ctx)
+	if strings.Contains(body, "connecting...") {
+		return nil, &ErrGeneration{Msg: "页面网关连接超时 (Connecting...)，正在自动切换账号"}
+	}
 	if loginRe.MatchString(body) {
 		return nil, &ErrAuth{Msg: "会话已被 muse.ai 登出（可能被其它登录挤掉或触发风控），" +
 			"请用浏览器扩展重新导入 cookie"}
@@ -553,20 +720,24 @@ func (e *Engine) EnsurePage(cookies map[string]string, expires map[string]int, a
 }
 
 // ensurePage 走注入点（测试用），默认就是真实的 EnsurePage。
-func (e *Engine) ensurePage(cookies map[string]string, expires map[string]int, accountID string) (Session, error) {
+func (e *Engine) ensurePage(ctx *PageCtx, cookies map[string]string, expires map[string]int, accountID string) (Session, error) {
 	if e.EnsurePageFn != nil {
-		return e.EnsurePageFn(cookies, expires, accountID)
+		page, err := e.EnsurePageFn(cookies, expires, accountID)
+		if page != nil {
+			ctx.Page = page
+			e.setPage(page)
+			ctx.AccID = accountID
+			e.setAccountID(accountID)
+		}
+		return page, err
 	}
-	return e.EnsurePage(cookies, expires, accountID)
+	return e.EnsurePage(ctx, cookies, expires, accountID)
 }
 
 // Refresh 对应 refresh()。
-func (e *Engine) Refresh(cookies map[string]string, expires map[string]int) (Session, error) {
-	if e.page != nil {
-		e.page.Close()
-		e.setPage(nil)
-	}
-	return e.EnsurePage(cookies, expires, "")
+func (e *Engine) Refresh(ctx *PageCtx, cookies map[string]string, expires map[string]int) (Session, error) {
+	e.closeCurrentPage(ctx)
+	return e.EnsurePage(ctx, cookies, expires, "")
 }
 
 // CurrentAccountID / Page / Browser 暴露内部状态（app.py 直接读这些属性）。

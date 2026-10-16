@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -78,11 +79,16 @@ func (a *App) probeAccountSync(aid string, checkQuota bool) pyval.Obj {
 	quota := acc["quota"]
 	if checkQuota {
 		if locked := a.browser.tryRun(func() {
+			ctx := a.Engine.NewPageCtx()
+			defer a.Engine.CloseCurrentPage(ctx)
 			if err := a.Engine.Start(); err != nil {
 				return
 			}
-			q, qerr := a.Engine.Quota(res.Cookies, res.CookiesExp)
+			q, qerr := a.Engine.Quota(ctx, res.Cookies, res.CookiesExp, aid)
 			if qerr != nil {
+				return
+			}
+			if ok, _ := q["found"].(bool); !ok {
 				return
 			}
 			q["checked_at"] = a.now().Unix()
@@ -124,12 +130,16 @@ func (a *App) runKeepaliveAll(force bool) pyval.Obj {
 			if label == "" {
 				label = aid
 			}
-			hasExp := acc["expires_at"] != nil
 			expAt := int64(numOr(acc["expires_at"]))
+			// 对应上游 1.6.1 的 `not exp_at`：None 或 0 都算"没有有效期信息"。
+			noExp := acc["expires_at"] == nil || expAt == 0
 			lastKA := int64(numOr(acc["last_keepalive"]))
 			okTrue := acc["ok"] == true
-			needsRun := force || !hasExp || (expAt-now < 36*3600) ||
-				(now-lastKA > 15*60) || !okTrue
+			// 上游 1.6.1：维护探测不再按"闲置 15 分钟"触发；最近 6 小时内已保活过、
+			// 且会话有效期充足、状态正常时，一律跳过。
+			needsRun := force || lastKA == 0 ||
+				(now-lastKA > 6*3600 &&
+					(noExp || expAt-now < 36*3600 || !okTrue))
 			if !needsRun {
 				skipped = append(skipped, pyval.Obj{{"id", aid}, {"label", label},
 					{"reason", "会话充足且近期已保活"}})
@@ -198,22 +208,54 @@ func (a *App) testAccount(c *reqCtx) (any, error) {
 }
 
 func (a *App) probeSession(aid string, cookies map[string]string, expires map[string]int) any {
+	ctx := a.Engine.NewPageCtx()
+	defer a.Engine.CloseCurrentPage(ctx)
 	if err := a.Engine.Start(); err != nil {
 		return a.testFailure(aid, err)
 	}
-	if _, err := a.Engine.Refresh(cookies, expires); err != nil {
+	if _, err := a.Engine.Refresh(ctx, cookies, expires); err != nil {
 		return a.testFailure(aid, err)
 	}
-	synced := a.syncCookies(aid)
+	synced := a.syncCookies(ctx, aid)
+	// 上游 1.6.1：会话有效性与额度可读性是两个独立结果；
+	// 只有读到有效额度（found=true）才覆盖旧缓存，读不到要显式回报 quota_error。
 	quota := any(nil)
-	if q, err := a.Engine.Quota(cookies, expires); err == nil {
-		q["checked_at"] = a.now().Unix()
-		a.Store.UpdateAccount(aid, map[string]any{"quota": q})
-		quota = q
+	var quotaError any = nil
+	if q, err := a.Engine.Quota(ctx, cookies, expires, aid); err == nil {
+		if found, _ := q["found"].(bool); found {
+			q["checked_at"] = a.now().Unix()
+			a.Store.UpdateAccount(aid, map[string]any{"quota": q})
+			quota = q
+		} else {
+			quotaError = "额度面板未读到有效数据；旧缓存未覆盖"
+		}
+	} else {
+		quotaError = pyExcName(err) + "；额度缓存未更新"
 	}
-	a.Store.Mark(aid, true, "会话有效")
+	note := "会话有效"
+	if quotaError != nil {
+		note += "；额度读取失败"
+	}
+	a.Store.Mark(aid, true, note)
 	return pyval.Obj{{"ok", true}, {"message", "会话有效，可正常生成"},
-		{"synced", synced}, {"quota", quota}}
+		{"synced", synced}, {"quota", quota}, {"quota_error", quotaError}}
+}
+
+// pyExcName 复刻 Python `type(exc).__name__`（只覆盖本项目会抛出的那几类异常）。
+func pyExcName(err error) string {
+	var ae *engine.ErrAuth
+	var ge *engine.ErrGeneration
+	switch {
+	case errors.As(err, &ae):
+		return "MuseAuthError"
+	case errors.As(err, &ge):
+		return "MuseGenerationError"
+	}
+	name := strings.TrimPrefix(fmt.Sprintf("%T", err), "*")
+	if i := strings.LastIndex(name, "."); i >= 0 {
+		name = name[i+1:]
+	}
+	return name
 }
 
 func (a *App) testFailure(aid string, err error) pyval.Obj {
@@ -244,14 +286,21 @@ func (a *App) queryQuota(c *reqCtx) (any, error) {
 		pErr error
 	)
 	if err := a.browser.runBlocking(c.R.Context().Done(), func() {
+		ctx := a.Engine.NewPageCtx()
+		defer a.Engine.CloseCurrentPage(ctx)
 		if serr := a.Engine.Start(); serr != nil {
 			pErr = serr
 			return
 		}
 		var qerr error
-		q, qerr = a.Engine.Quota(cookies, expires)
+		q, qerr = a.Engine.Quota(ctx, cookies, expires, aid)
 		if qerr != nil {
 			pErr = qerr
+			return
+		}
+		if found, _ := q["found"].(bool); !found {
+			q = nil
+			pErr = &engine.ErrGeneration{Msg: "额度面板未读到有效数据；旧缓存未覆盖"}
 			return
 		}
 		q["checked_at"] = a.now().Unix()
@@ -275,7 +324,7 @@ func (a *App) queryQuota(c *reqCtx) (any, error) {
 }
 
 func (a *App) queryAnyQuota(c *reqCtx) (any, error) {
-	acc := a.Store.PickAccount("", true, false, "")
+	acc := a.Store.PickAccount("", true, false, "", nil, true)
 	if acc == nil {
 		return nil, httpError(400, "没有可用账号")
 	}
@@ -293,19 +342,21 @@ func (a *App) queryAnyQuota(c *reqCtx) (any, error) {
 //	② 逻辑上 Python 这条本来就没有正确结果 —— 任务跑到一半被 refresh 关掉标签页，
 //	   两边都拿不到想要的东西。排队之后行为可预期，空闲时的对外结果与 Python 完全一致。
 func (a *App) reloginAll(c *reqCtx) (any, error) {
-	acc := a.Store.PickAccount("", true, false, "")
+	acc := a.Store.PickAccount("", true, false, "", nil, true)
 	if acc == nil {
 		return nil, httpError(400, "没有可用账号")
 	}
 	cookies := toStringMap(acc["cookies"])
 	expires := cookieIntMap(acc["cookies_exp"])
+	ctx := a.Engine.NewPageCtx()
+	defer a.Engine.CloseCurrentPage(ctx)
 	var failure error
 	if err := a.browser.runBlocking(c.R.Context().Done(), func() {
 		if err := a.Engine.Start(); err != nil {
 			failure = err
 			return
 		}
-		if _, err := a.Engine.Refresh(cookies, expires); err != nil {
+		if _, err := a.Engine.Refresh(ctx, cookies, expires); err != nil {
 			failure = err
 		}
 	}); err != nil {

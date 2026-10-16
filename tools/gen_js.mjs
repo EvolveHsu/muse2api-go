@@ -43,10 +43,42 @@ function isFragment(text, line) {
 }
 
 // Python 里具名的类常量给个可读的 Go 名。
+// 键是 engine.py 里的行号 —— 上游升级后行号会平移，重新生成时按新的行号更新这里，
+// 引用点用的语义名保持稳定（js_test.go 的 TestNamedConstantsMatchPython 兜底）。
 const NAMED_MAP = {
-  415: 'clickJS', 504: 'attJS', 550: 'sendStateJS', 587: 'setterJS',
-  774: 'extractJS', 797: 'agentTextJS', 806: 'userCountJS', 814: 'agentCountJS',
-  822: 'pollChatJS', 1050: 'injectJS',
+  // 1.6.1（engine.py 行号）：
+  366: 'jsWaitWsReady',
+  390: 'jsResetThread',
+  415: 'jsResetThreadReady',
+  429: 'jsHasTextarea',
+  462: 'jsBodyText',
+  496: 'clickJS',
+  520: 'jsQuotaMenuItem',
+  540: 'jsQuotaDialog',
+  586: 'attJS',
+  632: 'sendStateJS',
+  641: 'jsFocusInput',
+  653: 'jsInputRect',
+  669: 'setterJS',
+  687: 'jsSendButton',
+  713: 'jsInputCleared',
+  731: 'jsScrollBottom',
+  815: 'jsWaitAttachmentState',
+  855: 'extractJS',
+  878: 'agentTextJS',
+  887: 'userCountJS',
+  895: 'agentCountJS',
+  903: 'pollChatJS',
+  974: 'jsChatTail',
+  1046: 'jsDownloadButton',
+  1108: 'jsClearAttachments',
+  1131: 'injectJS',
+  1186: 'jsAttachConfirm',
+};
+
+// 拼接模板同样按行号钉住语义名，引用点不跟着行号漂。
+const ASSEMBLED_MAP = {
+  1292: 'assembleDebugDump',
 };
 
 function camel(s) {
@@ -94,7 +126,7 @@ const asm = [];
 for (const c of byLine.values()) {
   const text = dec(c);
   const fn = camel(enclosingDef(c.line) || 'Assemble');
-  const goFn = 'assemble' + fn + 'L' + c.line;
+  const goFn = ASSEMBLED_MAP[c.line] || ('assemble' + fn + 'L' + c.line);
   // 注意：split 用带捕获组的正则会连捕获内容一起返回，这里必须用不捕获的版本。
   const parts = text.split(new RegExp(NUL + 'VAR:[A-Za-z_][A-Za-z0-9_]*' + NUL, 'g'));
   const marks = [...text.matchAll(varRe)].map(m => m[1]);

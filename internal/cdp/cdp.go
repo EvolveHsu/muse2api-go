@@ -39,6 +39,13 @@ type CDP struct {
 	conn    *websocket.Conn
 	writeMu sync.Mutex
 
+	// sendMu 对应上游 1.6.0 给 cdp.py 加的那把 threading.Lock：
+	// 同一个连接上「发一条 + 收它的应答」必须整体互斥，否则并发请求会互相把对方的
+	// 响应当杂项消息丢掉（Go 这边读协程按 id 匹配，非匹配消息会被直接丢弃）。
+	// 多账号并发以后，浏览器级连接（Target.createBrowserContext 等）是跨任务共享的，
+	// 这条锁是必需的，不是优化。
+	sendMu sync.Mutex
+
 	in        chan map[string]any
 	dead      chan struct{}
 	timeout   time.Duration
@@ -93,6 +100,8 @@ func (c *CDP) readLoop() {
 
 // Send 发送一条命令并等待 id 对上的响应，超时抛 TimeoutErr。
 func (c *CDP) Send(method string, params map[string]any, timeout time.Duration) (map[string]any, error) {
+	c.sendMu.Lock()
+	defer c.sendMu.Unlock()
 	if params == nil {
 		params = map[string]any{}
 	}
@@ -193,6 +202,8 @@ func (c *CDP) Pump(seconds float64, onEvent func(map[string]any)) {
 }
 
 func (c *CDP) Close() {
+	c.sendMu.Lock()
+	defer c.sendMu.Unlock()
 	c.closeOnce.Do(func() { _ = c.conn.Close() })
 }
 

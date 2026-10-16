@@ -242,24 +242,35 @@ e, p = fresh({"atts": [att_vid, att_vid, att_vid], "state": [st("x", True)] * 3}
 out["wait_att_video_stable"] = {"ret": e._wait_attachment("", 30, "video", base_att_cnt=0),
                                 "log": p.log}
 
-# expect=video 而页面只渲染出封面静帧（muse 出视频前常先挂一张 img）：Python 把这条记成
-# fallback_att、给视频节点 15s 宽限期，宽限期一过才接受静帧。线上「2 秒视频最后拿到 .jpg」
-# 走的就是这条路，所以「第几轮接受」必须钉死。FakeTime 的 sleep 会推进 FIXED，
-# 而 Go 的 vclock 从同一个起点开始同样累加 —— 起点每例都复位，两边的浮点相位才可比。
+# 1.6.0 起 expect=video 不再接受封面静帧兜底：页面只有 img 时一直等到超时，返回 None。
+# FakeTime 的 sleep 会推进 FIXED，而 Go 的 vclock 从同一个起点开始同样累加 ——
+# 起点每例都复位，两边的浮点相位才可比。
 FIXED[0] = 1700000000.0
 e, p = fresh({"atts": [att_img], "state": [st("生成中", True)]})
-out["wait_att_video_grace_fallback"] = {
+out["wait_att_video_poster_rejected"] = {
     "ret": e._wait_attachment("", 30, "video", base_att_cnt=0), "log": p.log,
     "n_scroll": n_of(p, "scroll"), "n_atts": n_of(p, "atts"), "n_state": n_of(p, "state"),
     "secs": FIXED[0] - 1700000000.0}
 
-# 宽限期还没到就超时：静帧不能被当成品，必须报「未出现新的生成结果」。
-# 这一条是上一条的反向保险 —— 只录前者的话，Go 提前接受也能过。
+# 短超时同样一无所获：静帧不能被当成品。
 FIXED[0] = 1700000000.0
 e, p = fresh({"atts": [att_img], "state": [st("生成中", True)]})
-out["wait_att_video_grace_not_yet"] = {
+out["wait_att_video_poster_short"] = {
     "ret": e._wait_attachment("", 10, "video", base_att_cnt=0), "log": p.log,
     "n_scroll": n_of(p, "scroll"), "n_atts": n_of(p, "atts"), "n_state": n_of(p, "state")}
+
+# 1.6.0 新增：提示词 30 秒还没送达后端（Still sending）→ 快速失败，不再干等整个超时。
+FIXED[0] = 1700000000.0
+still = json.dumps({"cnt": 0, "txt": "", "stop": True, "tail": "…Still sending your request…"})
+e, p = fresh({"atts": ["[]"], "state": [still]})
+try:
+    e._wait_attachment("", 60, "image", base_att_cnt=0)
+    out["wait_att_still_sending"] = {"err": None}
+except Exception as exc:  # noqa: BLE001
+    out["wait_att_still_sending"] = {
+        "err": type(exc).__name__ + ":" + str(exc), "log": p.log,
+        "n_atts": n_of(p, "atts"), "n_state": n_of(p, "state"),
+        "secs_before_fail": FIXED[0] - 1700000000.0}
 
 e, p = fresh({"atts": ["[]"], "state": [json.dumps(
     {"cnt": 1, "txt": "好", "stop": False, "tail": "out of credits"})]})
@@ -597,9 +608,9 @@ except Exception as exc:  # noqa: BLE001
     out["generate_timeout"] = {"err": type(exc).__name__ + ":" + str(exc), "log": p.log,
                                "dump_file": os.path.exists(_noatt)}
 
-# ---------------- generate：视频三条分支（整链路，只打桩 ensure_page） ----------------
-# Python 线上从没成功产出过视频文件可对照，视频路径只能靠假页面钉住；
-# 这三条分别对应「真出视频」「只有封面静帧（线上 2 秒视频的实际结果）」「mime/URL 都认不出」。
+# ---------------- generate：视频分支（整链路，只打桩 ensure_page） ----------------
+# 1.6.0 起视频链路有三条硬规矩：只认真实视频源、静帧永不冒充成品、
+# 成品类型和期望不符时明确报错（blob 与下载兜底两条路都有守卫）。
 mp4_b64 = base64.b64encode(b"\x00\x00\x00\x18ftypmp42mp42isom").decode()
 vid_payload = json.dumps({"ok": True, "mime": "video/mp4", "size": 16,
                           "url": "https://x/a.mp4", "b64": mp4_b64})
@@ -612,6 +623,10 @@ unknown_payload = json.dumps({"ok": True, "mime": "application/octet-stream", "s
 att_vid_poster = json.dumps([{"tid": ATT + "image", "hasVideo": False,
                               "src": "https://x/poster.jpg", "vSrc": "",
                               "iSrc": "https://x/poster.jpg", "w": 640, "h": 360}])
+# 伪装成视频的附件：tid 是 video、src 带 .mp4 后缀，但真实内容可能仍是图片。
+att_vid_src_mp4 = json.dumps([{"tid": ATT + "video", "hasVideo": False,
+                               "src": "https://x/a.mp4", "vSrc": "",
+                               "iSrc": "", "w": 640, "h": 360}])
 
 
 def rec(name, res):
@@ -638,19 +653,22 @@ e.ensure_page = lambda *a, **k: p
 rec("generate_full_video_ext_from_expect",
     e.generate({"a": "1"}, "红球弹起", expect="video", timeout=60))
 
-# 只有封面静帧：selected_src 退到 src，_pick_ext 由 mime 判成 .jpg，
-# 于是 kind 跟着扩展名变成 image —— expect="video" 不会把静帧硬标成视频。
+# 只有封面静帧：严格匹配下视频候选为空 —— 一路等到超时，报「未出现新的生成结果」。
 FIXED[0] = 1700000000.0
 e, p = fresh({"reset_nav": [0], "scroll": [1], "clear": [0], "atts": ["[]", att_vid_poster],
               "agent_cnt": ["0"], "focus": [1], "rect": ['{"x":10,"y":20}'], "setter": [3],
-              "send_btn": ["clicked"], "state": [st("生成中", True)],
-              "extract": [poster_payload]})
+              "send_btn": ["clicked"], "state": [st("生成中", True)], "dump": ["{}"]})
 e.ensure_page = lambda *a, **k: p
-rec("generate_full_video_poster_only", e.generate({"a": "1"}, "红球弹起", expect="video", timeout=60))
-out["generate_full_video_poster_only"].update(
-    {"n_atts": n_of(p, "atts"), "n_state": n_of(p, "state"), "secs": FIXED[0] - 1700000000.0})
+try:
+    e.generate({"a": "1"}, "红球弹起", expect="video", timeout=60)
+    out["generate_full_video_poster_rejected"] = {"err": None}
+except Exception as exc:  # noqa: BLE001
+    out["generate_full_video_poster_rejected"] = {
+        "err": type(exc).__name__ + ":" + str(exc), "log": p.log,
+        "n_atts": n_of(p, "atts"), "n_state": n_of(p, "state"),
+        "secs": FIXED[0] - 1700000000.0}
 
-# 10s 就超时：宽限期没到，静帧不能当成品 → 报「等待生成超时」。
+# 10s 短超时：同样是「等待生成超时」，只是轮询少。
 FIXED[0] = 1700000000.0
 e, p = fresh({"reset_nav": [0], "scroll": [1], "clear": [0], "atts": ["[]", att_vid_poster],
               "agent_cnt": ["0"], "focus": [1], "rect": ['{"x":10,"y":20}'], "setter": [3],
@@ -664,16 +682,54 @@ except Exception as exc:  # noqa: BLE001
                                            "log": p.log, "n_atts": n_of(p, "atts"),
                                            "n_state": n_of(p, "state")}
 
+# 提取回来的成品是图片（mime 判成 .jpg）而期望视频：拒绝交付，明确报错。
+FIXED[0] = 1700000000.0
+e, p = fresh({"reset_nav": [0], "scroll": [1], "clear": [0], "atts": ["[]", att_vid_src_mp4],
+              "agent_cnt": ["0"], "focus": [1], "rect": ['{"x":10,"y":20}'], "setter": [3],
+              "send_btn": ["clicked"], "state": [st("生成中", True)],
+              "extract": [poster_payload]})
+e.ensure_page = lambda *a, **k: p
+try:
+    e.generate({"a": "1"}, "红球弹起", expect="video", timeout=60)
+    out["generate_full_video_image_guard_blob"] = {"err": None}
+except Exception as exc:  # noqa: BLE001
+    out["generate_full_video_image_guard_blob"] = {
+        "err": type(exc).__name__ + ":" + str(exc), "log": p.log}
+
+# 下载兜底拿回 .jpg 也拒绝交付。
+for _f in os.listdir(Cfg.download_dir):
+    os.remove(os.path.join(Cfg.download_dir, _f))
+SIDE["dl_clicked"] = lambda: (
+    open(os.path.join(Cfg.download_dir, "shot.jpg"), "wb").write(b"JPGDATA"),
+    os.utime(os.path.join(Cfg.download_dir, "shot.jpg"), (1750000000, 1750000000)))
+FIXED[0] = 1700000000.0
+e, p = fresh({"reset_nav": [0], "scroll": [1], "clear": [0], "atts": ["[]", att_vid_src_mp4],
+              "agent_cnt": ["0"], "focus": [1], "rect": ['{"x":10,"y":20}'], "setter": [3],
+              "send_btn": ["clicked"], "state": [st("生成中", True)],
+              "extract": [json.dumps({"ok": False, "err": "media-http-404"})],
+              "dl_clicked": ["ok"]})
+e.ensure_page = lambda *a, **k: p
+try:
+    e.generate({"a": "1"}, "红球弹起", expect="video", timeout=60)
+    out["generate_full_video_image_guard_download"] = {"err": None}
+except Exception as exc:  # noqa: BLE001
+    out["generate_full_video_image_guard_download"] = {
+        "err": type(exc).__name__ + ":" + str(exc), "log": p.log}
+SIDE.pop("dl_clicked", None)
+
 # 各轮询场景的超时是调用方传进来的，Go 必须用同一个值，否则循环次数不可能一致。
 for _k, _t in (("wait_att_immediate", 30), ("wait_att_video_stable", 30),
-               ("wait_att_video_grace_fallback", 30), ("wait_att_video_grace_not_yet", 10),
+               ("wait_att_video_poster_rejected", 30), ("wait_att_video_poster_short", 10),
+               ("wait_att_still_sending", 60),
                ("wait_att_credits", 30), ("wait_att_textonly", 60),
                ("wait_att_media_report", 30), ("wait_att_baseline_excluded", 3),
                ("chat_stream", 30), ("chat_stream_connecting", 30),
                ("generate_full_image", 60), ("generate_full_image_ref", 60),
                ("generate_full_download_fallback", 60),
                ("generate_full_video", 60), ("generate_full_video_ext_from_expect", 60),
-               ("generate_full_video_poster_only", 60), ("generate_full_video_gives_up", 10),
+               ("generate_full_video_poster_rejected", 60), ("generate_full_video_gives_up", 10),
+               ("generate_full_video_image_guard_blob", 60),
+               ("generate_full_video_image_guard_download", 60),
                ("generate_timeout", 3),
                ("dl_ok", 6)):
     if isinstance(out.get(_k), dict):

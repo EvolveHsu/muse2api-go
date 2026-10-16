@@ -240,6 +240,10 @@ func engineWith(t *testing.T, page Session) (*Engine, *vclock) {
 	return e, vc
 }
 
+// pageCtx 给回放用例造一个携带假页面的任务上下文：等价于录制脚本里 `eng.page = page`
+// 那一步（1.6.0 起 page 是 thread-local，Go 侧显式放在 PageCtx 里）。
+func pageCtx(page Session) *PageCtx { return &PageCtx{Page: page} }
+
 // mustDirs 建出 data / downloads / media 三个目录。线上由 app 启动时 makedirs，
 // 金样本脚本也是这么起手；不建目录的话 _debug_dump 的落盘断言就成了空断言。
 func mustDirs(t *testing.T, e *Engine) {
@@ -273,7 +277,7 @@ func TestAttachmentsReplay(t *testing.T) {
 			sec := g.section(t, name)
 			page := newReplay(t, g, sec)
 			e, _ := engineWith(t, page)
-			got := e.Attachments()
+			got := e.Attachments(page)
 			gb, _ := json.Marshal(got)
 			var asAny any
 			_ = json.Unmarshal(gb, &asAny)
@@ -306,7 +310,7 @@ func TestSendReplay(t *testing.T) {
 			sec := g.section(t, c.name)
 			page := newReplay(t, g, sec)
 			e, _ := engineWith(t, page)
-			got, err := e.send(c.prompt)
+			got, err := e.send(page, c.prompt)
 			if want, ok := errText(sec["err"]); ok {
 				if err == nil {
 					t.Fatalf("Python 抛了 %q，Go 却返回 %q", want, got)
@@ -402,9 +406,11 @@ func TestWaitAttachmentReplay(t *testing.T) {
 		{name: "wait_att_media_report", expect: "image"},
 		{name: "wait_att_baseline_excluded", expect: "image",
 			baseline: map[string]bool{"https://x/same": true}},
-		// 视频宽限期：第 27 轮才放行静帧；timeout 只有 10s 时必须一无所获。
-		{name: "wait_att_video_grace_fallback", expect: "video"},
-		{name: "wait_att_video_grace_not_yet", expect: "video"},
+		// 1.6.0：视频不再接受封面静帧兜底 —— 长/短超时都必须一无所获。
+		{name: "wait_att_video_poster_rejected", expect: "video"},
+		{name: "wait_att_video_poster_short", expect: "video"},
+		// 提示词 30 秒还没送达后端 → 快速失败。
+		{name: "wait_att_still_sending", expect: "image"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -412,7 +418,7 @@ func TestWaitAttachmentReplay(t *testing.T) {
 			page := newReplay(t, g, sec)
 			page.count = pollRule
 			e, vc := engineWith(t, page)
-			att, found, err := e.WaitAttachment("", intOf(sec["timeout"]), c.expect,
+			att, found, err := e.WaitAttachment(page, "", float64(intOf(sec["timeout"])), c.expect,
 				nil, 0, 0, nil, c.baseline)
 			if want, ok := errText(sec["err"]); ok {
 				if err == nil {
@@ -450,7 +456,7 @@ func TestNegativeTimeoutMeansImmediateTimeout(t *testing.T) {
 	g := loadGenGolden(t)
 	page := newReplay(t, g, g.section(t, "wait_att_immediate"))
 	e, _ := engineWith(t, page)
-	att, found, err := e.WaitAttachment("", -1, "image", nil, 0, 0, nil, nil)
+	att, found, err := e.WaitAttachment(page, "", -1, "image", nil, 0, 0, nil, nil)
 	if err != nil || found {
 		t.Fatalf("负数超时应立刻返回「没有附件」，Go 给了 found=%v err=%v %+v", found, err, att)
 	}
@@ -465,7 +471,7 @@ func TestPollAndCountsReplay(t *testing.T) {
 		sec := g.section(t, "poll_chat")
 		page := newReplay(t, g, sec)
 		e, _ := engineWith(t, page)
-		cnt, txt, stop := e.pollChat()
+		cnt, txt, stop := e.pollChat(page)
 		want, _ := sec["ret"].([]any)
 		if len(want) != 3 || int(want[0].(float64)) != cnt || want[1] != txt || boolOf(want[2]) != stop {
 			t.Errorf("pollChat 不同: go=(%d,%q,%v) py=%v", cnt, txt, stop, want)
@@ -476,7 +482,7 @@ func TestPollAndCountsReplay(t *testing.T) {
 		sec := g.section(t, "agent_count")
 		page := newReplay(t, g, sec)
 		e, _ := engineWith(t, page)
-		if got := e.agentCount(); got != int(sec["ret"].(float64)) {
+		if got := e.agentCount(page); got != int(sec["ret"].(float64)) {
 			t.Errorf("agentCount: go=%d py=%v", got, sec["ret"])
 		}
 		page.assertDrained("agent_count")
@@ -485,7 +491,7 @@ func TestPollAndCountsReplay(t *testing.T) {
 		sec := g.section(t, "user_count_none")
 		page := newReplay(t, g, sec)
 		e, _ := engineWith(t, page)
-		if got := e.userCount(); got != int(sec["ret"].(float64)) {
+		if got := e.userCount(page); got != int(sec["ret"].(float64)) {
 			t.Errorf("userCount: go=%d py=%v", got, sec["ret"])
 		}
 		page.assertDrained("user_count_none")
@@ -502,7 +508,7 @@ func TestExtractBytesReplay(t *testing.T) {
 		sec := g.section(t, "extract_ok")
 		page := newReplay(t, g, sec)
 		e, _ := engineWith(t, page)
-		data, mime, url, err := e.extractBytes("https://x/a", "image", 4)
+		data, mime, url, err := e.extractBytes(page, "https://x/a", "image", 4)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -518,7 +524,7 @@ func TestExtractBytesReplay(t *testing.T) {
 		sec := g.section(t, "extract_fail")
 		page := newReplay(t, g, sec)
 		e, _ := engineWith(t, page)
-		_, _, _, err := e.extractBytes("https://x/a", "image", 4)
+		_, _, _, err := e.extractBytes(page, "https://x/a", "image", 4)
 		if err == nil {
 			t.Fatal("应当失败")
 		}
@@ -540,7 +546,7 @@ func TestChatStreamReplay(t *testing.T) {
 	e, _ := engineWith(t, page)
 	e.EnsurePageFn = func(map[string]string, map[string]int, string) (Session, error) { return page, nil }
 	var deltas []string
-	err := e.ChatStream(map[string]string{"a": "1"}, "hi", nil, intOf(sec["timeout"]), "", nil,
+	err := e.ChatStream(pageCtx(page), map[string]string{"a": "1"}, "hi", nil, intOf(sec["timeout"]), "", nil,
 		func(s string) error { deltas = append(deltas, s); return nil })
 	if err != nil {
 		t.Fatalf("Go 报错而 Python 没有: %v", err)
@@ -555,7 +561,7 @@ func TestChatStreamReplay(t *testing.T) {
 		page2 := newReplay(t, g, sec)
 		e2, _ := engineWith(t, page2)
 		e2.EnsurePageFn = func(map[string]string, map[string]int, string) (Session, error) { return page2, nil }
-		got, err := e2.Chat(map[string]string{"a": "1"}, "hi", nil, intOf(sec["timeout"]), "")
+		got, err := e2.Chat(pageCtx(page2), map[string]string{"a": "1"}, "hi", nil, intOf(sec["timeout"]), "")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -618,7 +624,7 @@ func TestChatStreamConnectingCounts(t *testing.T) {
 
 	e, _ := engineWith(t, page)
 	e.EnsurePageFn = func(map[string]string, map[string]int, string) (Session, error) { return page, nil }
-	err := e.ChatStream(map[string]string{"a": "1"}, "hi", nil, intOf(sec["timeout"]), "", nil,
+	err := e.ChatStream(pageCtx(page), map[string]string{"a": "1"}, "hi", nil, intOf(sec["timeout"]), "", nil,
 		func(string) error { return nil })
 	want, ok := errText(sec["err"])
 	if !ok {
@@ -648,7 +654,7 @@ func TestClearAndAttachReplay(t *testing.T) {
 		sec := g.section(t, "clear_attachments")
 		page := newReplay(t, g, sec)
 		e, _ := engineWith(t, page)
-		e.clearAttachments()
+		e.clearAttachments(page)
 		page.assertDrained("clear_attachments")
 	})
 
@@ -662,7 +668,7 @@ func TestClearAndAttachReplay(t *testing.T) {
 			sec := g.section(t, c.name)
 			page := newReplay(t, g, sec)
 			e, _ := engineWith(t, page)
-			err := e.attachImage(c.input)
+			err := e.attachImage(page, c.input)
 			want, hasWant := errText(sec["err"])
 			if hasWant {
 				if err == nil || err.Error() != want {
@@ -695,7 +701,7 @@ func TestDownloadFallbackReplay(t *testing.T) {
 		page := newReplay(t, g, sec)
 		e, _ := engineWith(t, page)
 		mustDirs(t, e)
-		got, err := e.downloadFallback("https://x/a", 180)
+		got, err := e.downloadFallback(page, "https://x/a", 180)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -736,7 +742,7 @@ func TestDownloadFallbackReplay(t *testing.T) {
 				}
 			}
 		}
-		got, err := e.downloadFallback("https://x/a", intOf(sec["timeout"]))
+		got, err := e.downloadFallback(page, "https://x/a", intOf(sec["timeout"]))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -759,7 +765,7 @@ func TestDebugDumpReplay(t *testing.T) {
 		page := newReplay(t, g, sec)
 		e, _ := engineWith(t, page)
 		mustDirs(t, e)
-		e.debugDump("unit")
+		e.debugDump(page, "unit")
 		raw, err := os.ReadFile(filepath.Join(e.CFG.DataDir(), "debug-unit.json"))
 		if err != nil {
 			t.Fatal(err)
@@ -774,7 +780,7 @@ func TestDebugDumpReplay(t *testing.T) {
 		page := newReplay(t, g, sec)
 		e, _ := engineWith(t, page)
 		mustDirs(t, e)
-		e.debugDump("raise")
+		e.debugDump(page, "raise")
 		_, err := os.Stat(filepath.Join(e.CFG.DataDir(), "debug-raise.json"))
 		if (err == nil) != boolOf(sec["exists"]) {
 			t.Errorf("JS 抛错时不该写文件：py exists=%v, go exists=%v", sec["exists"], err == nil)
@@ -794,18 +800,20 @@ func TestGenerateFullReplay(t *testing.T) {
 		prompt  string
 		ref     string
 		timeout int
-		dlFile  bool
+		dl      string
 	}{
-		{"generate_full_image", "image", "画猫", "", 60, false},
-		{"generate_full_image_ref", "image", "画猫", "data:image/png;base64,iVBORw0KGgo=", 60, false},
-		{"generate_full_download_fallback", "image", "画猫", "", 60, true},
-		{"generate_timeout", "image", "画猫", "", 3, false},
+		{"generate_full_image", "image", "画猫", "", 60, ""},
+		{"generate_full_image_ref", "image", "画猫", "data:image/png;base64,iVBORw0KGgo=", 60, ""},
+		{"generate_full_download_fallback", "image", "画猫", "", 60, "shot.png"},
+		{"generate_timeout", "image", "画猫", "", 3, ""},
 		// 视频三条分支：真出视频 / 只有封面静帧（线上「2 秒视频」的实际结局）/
 		// mime 与 URL 都认不出时由 expect 兜底，外加宽限期没到就必须放弃的那条。
-		{"generate_full_video", "video", "红球弹起", "", 60, false},
-		{"generate_full_video_ext_from_expect", "video", "红球弹起", "", 60, false},
-		{"generate_full_video_poster_only", "video", "红球弹起", "", 60, false},
-		{"generate_full_video_gives_up", "video", "红球弹起", "", 10, false},
+		{"generate_full_video", "video", "红球弹起", "", 60, ""},
+		{"generate_full_video_ext_from_expect", "video", "红球弹起", "", 60, ""},
+		{"generate_full_video_poster_rejected", "video", "红球弹起", "", 60, ""},
+		{"generate_full_video_gives_up", "video", "红球弹起", "", 10, ""},
+		{"generate_full_video_image_guard_blob", "video", "红球弹起", "", 60, ""},
+		{"generate_full_video_image_guard_download", "video", "红球弹起", "", 60, "shot.jpg"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -814,8 +822,8 @@ func TestGenerateFullReplay(t *testing.T) {
 			page.count = pollRule
 			e, vc := engineWith(t, page)
 			mustDirs(t, e)
-			if c.dlFile {
-				// 金样本里点下载按钮的那次 JS 调用会在 downloads 里落下 shot.png；
+			if c.dl != "" {
+				// 金样本里点下载按钮的那次 JS 调用会在 downloads 里落下一个文件；
 				// Go 必须在同一个时刻造出它，listdir 的差分才比得出「这是新文件」。
 				fired := false
 				page.afterJS = func(expr string) {
@@ -823,8 +831,12 @@ func TestGenerateFullReplay(t *testing.T) {
 						return
 					}
 					fired = true
-					p := filepath.Join(e.CFG.DownloadDir(), "shot.png")
-					if err := os.WriteFile(p, []byte("PNGBYTES"), 0o644); err != nil {
+					p := filepath.Join(e.CFG.DownloadDir(), c.dl)
+					data := []byte("PNGBYTES")
+					if strings.HasSuffix(c.dl, ".jpg") {
+						data = []byte("JPGDATA")
+					}
+					if err := os.WriteFile(p, data, 0o644); err != nil {
 						page.t.Fatal(err)
 					}
 					ts := time.Unix(1750000000, 0)
@@ -834,7 +846,7 @@ func TestGenerateFullReplay(t *testing.T) {
 				}
 			}
 			e.EnsurePageFn = func(map[string]string, map[string]int, string) (Session, error) { return page, nil }
-			res, err := e.Generate(map[string]string{"a": "1"}, c.prompt, c.expect,
+			res, err := e.Generate(pageCtx(page), map[string]string{"a": "1"}, c.prompt, c.expect,
 				c.timeout, nil, "", nil, c.ref, nil)
 			comparePollCounts(t, sec, page, vc)
 			if want, ok := errText(sec["err"]); ok {
@@ -914,7 +926,7 @@ func TestQuotaReplay(t *testing.T) {
 			page := newReplay(t, g, sec)
 			e, _ := engineWith(t, page)
 			e.EnsurePageFn = func(map[string]string, map[string]int, string) (Session, error) { return page, nil }
-			got, err := e.Quota(map[string]string{"a": "1"}, nil)
+			got, err := e.Quota(pageCtx(page), map[string]string{"a": "1"}, nil, "")
 			if want, ok := errText(sec["err"]); ok {
 				if err == nil || err.Error() != want {
 					t.Fatalf("错误不同:\n py=%q\n go=%v", want, err)

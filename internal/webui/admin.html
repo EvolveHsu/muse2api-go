@@ -969,8 +969,10 @@ function quotaBadge(a){
   if (pct != null) title += `\n周用量：已用 ${pct}%`;
   if (q.extra_left) title += `\n额外代币：剩 ${q.extra_left}（已用 ${q.extra_used_pct ?? '?'}%）`;
   if (q.checked_at) title += `\n查询时间：${fmtTime(q.checked_at)}`;
+  if (q.checked_at && Date.now()/1000 - q.checked_at > 3600) title += '\n额度数据已超过 1 小时，需重新查询';
   const main = pct != null ? `${plan} · 已用 ${pct}%` : plan;
-  const sub = q.extra_left ? `<div class="mono" style="font-size:11px;color:var(--muted);margin-top:2px">+${esc(q.extra_left)}</div>` : '';
+  const age = q.checked_at ? `<div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px">查询 ${ago(q.checked_at)}</div>` : '';
+  const sub = (q.extra_left ? `<div class="mono" style="font-size:11px;color:var(--muted);margin-top:2px">+${esc(q.extra_left)}</div>` : '') + age;
   return `<span class="badge ${cls}" title="${esc(title)}">${esc(main)}</span>${sub}`;
 }
 
@@ -1105,7 +1107,8 @@ async function testAcc(id){
   toast('正在真实打开 muse.ai 校验会话…');
   try{
     const r = await api(`/admin/accounts/${id}/test`, {method:'POST'});
-    toast((r.ok ? '✓ ' : '✗ ') + r.message, r.ok ? 'ok' : 'bad');
+    const quotaStatus = r.quota_error ? `；额度读取失败：${r.quota_error}` : r.quota ? `；额度已刷新：${r.quota.weekly_used_pct ?? '?'}%` : '';
+    toast((r.ok ? '✓ ' : '✗ ') + r.message + quotaStatus, r.ok && !r.quota_error ? 'ok' : 'warn');
     loadPool();
   }catch(e){ toast('测试失败：' + e.message, 'bad'); }
 }

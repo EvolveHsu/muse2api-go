@@ -8,8 +8,7 @@ import (
 	"time"
 )
 
-// Startup 的第一件事：把被重启打断的生图任务判失败。
-// 视频任务不动 —— 结果挂在 muse.ai 侧，重启后按 id 还查得回来，这是 Python 原本的取舍。
+// Startup 的第一件事：把被重启打断的生图/生视频任务判失败（上游 1.6.0 起视频也纳入清理）。
 func TestStartupFailsInterruptedTasks(t *testing.T) {
 	a, _ := testApp(t, "cap-key", time.Unix(1700000000, 0))
 	img := a.Store.CreateTask("image", "猫一")
@@ -23,7 +22,7 @@ func TestStartupFailsInterruptedTasks(t *testing.T) {
 	defer close(stop)
 	a.Startup(stop)
 
-	for _, tid := range []string{img["id"].(string), processing["id"].(string)} {
+	for _, tid := range []string{img["id"].(string), processing["id"].(string), vid["id"].(string)} {
 		task := a.Store.GetTask(tid)
 		if task["status"] != "failed" || task["error"] != "服务重启中断了任务，请重新提交" {
 			t.Errorf("任务 %s 没被打断标记：%v / %v", tid, task["status"], task["error"])
@@ -32,16 +31,13 @@ func TestStartupFailsInterruptedTasks(t *testing.T) {
 	if got := a.Store.GetTask(done["id"].(string)); got["status"] != "completed" {
 		t.Errorf("已完成的任务被改了：%v", got["status"])
 	}
-	if got := a.Store.GetTask(vid["id"].(string)); got["status"] != "queued" {
-		t.Errorf("视频任务不该被重启打断：%v", got["status"])
-	}
 	// 落盘也得跟上，不然重启读回来的还是旧状态。
 	raw, err := os.ReadFile(filepath.Join(a.CFG.DataDir(), "tasks.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if n := strings.Count(string(raw), "服务重启中断了任务"); n != 2 {
-		t.Errorf("落盘里应有 2 条打断说明，实得 %d：%s", n, raw)
+	if n := strings.Count(string(raw), "服务重启中断了任务"); n != 3 {
+		t.Errorf("落盘里应有 3 条打断说明，实得 %d：%s", n, raw)
 	}
 }
 
@@ -73,7 +69,7 @@ func TestStartupGeneratesMissingAPIKey(t *testing.T) {
 }
 
 func TestBrowserLockTracksActivity(t *testing.T) {
-	b := newBrowserLock()
+	b := newBrowserLock(1)
 	if b.busy() {
 		t.Fatal("新建的锁不该被占着")
 	}
@@ -110,7 +106,7 @@ func TestBrowserLockTracksActivity(t *testing.T) {
 }
 
 func TestBrowserLockTryRunIsNonBlocking(t *testing.T) {
-	b := newBrowserLock()
+	b := newBrowserLock(1)
 	inside := make(chan struct{})
 	done := make(chan struct{})
 	go func() {

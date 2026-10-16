@@ -163,6 +163,10 @@ type Config struct {
 	VideoTimeout int
 	ChatTimeout  int
 
+	// 最大并发生成任务数（对应上游 1.6.0 的 MUSE2API_CONCURRENCY，默认 2，下限 1）。
+	// 每个并发任务各自开一个隔离的 Incognito BrowserContext，互不吃对方 cookie。
+	MaxConcurrency int
+
 	// muse.ai 助手会明确拒绝输出"伪工具调用"，强行注入协议反而污染正常回答，
 	// 所以默认只做参数兼容（传 tools 不 422），不注入也不解析。
 	ToolProtocol bool
@@ -204,6 +208,8 @@ func Load() *Config {
 		VideoTimeout: envInt("MUSE2API_VIDEO_TIMEOUT", "600"),
 		ChatTimeout:  envInt("MUSE2API_CHAT_TIMEOUT", "300"),
 
+		MaxConcurrency: maxInt(1, envInt("MUSE2API_CONCURRENCY", "2")),
+
 		ToolProtocol:              envBool("MUSE2API_TOOL_PROTOCOL", "0"),
 		KeepaliveDisabledAccounts: envBool("MUSE2API_KEEPALIVE_DISABLED_ACCOUNTS", "0"),
 
@@ -214,6 +220,14 @@ func Load() *Config {
 		// 所以这条没有可照抄的环境名 —— 线上部署用的是默认值「开」，这里也默认开。
 		AccessLog: envBool("MUSE2API_ACCESS_LOG", "1"),
 	}
+}
+
+// maxInt 对应 Python 的 max(1, ...)：MUSE2API_CONCURRENCY=0 或负数一律夹到 1。
+func maxInt(lo, v int) int {
+	if v < lo {
+		return lo
+	}
+	return v
 }
 
 func (c *Config) DataDir() string      { return filepath.Join(c.BaseDir, "data") }

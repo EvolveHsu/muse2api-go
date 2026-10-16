@@ -481,7 +481,12 @@ func (s *Store) DeleteAccount(aid string) bool {
 }
 
 // PickAccount 选择可用账号：优先复用已预热的健康账号（减少切号重连耗时），每满 15 次或遇错自动轮转。
-func (s *Store) PickAccount(preferredID string, rotate, forceRotate bool, excludeID string) map[string]any {
+// PickAccount 对应上游 1.6.0 的 store.pick_account 新签名：
+// excludeIDs 是「正在被其它并发任务占用」的账号集合（nil = 上游语义里的 None，
+// 空但非 nil 的切片 = 上游语义里的空 set，两者在「全都繁忙」时的返回值不同）；
+// recordUse=false 时只做选择，不更新 last_used/use_count，也不落盘。
+func (s *Store) PickAccount(preferredID string, rotate, forceRotate bool, excludeID string,
+	excludeIDs []string, recordUse bool) map[string]any {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -494,15 +499,35 @@ func (s *Store) PickAccount(preferredID string, rotate, forceRotate bool, exclud
 	if len(live) == 0 {
 		return nil
 	}
-	if excludeID != "" && len(live) > 1 {
-		var filtered []map[string]any
+	blocked := map[string]bool{}
+	for _, id := range excludeIDs {
+		blocked[id] = true
+	}
+	if excludeID != "" {
+		blocked[excludeID] = true
+	}
+	if len(blocked) > 0 {
+		var available []map[string]any
 		for _, a := range live {
-			if a["id"] != excludeID {
-				filtered = append(filtered, a)
+			if !blocked[strOfID(a)] {
+				available = append(available, a)
 			}
 		}
-		if len(filtered) > 0 {
-			live = filtered
+		if len(available) > 0 {
+			live = available
+		} else if excludeIDs != nil {
+			// 并发模式下要求避开所有繁忙账号，但当前无剩余空闲账号。
+			return nil
+		} else if len(live) > 1 {
+			var filtered []map[string]any
+			for _, a := range live {
+				if strOfID(a) != excludeID {
+					filtered = append(filtered, a)
+				}
+			}
+			if len(filtered) > 0 {
+				live = filtered
+			}
 		}
 	}
 
@@ -516,9 +541,11 @@ func (s *Store) PickAccount(preferredID string, rotate, forceRotate bool, exclud
 				if !rotate || stickyN < 15 {
 					s.stickyID = preferredID
 					s.stickyCount = stickyN + 1
-					a["last_used"] = nowFloat()
-					a["use_count"] = posInt(a["use_count"]) + 1
-					_ = s.persistAccounts()
+					if recordUse {
+						a["last_used"] = nowFloat()
+						a["use_count"] = posInt(a["use_count"]) + 1
+						_ = s.persistAccounts()
+					}
 					return a
 				}
 			}
@@ -547,10 +574,17 @@ func (s *Store) PickAccount(preferredID string, rotate, forceRotate bool, exclud
 	acc := candidates[0]
 	s.stickyID, _ = acc["id"].(string)
 	s.stickyCount = 1
-	acc["last_used"] = nowFloat()
-	acc["use_count"] = posInt(acc["use_count"]) + 1
-	_ = s.persistAccounts()
+	if recordUse {
+		acc["last_used"] = nowFloat()
+		acc["use_count"] = posInt(acc["use_count"]) + 1
+		_ = s.persistAccounts()
+	}
 	return acc
+}
+
+func strOfID(a map[string]any) string {
+	v, _ := a["id"].(string)
+	return v
 }
 
 // isFalse 对应 Python 的 `x is False`（None 不算 False）。
@@ -775,14 +809,14 @@ func (s *Store) UpdateTask(tid string, kw map[string]any) map[string]any {
 }
 
 // FailInterruptedTasks 对应 app.py 的 @app.on_event("startup") 里那段循环：
-// 进程重启时还挂在 queued/processing 的生图任务永远等不到结果（队列是内存态的），
+// 进程重启时还挂在 queued/processing 的任务永远等不到结果（工作线程是内存态的），
 // 当场判失败落盘，客户端才会看到「请重新提交」而不是一直 pending。
-// 只处理 kind=="image"：视频任务的结果挂在 muse.ai 侧，重启后按 id 还能查回来。
+// 上游 1.6.0 起视频任务也纳入清理（此前只清 image）。
 func (s *Store) FailInterruptedTasks(message string) int {
 	var ids []string
 	s.mu.Lock()
 	for tid, t := range s.tasks {
-		if t["kind"] != "image" {
+		if t["kind"] != "image" && t["kind"] != "video" {
 			continue
 		}
 		switch t["status"] {
@@ -876,3 +910,17 @@ func (s *Store) listTasksLocked(limit int) []map[string]any {
 
 // Accounts 暴露内部切片仅供测试与迁移使用。
 func (s *Store) Accounts() []map[string]any { return s.accounts }
+
+// HasLiveAccounts 对应上游 AccountPoolManager.acquire() 里那句
+// `live = [a for a in self.store.accounts if a.get("enabled", True) and a.get("cookies")]`
+// 的判空：一个可路由的账号都没有时要直接报「没有可用账号」，而不是等超时。
+func (s *Store) HasLiveAccounts() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for _, a := range s.accounts {
+		if enabledIs(a, true) && truthy(a["cookies"]) {
+			return true
+		}
+	}
+	return false
+}

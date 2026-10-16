@@ -50,7 +50,7 @@ func runGoldenSequence(t *testing.T, dir string) (stats map[string]any, pickedSa
 		"cookies_exp": map[string]any{"hatch_vml": 1700172800},
 		"quota":       map[string]any{"plan": "Free plan", "weekly_used_pct": 12},
 	})
-	picked := s.PickAccount(a1["id"].(string), true, false, "")
+	picked := s.PickAccount(a1["id"].(string), true, false, "", nil, true)
 	t1 := s.CreateTask("image", "画一只猫")
 	s.UpdateTask(t1["id"].(string), map[string]any{
 		"status": "completed",

@@ -62,13 +62,14 @@ type HTTPClient interface {
 
 // RenewResult 对应 renew_session_http 返回的 dict，键名与 JSON 契约一致。
 type RenewResult struct {
-	OK         bool              `json:"ok"`
-	Status     string            `json:"status"`
-	VMID       string            `json:"vm_id"`
-	VMState    string            `json:"vm_state"`
-	WakeOK     bool              `json:"wake_ok"`
-	Cookies    map[string]string `json:"cookies"`
-	CookiesExp map[string]int    `json:"cookies_exp"`
+	OK            bool              `json:"ok"`
+	Status        string            `json:"status"`
+	VMID          string            `json:"vm_id"`
+	VMState       string            `json:"vm_state"`
+	WakeOK        bool              `json:"wake_ok"`
+	WakeRequested bool              `json:"wake_requested"`
+	Cookies       map[string]string `json:"cookies"`
+	CookiesExp    map[string]int    `json:"cookies_exp"`
 }
 
 // CookieEntry 对应 read_cookies 返回的 {name: {"value":..., "expires":...}}。

@@ -14,7 +14,7 @@
 |---|---|
 | 原始项目 | https://github.com/czg86389-hub/muse2api |
 | 上游许可 | MIT（`LICENSE` 是上游原文照抄，见 `NOTICE` 的派生说明） |
-| 移植基线 | 上游 `2374061`（1.5.3）起步，已同步到 `42ee039`（1.5.4） |
+| 移植基线 | 上游 `2374061`（1.5.3）起步，已同步到上游 `v1.6.1`（`662f51a`）—— 含 1.6.0 的多账号并发改造 |
 | 本仓库 | Go 移植版，不含上游 Python 源码 |
 
 移植方式刻意避免"照着读懂再手写"：注入浏览器的 JavaScript 由 `tools/gen_js.mjs` 从部署中的 `engine.py` 用 AST **程序化抽取**成 `internal/engine/js.go`；管理面板 HTML、`/openapi.json`、`oauth2-redirect.html` 是从线上抓的**字节快照**（`internal/webui/`）。这些东西不是重写的，所以不会"看着差不多但行为差一点"。
@@ -52,7 +52,7 @@ curl -X POST http://<host>:<port>/v1/videos/generations \
   -d '{"prompt":"红球在白色桌面上弹起一次","duration":6,"async":true}'
 ```
 
-> `duration` / `size` / `aspect_ratio` 这些参数是**拼进提示词**交给 muse.ai 的（例如 `时长严格为 2 秒`），真正的产出由对方模型决定。生成视频时如果 muse.ai 只渲染出封面静帧，本服务会照上游语义返回 `kind:"image"` 的 `.jpg` —— 需要必须出片的客户端应按 `kind` 判失败。
+> `duration` / `size` / `aspect_ratio` 这些参数是**拼进提示词**交给 muse.ai 的（例如 `时长严格为 2 秒`），真正的产出由对方模型决定。上游 1.6.0 起视频任务不再用封面静帧兜底：只认真实视频源，提取/下载回来的成品如果是图片，任务会明确报错（`期望生成视频…拒绝以图片冒充视频交付`），而不是交出 `.jpg`。
 
 ---
 
@@ -63,7 +63,7 @@ curl -X POST http://<host>:<port>/v1/videos/generations \
 `Dockerfile` 是两阶段的：builder 用官方 `golang` 镜像把唯一的入口命令静态编出来（`CGO_ENABLED=0`，运行时不依赖 glibc 之外的东西），runtime 阶段只留二进制 + chromium。**clone 下来直接构建就行，宿主机不用装 Go。**
 
 ```bash
-docker build -t muse2api-go:1.5.4 .
+docker build -t muse2api-go:1.6.1 .
 ```
 
 运行阶段基于 `debian:bookworm-slim` + 发行版自带的 `chromium`（**与上游同一发行版、同一浏览器包**，否则 DOM 行为不可比；换 chromium 版本等于换了被测对象）。
@@ -73,7 +73,7 @@ docker build -t muse2api-go:1.5.4 .
 ```bash
 docker run -d --name muse2api-go --restart unless-stopped --init \
   -p 8080:18610 -v $PWD/data-go:/app/data --shm-size=2gb \
-  -e MUSE2API_KEY=<你的密钥> muse2api-go:1.5.4
+  -e MUSE2API_KEY=<你的密钥> muse2api-go:1.6.1
 ```
 
 三个参数都不是可选的装饰：
@@ -118,7 +118,7 @@ curl -s -H "Authorization: Bearer $MUSE2API_KEY" localhost:8080/v1/models
 
 ## 配置
 
-环境变量与上游同名同语义，下面是本移植版**新增**或最常碰的几条（完整清单见 `internal/config/config.go`，共 21 个）：
+环境变量与上游同名同语义，下面是本移植版**新增**或最常碰的几条（完整清单见 `internal/config/config.go`，共 22 个）：
 
 | 变量 | 默认 | 说明 |
 |---|---|---|
@@ -127,6 +127,7 @@ curl -s -H "Authorization: Bearer $MUSE2API_KEY" localhost:8080/v1/models
 | `MUSE2API_WARM_TAB` | `0` | **Go 版新增**：`1` 恢复上游"常驻一个热标签页"的行为（内存换冷启动） |
 | `MUSE2API_ACCESS_LOG` | `1` | **Go 版新增**：每个请求打一行 uvicorn 同格式日志，`0` 关掉 |
 | `MUSE2API_IMAGE_TIMEOUT` / `VIDEO_TIMEOUT` / `CHAT_TIMEOUT` | `240` / `600` / `300` | 三类任务的超时 |
+| `MUSE2API_CONCURRENCY` | `2` | **上游 1.6.0**：最大并发生成任务数。每个任务独立 Incognito BrowserContext；同一账号同一时刻只被一个任务占用 |
 | `MUSE2API_PUBLIC_BASE` | 空 | 非空时 `data[].url` 拼成绝对地址，否则回相对路径 `/v1/media/…` |
 | `MUSE2API_CORS_ORIGINS` | `https://muse.ai,https://www.muse.ai` | 与上游同 |
 

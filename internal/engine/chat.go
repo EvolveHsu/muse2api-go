@@ -8,8 +8,8 @@ import (
 )
 
 // agentText 对应 _agent_text()：最后一个助手气泡的文本。
-func (e *Engine) agentText() string {
-	v, err := e.page.JS(agentTextJS, false, 0)
+func (e *Engine) agentText(page Session) string {
+	v, err := page.JS(agentTextJS, false, 0)
 	if err != nil {
 		return ""
 	}
@@ -17,8 +17,8 @@ func (e *Engine) agentText() string {
 }
 
 // agentCount 对应 _agent_count()：JS 返回的是字符串数字，取不到算 0。
-func (e *Engine) agentCount() int {
-	v, err := e.page.JS(agentCountJS, false, 0)
+func (e *Engine) agentCount(page Session) int {
+	v, err := page.JS(agentCountJS, false, 0)
 	if err != nil || !v.Truthy() {
 		return 0
 	}
@@ -30,8 +30,8 @@ func (e *Engine) agentCount() int {
 }
 
 // userCount 对应 _user_count()。
-func (e *Engine) userCount() int {
-	v, err := e.page.JS(userCountJS, false, 0)
+func (e *Engine) userCount(page Session) int {
+	v, err := page.JS(userCountJS, false, 0)
 	if err != nil || !v.Truthy() {
 		return 0
 	}
@@ -43,8 +43,8 @@ func (e *Engine) userCount() int {
 }
 
 // pollChat 对应 _poll_chat()：一次 CDP 同时完成"滚到底 + 读气泡"，异常退化成零值。
-func (e *Engine) pollChat() (int, string, bool) {
-	raw, err := e.page.JS(pollChatJS, false, 0)
+func (e *Engine) pollChat(page Session) (int, string, bool) {
+	raw, err := page.JS(pollChatJS, false, 0)
 	if err != nil || !raw.Truthy() {
 		return 0, "", false
 	}
@@ -64,7 +64,7 @@ func (e *Engine) pollChat() (int, string, bool) {
 // DEVIATION: Python 是 generator，Go 没有等价的惰性迭代，改成回调式：
 // onDelta 每收到一段增量文字就被调用一次；返回 error 对应 Python 的 raise。
 // 调用顺序、CDP 报文与超时判定与 Python 完全一致。
-func (e *Engine) ChatStream(cookies map[string]string, prompt string, expires map[string]int,
+func (e *Engine) ChatStream(ctx *PageCtx, cookies map[string]string, prompt string, expires map[string]int,
 	timeout int, accountID string, stop <-chan struct{}, onDelta func(string) error) error {
 
 	// Python: timeout = int(timeout or getattr(self.cfg, "chat_timeout", 300)) —— 只有 0 算 falsy，
@@ -72,12 +72,13 @@ func (e *Engine) ChatStream(cookies map[string]string, prompt string, expires ma
 	if timeout == 0 {
 		timeout = e.CFG.ChatTimeout
 	}
-	if _, err := e.ensurePage(cookies, expires, accountID); err != nil {
+	if _, err := e.ensurePage(ctx, cookies, expires, accountID); err != nil {
 		return err
 	}
-	e.ResetThread(true)
-	baseAgent, baseText, _ := e.pollChat()
-	if _, err := e.send(prompt); err != nil {
+	page := ctx.Page
+	e.ResetThread(ctx, true)
+	baseAgent, baseText, _ := e.pollChat(page)
+	if _, err := e.send(page, prompt); err != nil {
 		return err
 	}
 
@@ -98,11 +99,11 @@ func (e *Engine) ChatStream(cookies map[string]string, prompt string, expires ma
 			return nil
 		}
 		e.sleep(60 * time.Millisecond)
-		cnt, cur, _ := e.pollChat()
+		cnt, cur, _ := e.pollChat(page)
 		if cur == "" || (cnt <= baseAgent && cur == baseText) {
 			if e.now().Sub(tSent) > 14*time.Second {
 				tail := ""
-				if v, err := e.page.JS(jsChatStreamL893, false, 0); err == nil {
+				if v, err := page.JS(jsChatTail, false, 0); err == nil {
 					tail = v.Str2()
 				}
 				if strings.Contains(tail, "Still sending") || strings.Contains(tail, "Connecting...") {
@@ -135,7 +136,7 @@ func (e *Engine) ChatStream(cookies map[string]string, prompt string, expires ma
 			return nil
 		}
 		e.sleep(60 * time.Millisecond)
-		_, cur, hasStop := e.pollChat()
+		_, cur, hasStop := e.pollChat(page)
 		if cur == "" {
 			continue
 		}
@@ -167,10 +168,10 @@ func (e *Engine) ChatStream(cookies map[string]string, prompt string, expires ma
 }
 
 // Chat 对应 chat()：非流式，把增量拼成完整回复。
-func (e *Engine) Chat(cookies map[string]string, prompt string, expires map[string]int,
+func (e *Engine) Chat(ctx *PageCtx, cookies map[string]string, prompt string, expires map[string]int,
 	timeout int, accountID string) (string, error) {
 	var b strings.Builder
-	err := e.ChatStream(cookies, prompt, expires, timeout, accountID, nil, func(s string) error {
+	err := e.ChatStream(ctx, cookies, prompt, expires, timeout, accountID, nil, func(s string) error {
 		b.WriteString(s)
 		return nil
 	})
