@@ -127,7 +127,7 @@ Environment variables keep upstream's names and semantics. Below are the ones th
 | `MUSE2API_WARM_TAB` | `0` | **Go-only**: `1` restores upstream's "keep one warm tab resident" behaviour (memory in exchange for cold starts) |
 | `MUSE2API_ACCESS_LOG` | `1` | **Go-only**: one log line per request in uvicorn's exact format; `0` turns it off |
 | `MUSE2API_IMAGE_TIMEOUT` / `VIDEO_TIMEOUT` / `CHAT_TIMEOUT` | `240` / `600` / `300` | timeouts for the three task types |
-| `MUSE2API_CONCURRENCY` | `2` | **upstream 1.6.0**: how many generation tasks may run in parallel. Each task gets its own Incognito BrowserContext; the same account is never used by two tasks at once |
+| `MUSE2API_CONCURRENCY` | `2` | **upstream 1.6.0**: how many generation tasks may run in parallel. Each task gets its own Incognito BrowserContext; the same account is never used by two tasks at once. The code default matches upstream; `deploy/docker-compose.go.yml` pins it to `1`, because each extra lane is another renderer and the browser working set dominates memory |
 | `MUSE2API_PUBLIC_BASE` | empty | when set, `data[].url` becomes absolute; otherwise it returns the relative `/v1/media/…` |
 | `MUSE2API_CORS_ORIGINS` | `https://muse.ai,https://www.muse.ai` | same as upstream |
 
@@ -137,7 +137,7 @@ Environment variables keep upstream's names and semantics. Below are the ones th
 
 ## Deviations from upstream
 
-Differences are annotated in the code with `DEVIATION` comments — `grep -rn DEVIATION internal/ cmd/` returns 24 lines: 19 are the annotations themselves and 5 are pointers to them. Nine of the 19 carry numbers (#1, #4, #13–#17, #19, #20); the numbering comes from the ledger kept while porting. The rest of that ledger is wording, key order and numeric-tolerance level: they do not change how the service is used, so they were left as unnumbered comments.
+Differences are annotated in the code with `DEVIATION` comments — `grep -rn DEVIATION internal/ cmd/` returns 25 lines: 19 are the annotations themselves and 6 are pointers to them. Nine of the 19 carry numbers (#1, #4, #13–#17, #19, #20); the numbering comes from the ledger kept while porting. The rest of that ledger is wording, key order and numeric-tolerance level: they do not change how the service is used, so they were left as unnumbered comments.
 
 1. **Idle browser release + no automatic warm-up** (#1) — the only thing that actually delivers low resident memory; controlled by `MUSE2API_BROWSER_IDLE_MINUTES` / `MUSE2API_WARM_TAB`.
 2. **No in-container git self-update** (#4) — `/admin/repo/pull`, `/admin/repo/push` and `/admin/update/upgrade` return version info and manual update steps only, and the matching panel buttons are greyed out. Upstream's endpoints do "git pull inside the container, then `os._exit(0)` and let the restart policy bring it back"; this port deploys as compiled artifact + docker build, so there is no working copy with a `.git` inside the container and nothing to map onto.

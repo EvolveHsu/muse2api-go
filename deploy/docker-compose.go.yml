@@ -34,9 +34,13 @@ services:
       - MUSE2API_IMAGE_TIMEOUT=240
       - MUSE2API_VIDEO_TIMEOUT=600
       - MUSE2API_CHAT_TIMEOUT=300
-      # Go 版新增的两条（Python 没有）：空闲多久释放浏览器 / 要不要常驻热标签页
+      # Go 版新增的几条（Python 没有）：空闲多久释放浏览器 / 要不要常驻热标签页 / 要不要打 access log
       - MUSE2API_BROWSER_IDLE_MINUTES=30
       - MUSE2API_WARM_TAB=0
+      # 上游 1.6.0 起支持多账号并发生成，代码里的默认值与上游一致（2）。
+      # 这份样例按"压内存"的目标钉成 1：多一路并发就多一个 renderer，而浏览器工作集
+      # 本来就是内存大头。要跟上游完全一致就删掉这行（或改回 2）。
+      - MUSE2API_CONCURRENCY=1
     volumes:
       - ./data-go:/app/data
     shm_size: '2gb' # Chromium 渲染大图时 /dev/shm 不够会直接崩，这条与 Python 版一致
