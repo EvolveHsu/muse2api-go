@@ -259,6 +259,46 @@ out["wait_att_video_poster_short"] = {
     "ret": e._wait_attachment("", 10, "video", base_att_cnt=0), "log": p.log,
     "n_scroll": n_of(p, "scroll"), "n_atts": n_of(p, "atts"), "n_state": n_of(p, "state")}
 
+# 下面三条钉的是「静帧之外」的其余分支，poster_rejected/poster_short 覆盖不到它们。
+
+# 上游自己在 a6617a9 加的回归用例，原样复刻：muse 会先把 data-testid 标成
+# …-presentation-video，而 <video> 还没挂上，_ATT_JS 的 primary 退回封面 img，
+# w/h 还是静帧尺寸。旧写法（"video" in tid）会命中，新写法绝不能命中。
+att_tid_cover = json.dumps([{"tid": ATT + "video", "hasVideo": False,
+                              "src": "https://x/cover.jpg", "vSrc": "",
+                              "iSrc": "https://x/cover.jpg", "w": 1280, "h": 720}])
+FIXED[0] = 1700000000.0
+e, p = fresh({"atts": [att_tid_cover], "state": [st("生成中", True)]})
+out["wait_att_video_tid_cover_rejected"] = {
+    "ret": e._wait_attachment("", 8, "video", base_att_cnt=0), "log": p.log,
+    "n_scroll": n_of(p, "scroll"), "n_atts": n_of(p, "atts"), "n_state": n_of(p, "state"),
+    "secs": FIXED[0] - 1700000000.0}
+
+# 反方向的保险（前面几条全是"必须不命中"，缺一条"必须命中"）：
+# 没有 <video>、hasVideo 也是 False、vSrc 也是空，但 src 是显式视频后缀 —— 这算命中。
+# 少了这条，Go 把 endswith 那一路判掉（视频永不交付）也一样能过全部反向用例。
+att_src_ext = json.dumps([{"tid": ATT + "image", "hasVideo": False,
+                           "src": "https://x/a.webm", "vSrc": "",
+                           "iSrc": "https://x/a.webm", "w": 0, "h": 0}])
+FIXED[0] = 1700000000.0
+e, p = fresh({"atts": [att_src_ext], "state": [st("生成中", True)]})
+out["wait_att_video_src_ext_only"] = {
+    "ret": e._wait_attachment("", 30, "video", base_att_cnt=0), "log": p.log,
+    "n_scroll": n_of(p, "scroll"), "n_atts": n_of(p, "atts"), "n_state": n_of(p, "state"),
+    "secs": FIXED[0] - 1700000000.0}
+
+# src 里带 "video" 字样、但既不是视频后缀也没有 <video>（muse 把静帧存成 …-video.png 这类）。
+# 1.5.x 的 is_match 有 `"video" in src`，会把它当成品；1.6.x 必须全程不命中。
+att_src_word = json.dumps([{"tid": ATT + "image", "hasVideo": False,
+                            "src": "https://x/video-still.png", "vSrc": "",
+                            "iSrc": "https://x/video-still.png", "w": 512, "h": 512}])
+FIXED[0] = 1700000000.0
+e, p = fresh({"atts": [att_src_word], "state": [st("生成中", True)]})
+out["wait_att_video_src_word_only"] = {
+    "ret": e._wait_attachment("", 8, "video", base_att_cnt=0), "log": p.log,
+    "n_scroll": n_of(p, "scroll"), "n_atts": n_of(p, "atts"), "n_state": n_of(p, "state"),
+    "secs": FIXED[0] - 1700000000.0}
+
 # 1.6.0 新增：提示词 30 秒还没送达后端（Still sending）→ 快速失败，不再干等整个超时。
 FIXED[0] = 1700000000.0
 still = json.dumps({"cnt": 0, "txt": "", "stop": True, "tail": "…Still sending your request…"})
@@ -717,10 +757,28 @@ except Exception as exc:  # noqa: BLE001
         "err": type(exc).__name__ + ":" + str(exc), "log": p.log}
 SIDE.pop("dl_clicked", None)
 
+# b19b484 把时限改成 monotonic 绝对 deadline，并在**发送之前**加了一道守卫：
+# 准备阶段（滚动/清附件/取基线/数气泡）一旦把时限吃光，就一个字都不发。
+# timeout=0 时 FakeTime 与 deadline 相等，守卫按 `>=` 判定，因此必然命中；
+# n_send_btn 记成 0 就是"守卫在 _send 之前"的证据 —— 挪到后面去就会红。
+FIXED[0] = 1700000000.0
+e, p = fresh({"reset_nav": [0], "scroll": [1], "clear": [0], "atts": ["[]"],
+              "agent_cnt": ["0"], "focus": [1], "rect": ['{"x":10,"y":20}'], "setter": [3],
+              "send_btn": ["clicked"], "state": [st("生成中", True)], "dump": ["{}"]})
+e.ensure_page = lambda *a, **k: p
+try:
+    e.generate({"a": "1"}, "红球弹起", expect="video", timeout=0)
+    out["generate_prep_timeout"] = {"err": None}
+except Exception as exc:  # noqa: BLE001
+    out["generate_prep_timeout"] = {"err": type(exc).__name__ + ":" + str(exc), "log": p.log,
+                                    "n_send_btn": n_of(p, "send_btn"),
+                                    "n_atts": n_of(p, "atts"), "n_scroll": n_of(p, "scroll")}
+
 # 各轮询场景的超时是调用方传进来的，Go 必须用同一个值，否则循环次数不可能一致。
 for _k, _t in (("wait_att_immediate", 30), ("wait_att_video_stable", 30),
                ("wait_att_video_poster_rejected", 30), ("wait_att_video_poster_short", 10),
-               ("wait_att_still_sending", 60),
+               ("wait_att_video_tid_cover_rejected", 8), ("wait_att_video_src_ext_only", 30),
+               ("wait_att_video_src_word_only", 8), ("wait_att_still_sending", 60),
                ("wait_att_credits", 30), ("wait_att_textonly", 60),
                ("wait_att_media_report", 30), ("wait_att_baseline_excluded", 3),
                ("chat_stream", 30), ("chat_stream_connecting", 30),
@@ -728,6 +786,7 @@ for _k, _t in (("wait_att_immediate", 30), ("wait_att_video_stable", 30),
                ("generate_full_download_fallback", 60),
                ("generate_full_video", 60), ("generate_full_video_ext_from_expect", 60),
                ("generate_full_video_poster_rejected", 60), ("generate_full_video_gives_up", 10),
+               ("generate_prep_timeout", 0),
                ("generate_full_video_image_guard_blob", 60),
                ("generate_full_video_image_guard_download", 60),
                ("generate_timeout", 3),

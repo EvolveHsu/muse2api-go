@@ -2637,6 +2637,667 @@
       "n_state": 17,
       "timeout": 10
     },
+    "wait_att_video_tid_cover_rejected": {
+      "ret": null,
+      "log": [
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-video\", \"hasVideo\": false, \"src\": \"https://x/cover.jpg\", \"vSrc\": \"\", \"iSrc\": \"https://x/cover.jpg\", \"w\": 1280, \"h\": 720}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ]
+      ],
+      "n_scroll": 14,
+      "n_atts": 14,
+      "n_state": 14,
+      "secs": 8.399998664855957,
+      "timeout": 8
+    },
+    "wait_att_video_src_ext_only": {
+      "ret": {
+        "tid": "hatch-chat-attachment-presentation-image",
+        "hasVideo": false,
+        "src": "https://x/a.webm",
+        "vSrc": "",
+        "iSrc": "https://x/a.webm",
+        "w": 0,
+        "h": 0
+      },
+      "log": [
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.webm\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.webm\", \"w\": 0, \"h\": 0}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/a.webm\", \"vSrc\": \"\", \"iSrc\": \"https://x/a.webm\", \"w\": 0, \"h\": 0}]",
+          false
+        ]
+      ],
+      "n_scroll": 2,
+      "n_atts": 2,
+      "n_state": 1,
+      "secs": 1.1999998092651367,
+      "timeout": 30
+    },
+    "wait_att_video_src_word_only": {
+      "ret": null,
+      "log": [
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[{\"tid\": \"hatch-chat-attachment-presentation-image\", \"hasVideo\": false, \"src\": \"https://x/video-still.png\", \"vSrc\": \"\", \"iSrc\": \"https://x/video-still.png\", \"w\": 512, \"h\": 512}]",
+          false
+        ],
+        [
+          "js",
+          13,
+          false,
+          "{\"cnt\": 1, \"txt\": \"\\u751f\\u6210\\u4e2d\", \"stop\": true, \"tail\": \"\"}",
+          false
+        ]
+      ],
+      "n_scroll": 14,
+      "n_atts": 14,
+      "n_state": 14,
+      "secs": 8.399998664855957,
+      "timeout": 8
+    },
     "wait_att_still_sending": {
       "err": "MuseGenerationError:提示词未成功送达后端（Still sending / Delivery not confirmed），终止等待并重试",
       "log": [
@@ -4556,7 +5217,7 @@
         ],
         [
           "wait_timeout",
-          60.0
+          60
         ],
         [
           "extract",
@@ -9260,9 +9921,53 @@
       ],
       "timeout": 60
     },
+    "generate_prep_timeout": {
+      "err": "MuseGenerationError:任务准备超时，已停止发送",
+      "log": [
+        [
+          "js",
+          26,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          12,
+          false,
+          1,
+          false
+        ],
+        [
+          "js",
+          22,
+          false,
+          0,
+          false
+        ],
+        [
+          "js",
+          0,
+          false,
+          "[]",
+          false
+        ],
+        [
+          "js",
+          10,
+          false,
+          "0",
+          false
+        ]
+      ],
+      "n_send_btn": 0,
+      "n_atts": 1,
+      "n_scroll": 1,
+      "timeout": 0
+    },
     "__fallbacks__": {
       "focus": 7,
-      "scroll": 149,
+      "scroll": 179,
       "dump": 3
     }
   },

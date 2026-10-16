@@ -224,6 +224,12 @@ func (e *Engine) WaitAttachment(page Session, baselineSrc string, timeout float6
 			src := att.Src
 			vSrc := att.VSrc
 			// 视频任务禁止用封面 src 冒充成品；无 vSrc 时只接受显式视频后缀的 src。
+			//
+			// 变异验证留下的事实，记下来免得被误读成覆盖缺口：上面那段 is_match 与这里的
+			// checkSrc 是**两道各自都能独立挡住静帧的闸门**——把 "video" in tid 加回去、
+			// 或把 1.5.x 的 15 秒宽限兜底加回来，回放都不会红（另一道照样拦得住），
+			// 要复现旧行为必须同时放宽两道。真正各自唯一能咬住的是：wait_att_video_src_ext_only
+			// 钉住 videoExtRe 这一路（去掉它就红），poster_rejected 钉住拒绝交付。
 			checkSrc := src
 			if expect == "video" {
 				switch {

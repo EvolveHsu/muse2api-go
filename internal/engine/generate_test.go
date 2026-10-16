@@ -353,12 +353,18 @@ func countSend(p *replayPage, method string) int {
 // 先 scroll 再 atts 再 state）。特征对不上时计数会变成 0，用例就红，不会静默放过。
 func pollRule(expr string) string {
 	switch {
-	case strings.Contains(expr, "b.scrollHeight-a.scrollHeight"):
-		return "scroll"
-	case strings.Contains(expr, "seen.add"):
-		return "atts"
 	case strings.Contains(expr, "slice(-700)"):
 		return "state"
+	case strings.Contains(expr, "/发送|send/i.test"):
+		return "send_btn"
+	case strings.Contains(expr, "seen.add"):
+		return "atts"
+	case strings.Contains(expr, `closest('[data-testid^="hatch-chat-attachment`):
+		return "dl_clicked"
+	case strings.Contains(expr, "b.scrollHeight-a.scrollHeight"):
+		return "scroll"
+	case strings.Contains(expr, "async function(src, expect)"):
+		return "extract"
 	}
 	return ""
 }
@@ -372,6 +378,7 @@ func comparePollCounts(t *testing.T, sec map[string]any, page *replayPage, vc *v
 		key  string
 	}{
 		{"scroll", "n_scroll"}, {"atts", "n_atts"}, {"state", "n_state"},
+		{"extract", "n_extract"}, {"dl_clicked", "n_dl"}, {"send_btn", "n_send_btn"},
 	} {
 		v, has := sec[c.key]
 		if !has {
@@ -409,6 +416,13 @@ func TestWaitAttachmentReplay(t *testing.T) {
 		// 1.6.0：视频不再接受封面静帧兜底 —— 长/短超时都必须一无所获。
 		{name: "wait_att_video_poster_rejected", expect: "video"},
 		{name: "wait_att_video_poster_short", expect: "video"},
+		// 上游 a6617a9 自己那条回归：tid 已标 …-presentation-video 但只有 cover.jpg，不得命中。
+		{name: "wait_att_video_tid_cover_rejected", expect: "video"},
+		// 反向保险：上面几条全是"必须不命中"，缺一条"必须命中"。没有 <video>、vSrc 也空，
+		// 但 src 是显式视频后缀 —— 这算命中。缺了它，把 endswith 那一路判掉也能全绿。
+		{name: "wait_att_video_src_ext_only", expect: "video"},
+		// src 里带 "video" 字样但不是视频后缀、也没有 <video>：1.5.x 会当成品交，现在必须不命中。
+		{name: "wait_att_video_src_word_only", expect: "video"},
 		// 提示词 30 秒还没送达后端 → 快速失败。
 		{name: "wait_att_still_sending", expect: "image"},
 	}
@@ -806,14 +820,17 @@ func TestGenerateFullReplay(t *testing.T) {
 		{"generate_full_image_ref", "image", "画猫", "data:image/png;base64,iVBORw0KGgo=", 60, ""},
 		{"generate_full_download_fallback", "image", "画猫", "", 60, "shot.png"},
 		{"generate_timeout", "image", "画猫", "", 3, ""},
-		// 视频三条分支：真出视频 / 只有封面静帧（线上「2 秒视频」的实际结局）/
-		// mime 与 URL 都认不出时由 expect 兜底，外加宽限期没到就必须放弃的那条。
+		// 视频分支：真出视频 / mime 与 URL 都认不出时由 expect 兜底 /
+		// 只有封面静帧（1.6.0 起一律拒绝，不再交付静帧）/ 成品是图片却期望视频 → 拒绝交付
+		// （blob 与 download 各一条）/ 准备阶段吃光时限 → 连提示词都不发。
 		{"generate_full_video", "video", "红球弹起", "", 60, ""},
 		{"generate_full_video_ext_from_expect", "video", "红球弹起", "", 60, ""},
 		{"generate_full_video_poster_rejected", "video", "红球弹起", "", 60, ""},
 		{"generate_full_video_gives_up", "video", "红球弹起", "", 10, ""},
 		{"generate_full_video_image_guard_blob", "video", "红球弹起", "", 60, ""},
 		{"generate_full_video_image_guard_download", "video", "红球弹起", "", 60, "shot.jpg"},
+		// b19b484 的 monotonic 绝对时限 + 发送前守卫：金样本记的 n_send_btn=0 就是证据。
+		{"generate_prep_timeout", "video", "红球弹起", "", 0, ""},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {

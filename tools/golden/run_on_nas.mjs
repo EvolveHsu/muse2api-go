@@ -1,8 +1,16 @@
-// 把 tools/golden 下的某个录制脚本送进 NAS 上的 muse2api 容器里跑（真 Python 当 oracle），
+// 把 tools/golden 下的某个录制脚本送进 NAS 上的 Python 容器里跑（真 Python 当 oracle），
 // 再把 stdout 里 @@JSON@@ 后面那段 base64 落成 testdata 的金样本文件。
 //
 //   export NAS_HOST=… NAS_USER=… NAS_PW=…   # 三个都只进环境，不写文件
 //   node tools/golden/run_on_nas.mjs golden_generate internal/engine/testdata/generate_golden.json
+//
+// 容器名默认 `muse2api`（线上那份 Python）。追上游新版本时不必动线上容器：
+// 用同一个镜像 + `--network none` + 挂载新源码，起一个只做解释器的 oracle 容器，
+// 再用 NAS_CONTAINER 指过去 —— 空账号池加无外网，结构性地保证录制不消耗任何额度。
+//   docker run -d --name muse2api-oracle --init --network none \
+//     -v /path/to/upstream/src:/app -v /path/to/oracle/data:/app/data \
+//     -e MUSE2API_KEY=oracle-local --entrypoint sleep <上游镜像> infinity
+//   NAS_CONTAINER=muse2api-oracle node tools/golden/run_on_nas.mjs …
 //
 // 密码只从环境变量读，绝不落盘。依赖 ssh2（一次性装在临时目录里，用完卸载）：
 //   若 import 'ssh2' 失败，脚本会打印安装指引然后退出。
@@ -51,20 +59,23 @@ function needEnv(key) {
 const NAS_HOST = needEnv('NAS_HOST').replace(/^[a-zA-Z]+:\/\//, '').replace(/\/+$/, '');
 const NAS_USER = needEnv('NAS_USER');
 const NAS_PORT = Number(process.env.NAS_PORT || 22);
+// 每一步都套 timeout：容器里卡住的 python 会变成宿主机上的孤儿进程，之前踩过。
+const ORACLE = (process.env.NAS_CONTAINER || 'muse2api').trim();
+const run1 = (cmd) => `timeout 300 ${cmd}`;
 
 const { Client } = await loadSSH2();
 
 const SRC = path.join('tools', 'golden', scriptName.endsWith('.py') ? scriptName : scriptName + '.py');
 const b64 = fs.readFileSync(SRC).toString('base64');
 const remote = [
-  `printf '%s' '${b64}' | base64 -d > /tmp/gg.py`,
-  'docker cp /tmp/gg.py muse2api:/tmp/gg.py',
-  'rm -f /tmp/gg.py',
+  run1(`printf '%s' '${b64}' | base64 -d > /tmp/gg.py`),
+  run1(`docker cp /tmp/gg.py ${ORACLE}:/tmp/gg.py`),
+  run1('rm -f /tmp/gg.py'),
   // 先 AST 解析：语法错在容器里当场报，不用等整轮跑完才发现
-  `docker exec muse2api python3 -c "import ast;ast.parse(open('/tmp/gg.py',encoding='utf-8').read());print('AST_OK')"`,
-  'docker exec muse2api python3 /tmp/gg.py 2>&1 | tail -c 900000',
-  'docker exec muse2api rm -f /tmp/gg.py',
-  'docker exec muse2api rm -rf /tmp/genc',
+  run1(`docker exec ${ORACLE} python3 -c "import ast;ast.parse(open('/tmp/gg.py',encoding='utf-8').read());print('AST_OK')"`),
+  run1(`docker exec ${ORACLE} python3 /tmp/gg.py 2>&1 | tail -c 900000`),
+  run1(`docker exec ${ORACLE} rm -f /tmp/gg.py`),
+  run1(`docker exec ${ORACLE} rm -rf /tmp/genc`),
 ].join(' && ');
 
 const run = (cmd) => new Promise((res) => {
