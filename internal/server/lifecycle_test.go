@@ -183,7 +183,12 @@ func TestKeepaliveLoopDoesNotWarmByDefault(t *testing.T) {
 	go a.keepaliveLoop(stop)
 	time.Sleep(1200 * time.Millisecond) // 越过循环开头那 1 秒
 	close(stop)
-	time.Sleep(100 * time.Millisecond)
+	// 循环退出的耗时没有上界保证：原来这里睡死 100 毫秒，机器满载时（实测：紧跟在三次
+	// 交叉编译之后跑全量）会偶发误红。改成轮询到条件成立、上限 5 秒 —— 真的留着锁照样红。
+	quit := time.Now().Add(5 * time.Second)
+	for a.browser.busy() && time.Now().Before(quit) {
+		time.Sleep(20 * time.Millisecond)
+	}
 	if a.Engine.BrowserProcUp() {
 		t.Error("默认策略下保活循环不该预热浏览器")
 	}
