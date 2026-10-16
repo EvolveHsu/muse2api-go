@@ -104,6 +104,7 @@ const steps = {
     // --env-file：密钥从 ${REMOTE_DIR}/.env 读（与 Python 侧同一把），重建容器也不再换 key。
     `docker rm -f ${CONTAINER} 2>/dev/null; docker run -d --name ${CONTAINER} --restart unless-stopped --init ` +
       `-p ${HOST_PORT}:18610 -v ${REMOTE_DIR}/data-go:/app/data --shm-size=2gb ` +
+      `--log-opt max-size=100m --log-opt max-file=5 ` +
       `--env-file ${REMOTE_DIR}/.env -e MUSE2API_BROWSER_IDLE_MINUTES=${process.env.BROWSER_IDLE_MINUTES || 30} ` +
       `-e MUSE2API_WARM_TAB=0 ${IMG} && sleep 3 && docker ps --filter name=${CONTAINER} --format "{{.Names}} {{.Status}}"`,
     `K=$(grep -o "^MUSE2API_KEY=.*" ${REMOTE_DIR}/.env | cut -d= -f2); curl -s -m 6 -o /dev/null -w "用 .env 里的 key 打 /admin/accounts: %{http_code}\\n" -H "Authorization: Bearer $K" http://127.0.0.1:${HOST_PORT}/admin/accounts`,
