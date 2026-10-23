@@ -232,7 +232,7 @@
         "json": {
           "vm_id": "vm-1",
           "retry_count": 0,
-          "connect_attempt_id": "d7d8edec-a5e3-4c51-8ea2-1275d5fcb5bc"
+          "connect_attempt_id": "2e5d9891-371f-4da7-bf84-b512fc10480f"
         },
         "timeout": 8
       },
@@ -610,9 +610,8 @@
   "parse_quota_weird": {
     "raw": "Pro plan\n3% used (500M tokens left)\nNever expires\nweekly limit resets on Jan 1",
     "plan": "Pro plan",
+    "weekly_reset": "Jan 1",
     "weekly_used_pct": 3,
-    "extra_used_pct": 3,
-    "extra_left": "500M tokens left",
     "extra_expires": "never",
     "found": true
   },

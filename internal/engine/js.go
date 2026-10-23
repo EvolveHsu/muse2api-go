@@ -7,16 +7,52 @@ const (
 	// engine.py 模块级常量 ATT_SEL
 	attSel = `[data-testid^="hatch-chat-attachment-presentation-"]`
 
-	// engine.py:496
-	clickJS = `(function(){var sel=%s;var b=[...document.querySelectorAll(sel)].filter(function(x){return x.offsetParent!==null;})[0];if(!b)return null;var r=b.getBoundingClientRect();return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});})()`
+	// engine.py:498
+	jsClickPointL498 = `(function(){var sel=%s;var b=[...document.querySelectorAll(sel)].filter(function(x){return x.offsetParent!==null;})[0];if(!b)return null;var r=b.getBoundingClientRect();return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});})()`
 
-	// engine.py:586
+	// engine.py:505
+	jsQuotaSettings = `(() => {
+        const visible = e => e.getClientRects().length > 0
+            && getComputedStyle(e).visibility !== 'hidden';
+        const labels = ['Settings', '設定', '设置'];
+        const b = [...document.querySelectorAll('[data-testid="hatch-dock-more"]')].find(visible)
+            || [...document.querySelectorAll('button,[role=button]')].find(e =>
+                visible(e) && labels.includes((e.getAttribute('aria-label') || '').trim()));
+        if (!b) return null;
+        const r = b.getBoundingClientRect();
+        return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});
+    })()`
+
+	// engine.py:517
+	jsQuotaMenu = `(() => {
+        const visible = e => e.getClientRects().length > 0
+            && getComputedStyle(e).visibility !== 'hidden';
+        const labels = ['Settings', '設定', '设置'];
+        const exact = e => labels.includes((e.textContent || '').trim());
+        // Menu items include a shortcut suffix (for example 設定Ctrl+,).
+        const b = [...document.querySelectorAll('[role=menuitem]')].find(e =>
+            visible(e) && (exact(e) || [...e.querySelectorAll('span,div')].some(exact)))
+            || [...document.querySelectorAll('[role=menu] button,[role=menu] span,[role=menu] div')]
+                .find(e => visible(e) && exact(e));
+        if (!b) return null;
+        const r = b.getBoundingClientRect();
+        return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});
+    })()`
+
+	// engine.py:532
+	jsQuotaDialog = `(() => {
+        const d = [...document.querySelectorAll('[role=dialog],[aria-modal=true]')]
+            .find(e => e.getClientRects().length > 0 && getComputedStyle(e).visibility !== 'hidden');
+        return d ? (d.innerText || '') : '';
+    })()`
+
+	// engine.py:643
 	attJS = `(function(){var list = []; var seen = new Set();function addEl(el, tid){  if(!el || seen.has(el)) return;  seen.add(el);  if(el.closest('form, [class*=chat-user-bubble], [class*="group/msg"]')) return;  var v = el.querySelector('video') || (el.tagName === 'VIDEO' ? el : null);  var img = el.querySelector('img') || (el.tagName === 'IMG' ? el : null);  var isVid = (tid || '').includes('video') || !!v;  var primary = isVid ? (v || img) : (img || v);  var src = primary ? (primary.currentSrc || primary.src || '') : '';  if(src && !seen.has(src)){    seen.add(src);    list.push({      tid: tid || el.getAttribute('data-testid') || (isVid ? 'video' : 'image'),      hasVideo: !!v,      hasImg: !!img,      src: src,      vSrc: v ? (v.currentSrc || v.src || '') : '',      iSrc: img ? (img.currentSrc || img.src || '') : '',      w: primary ? (primary.videoWidth || primary.naturalWidth || 0) : 0,      h: primary ? (primary.videoHeight || primary.naturalHeight || 0) : 0    });  }}document.querySelectorAll('[data-testid^="hatch-chat-attachment-presentation-"]').forEach(function(a){ addEl(a, a.getAttribute('data-testid')); });document.querySelectorAll('div[class*="hatch-agent-bubble-bg"] img, div[class*="hatch-agent-bubble-bg"] video').forEach(function(m){  var s = m.currentSrc || m.src || '';  if(s && !s.includes('avatar') && !s.includes('emoji')) addEl(m.parentElement || m, 'agent-media');});return JSON.stringify(list);})()`
 
-	// engine.py:632
+	// engine.py:689
 	sendStateJS = `(function(){var ta=document.querySelector('textarea');var b=[...document.querySelectorAll('button,[role=button]')].find(function(x){return /send/i.test(x.getAttribute('aria-label')||'');});return JSON.stringify({v:ta?ta.value:'',btn:b?(b.disabled?2:1):0});})()`
 
-	// engine.py:855
+	// engine.py:912
 	extractJS = `
     (async function(src, expect){
       try{
@@ -38,22 +74,22 @@ const (
     })(%s, %s)
     `
 
-	// engine.py:878
+	// engine.py:935
 	agentTextJS = `(function(){var bs=[].slice.call(document.querySelectorAll('div[class*="hatch-chat-groupable-bubble"]'));for(var i=bs.length-1;i>=0;i--){var cs=bs[i].className||'';if(/hatch-agent-bubble-bg/.test(cs))return bs[i].innerText||'';}return '';})()`
 
-	// engine.py:887
+	// engine.py:944
 	userCountJS = `(function(){var bs=[].slice.call(document.querySelectorAll('div[class*="hatch-chat-groupable-bubble"]'));var n=0;for(var i=0;i<bs.length;i++){if(/chat-user-bubble/.test(bs[i].className||''))n++;}return String(n);})()`
 
-	// engine.py:895
+	// engine.py:952
 	agentCountJS = `(function(){var bs=[].slice.call(document.querySelectorAll('div[class*="hatch-chat-groupable-bubble"]'));var n=0;for(var i=0;i<bs.length;i++){if(/hatch-agent-bubble-bg/.test(bs[i].className||''))n++;}return String(n);})()`
 
-	// engine.py:903
+	// engine.py:960
 	pollChatJS = `(function(){var els=[...document.querySelectorAll('*')].filter(function(e){var s=getComputedStyle(e);return (s.overflowY==='auto'||s.overflowY==='scroll')&&e.scrollHeight>e.clientHeight+100;});els.sort(function(a,b){return b.scrollHeight-a.scrollHeight;});if(els[0])els[0].scrollTop=els[0].scrollHeight;var scope=document.querySelector('main,[class*="chat-scroll"],[class*="hatch-chat-scroll"]')||document.body;var bs=[].slice.call(scope.querySelectorAll('div[class*="hatch-chat-groupable-bubble"]')).filter(function(b){return /hatch-agent-bubble-bg/.test(b.className||'');});var nonEmpty=bs.filter(function(b){return ((b.innerText||'').trim().length)>0;});var txt=nonEmpty.length?(nonEmpty[nonEmpty.length-1].innerText||'').trim():'';var stop=!!(document.querySelector('[data-testid="hatch-composer-stop-button"]')||document.querySelector('button[aria-label*="Stop" i]')||document.querySelector('button[aria-label*="停止"]'));return JSON.stringify({cnt:nonEmpty.length,total:bs.length,txt:txt,stop:stop});})()`
 
-	// engine.py:669
+	// engine.py:726
 	setterJS = `(function(t){var ta=document.querySelector('textarea');if(!ta) return 0;ta.focus();var s=Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set;s.call(ta,t);ta.dispatchEvent(new Event('input',{bubbles:true}));ta.dispatchEvent(new Event('change',{bubbles:true}));return (ta.value||'').length;})(%s)`
 
-	// engine.py:1131
+	// engine.py:1188
 	injectJS = `
         (function(b64, mime) {
             try {
@@ -96,13 +132,10 @@ const (
         })(%s, %s)
         `
 
-	// engine.py:520
-	jsQuotaMenuItem = `(function(){var els=[...document.querySelectorAll('div,span,li,[role=menuitem],button')].filter(function(e){return e.offsetParent!==null&&(e.textContent||'').trim()==='Settings'&&e.getAttribute('aria-label')!=='Settings'&&e.children.length<=3;});if(!els.length)return null;var el=els[els.length-1];var r=el.getBoundingClientRect();return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});})()`
-
-	// engine.py:653
+	// engine.py:710
 	jsInputRect = `(function(){var t=document.querySelector('textarea');if(!t)return null;var r=t.getBoundingClientRect();return JSON.stringify({x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2)});})()`
 
-	// engine.py:641
+	// engine.py:698
 	jsFocusInput = `(function(){
                 var ta = document.querySelector('textarea');
                 if (ta) {
@@ -111,13 +144,13 @@ const (
                 }
             })()`
 
-	// engine.py:687
+	// engine.py:744
 	jsSendButton = `(function(){var b=[...document.querySelectorAll('button,[role=button]')].filter(function(x){return x.offsetParent!==null;}).find(function(x){return /发送|send/i.test(x.getAttribute('aria-label')||'')||/发送|send/i.test(x.getAttribute('data-testid')||'')||/send/i.test(x.innerText||'');});if(!b)return 'no-button';if(b.disabled)return 'disabled';b.click();return 'clicked';})()`
 
-	// engine.py:731
+	// engine.py:788
 	jsScrollBottom = `(function(){var els=[...document.querySelectorAll('*')].filter(function(e){var s=getComputedStyle(e);return (s.overflowY==='auto'||s.overflowY==='scroll')&&e.scrollHeight>e.clientHeight+100;});els.sort(function(a,b){return b.scrollHeight-a.scrollHeight;});if(els[0])els[0].scrollTop=els[0].scrollHeight;var s=document.scrollingElement||document.body;s.scrollTop=s.scrollHeight;var el=document.querySelector('textarea');if(el)el.scrollIntoView({block:'end'});return 1;})()`
 
-	// engine.py:1046
+	// engine.py:1103
 	jsDownloadButton = `(function(src){
             var media=[...document.querySelectorAll('img,video')]
                 .find(m=>(m.currentSrc||m.src||'')===src);
@@ -130,13 +163,13 @@ const (
             b.click();return 'ok';
         })(%s)`
 
-	// engine.py:1108
+	// engine.py:1165
 	jsClearAttachments = "(function(){var btns=Array.from(document.querySelectorAll('button[aria-label]')).filter(function(b){var al=b.getAttribute('aria-label')||'';return /remove\\s*attachment|移除附件|删除附件|移除|删除/i.test(al);});btns.forEach(function(b){b.click();});Array.from(document.querySelectorAll('input[type=\"file\"]')).forEach(function(inp){inp.value='';});return btns.length;})()"
 
-	// engine.py:1186
+	// engine.py:1243
 	jsAttachConfirm = "(function(){\n                var btns = Array.from(document.querySelectorAll('button[aria-label]'));\n                var hasRemove = btns.some(function(b){\n                    return /remove\\s*attachment|移除附件|删除附件/i.test(b.getAttribute('aria-label') || '');\n                });\n                if (hasRemove) return 'remove';\n                // 兜底：composer 内出现附件缩略图（img/video）\n                var ov = document.querySelector('[data-testid=\"hatch-composer-placeholder-overlay\"]');\n                var composer = ov ? (ov.closest('form') || ov.parentElement.parentElement.parentElement) : null;\n                if (composer) {\n                    var media = composer.querySelectorAll('img, video');\n                    if (media.length > 0) return 'thumb';\n                }\n                return '';\n                })()"
 
-	// engine.py:366
+	// engine.py:368
 	jsWaitWsReady = `(function(){
                     if (document.readyState !== 'complete') return 'loading';
                     if (!document.querySelector('textarea')) return 'no-ta';
@@ -149,7 +182,7 @@ const (
                     return 'ready';
                 })()`
 
-	// engine.py:390
+	// engine.py:392
 	jsResetThread = `(function(forChat){
                 var d = document.querySelector('[role="dialog"]');
                 if (d) {
@@ -171,10 +204,7 @@ const (
                 return (window.location.pathname !== '/thread/new') || bubbleCount > 0;
             })(%s)`
 
-	// engine.py:540
-	jsQuotaDialog = `(function(){var d=document.querySelector('[role=dialog],[aria-modal=true]');return d?(d.innerText||''):'';})()`
-
-	// engine.py:815
+	// engine.py:872
 	jsWaitAttachmentState = `(function(){
                     var bs=[].slice.call(document.querySelectorAll('div[class*="hatch-chat-groupable-bubble"]'))
                         .filter(function(b){return /hatch-agent-bubble-bg/.test(b.className||'');});
@@ -186,27 +216,28 @@ const (
                     return JSON.stringify({cnt: bs.length, txt: lastTxt, stop: hasStop, tail: tail});
                 })()`
 
-	// engine.py:415
+	// engine.py:417
 	jsResetThreadReady = `(function(){
                         return document.readyState === 'complete'
                             && !!document.querySelector('textarea')
                             && document.querySelectorAll('div[class*="hatch-chat-groupable-bubble"]').length === 0;
                     })()`
 
-	// engine.py:429
+	// engine.py:431
 	jsHasTextarea = `!!document.querySelector('textarea')`
 
-	// engine.py:713
+	// engine.py:770
 	jsInputCleared = `!(document.querySelector('textarea')||{value:''}).value`
 
-	// engine.py:462
+	// engine.py:464
 	jsBodyText = `document.body ? document.body.innerText.slice(0,1200) : ''`
 
-	// engine.py:974
+	// engine.py:1031
 	jsChatTail = `document.body.innerText.slice(-500)`
+
 )
 
-// engine.py:1292 处由字面量与变量拼接而成的模板
+// engine.py:1349 处由字面量与变量拼接而成的模板
 func assembleDebugDump() string {
 	return `JSON.stringify({atts:[...document.querySelectorAll('` +
 		attSel +
@@ -215,33 +246,34 @@ func assembleDebugDump() string {
 
 // jsCatalog 让测试能按名字遍历所有独立常量。
 var jsCatalog = map[string]string{
-	"clickJS":               clickJS,
-	"attJS":                 attJS,
-	"sendStateJS":           sendStateJS,
-	"extractJS":             extractJS,
-	"agentTextJS":           agentTextJS,
-	"userCountJS":           userCountJS,
-	"agentCountJS":          agentCountJS,
-	"pollChatJS":            pollChatJS,
-	"setterJS":              setterJS,
-	"injectJS":              injectJS,
-	"jsQuotaMenuItem":       jsQuotaMenuItem,
-	"jsInputRect":           jsInputRect,
-	"jsFocusInput":          jsFocusInput,
-	"jsSendButton":          jsSendButton,
-	"jsScrollBottom":        jsScrollBottom,
-	"jsDownloadButton":      jsDownloadButton,
-	"jsClearAttachments":    jsClearAttachments,
-	"jsAttachConfirm":       jsAttachConfirm,
-	"jsWaitWsReady":         jsWaitWsReady,
-	"jsResetThread":         jsResetThread,
-	"jsQuotaDialog":         jsQuotaDialog,
+	"jsClickPointL498": jsClickPointL498,
+	"jsQuotaSettings": jsQuotaSettings,
+	"jsQuotaMenu": jsQuotaMenu,
+	"jsQuotaDialog": jsQuotaDialog,
+	"attJS": attJS,
+	"sendStateJS": sendStateJS,
+	"extractJS": extractJS,
+	"agentTextJS": agentTextJS,
+	"userCountJS": userCountJS,
+	"agentCountJS": agentCountJS,
+	"pollChatJS": pollChatJS,
+	"setterJS": setterJS,
+	"injectJS": injectJS,
+	"jsInputRect": jsInputRect,
+	"jsFocusInput": jsFocusInput,
+	"jsSendButton": jsSendButton,
+	"jsScrollBottom": jsScrollBottom,
+	"jsDownloadButton": jsDownloadButton,
+	"jsClearAttachments": jsClearAttachments,
+	"jsAttachConfirm": jsAttachConfirm,
+	"jsWaitWsReady": jsWaitWsReady,
+	"jsResetThread": jsResetThread,
 	"jsWaitAttachmentState": jsWaitAttachmentState,
-	"jsResetThreadReady":    jsResetThreadReady,
-	"jsHasTextarea":         jsHasTextarea,
-	"jsInputCleared":        jsInputCleared,
-	"jsBodyText":            jsBodyText,
-	"jsChatTail":            jsChatTail,
+	"jsResetThreadReady": jsResetThreadReady,
+	"jsHasTextarea": jsHasTextarea,
+	"jsInputCleared": jsInputCleared,
+	"jsBodyText": jsBodyText,
+	"jsChatTail": jsChatTail,
 }
 
 // jsAssembled 是拼接模板的还原函数表，测试逐个与金样本比对。

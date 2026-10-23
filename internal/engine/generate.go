@@ -13,10 +13,11 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	uninorm "golang.org/x/text/unicode/norm"
 )
 
 // extractBytes 对应 extract_bytes()：在页面里 fetch 成 base64 取回字节，失败重试 4 次。
@@ -471,70 +472,80 @@ func uuid4Hex() string {
 	return hex.EncodeToString(b)
 }
 
-// Quota 对应 quota()：打开 Settings 面板读额度。返回结构化结果；读不到时 raise。
-// account_id 传入后额度面板必须绑定到对应账号的页面（上游 1.6.1 的多账号额度隔离修复）。
+// Quota 对应 quota()：打开 Settings 面板读额度。读不到有效用量时报错，
+// 由上层决定是否沿用旧缓存（对应 app.py 的 except 分支）。
 func (e *Engine) Quota(ctx *PageCtx, cookies map[string]string, expires map[string]int,
 	accountID string) (map[string]any, error) {
 	if _, err := e.ensurePage(ctx, cookies, expires, accountID); err != nil {
 		return nil, err
 	}
 	p := ctx.Page
-	e.sleep(time.Second)
-
-	clickExpr, err := pyFormat(clickJS, jsonString(`button[aria-label="Settings"]`))
-	if err != nil {
-		return nil, &ErrGeneration{Msg: err.Error()}
-	}
-	raw, err := p.JS(clickExpr, false, 0)
-	if err != nil {
+	e.dismissQuotaUI(p)
+	defer func() {
+		if err := recover(); err != nil {
+			log.Printf("关闭额度设置面板失败: %v", err)
+			panic(err)
+		}
+		e.dismissQuotaUI(p)
+	}()
+	if err := e.quotaClick(p, jsQuotaSettings, "找不到设置入口（Settings／設定／设置）"); err != nil {
 		return nil, err
 	}
-	if !raw.Truthy() {
-		return nil, &ErrGeneration{Msg: "找不到 Settings 按钮"}
-	}
-	pt, err := readPoint(raw.Str2())
-	if err != nil {
-		return nil, &ErrGeneration{Msg: err.Error()}
-	}
-	e.clickPoint(p, pt[0], pt[1])
-	e.sleep(1600 * time.Millisecond)
-
-	raw, err = p.JS(jsQuotaMenuItem, false, 0)
-	if err != nil {
+	if err := e.quotaClick(p, jsQuotaMenu, "设置菜单未出现可识别的设置项"); err != nil {
 		return nil, err
 	}
-	if !raw.Truthy() {
-		return nil, &ErrGeneration{Msg: "Settings 菜单未弹出"}
-	}
-	pt, err = readPoint(raw.Str2())
-	if err != nil {
-		return nil, &ErrGeneration{Msg: err.Error()}
-	}
-	e.clickPoint(p, pt[0], pt[1])
-	e.sleep(3 * time.Second)
-
-	txt := ""
-	for i := 0; i < 6; i++ {
+	deadline := e.now().Add(12 * time.Second)
+	for {
 		v, err := p.JS(jsQuotaDialog, false, 0)
 		if err != nil {
 			return nil, err
 		}
-		txt = v.Str2()
-		if strings.Contains(txt, "Usage") || strings.Contains(txt, "used") {
-			break
+		parsed := parseQuota(v.Str2())
+		if found, _ := parsed["found"].(bool); found {
+			return parsed, nil
 		}
-		e.sleep(1200 * time.Millisecond)
+		if !e.now().Before(deadline) {
+			return nil, &ErrGeneration{Msg: "额度面板未读到有效用量；旧缓存未覆盖"}
+		}
+		e.sleep(200 * time.Millisecond)
 	}
+}
 
-	for _, t := range [2]string{"keyDown", "keyUp"} {
-		if _, err := p.Send("Input.dispatchKeyEvent", map[string]any{
-			"type": t, "key": "Escape", "code": "Escape",
-			"windowsVirtualKeyCode": 27, "nativeVirtualKeyCode": 27}, 0); err != nil {
-			return nil, err
+// quotaClick 对应 _quota_click()：轮询入口按钮，找到就点一下。
+func (e *Engine) quotaClick(p Session, expr, errMsg string) error {
+	deadline := e.now().Add(8 * time.Second)
+	for {
+		raw, err := p.JS(expr, false, 0)
+		if err != nil {
+			return err
 		}
+		if raw.Truthy() {
+			pt, perr := readPoint(raw.Str2())
+			if perr != nil {
+				return &ErrGeneration{Msg: perr.Error()}
+			}
+			e.clickPoint(p, pt[0], pt[1])
+			return nil
+		}
+		if !e.now().Before(deadline) {
+			return &ErrGeneration{Msg: errMsg}
+		}
+		e.sleep(150 * time.Millisecond)
 	}
-	e.sleep(500 * time.Millisecond)
-	return parseQuota(txt), nil
+}
+
+// dismissQuotaUI 对应 _dismiss_quota_ui()：清掉残留的菜单和对话框。
+func (e *Engine) dismissQuotaUI(p Session) {
+	for i := 0; i < 2; i++ {
+		for _, t := range [2]string{"keyDown", "keyUp"} {
+			if _, err := p.Send("Input.dispatchKeyEvent", map[string]any{
+				"type": t, "key": "Escape", "code": "Escape",
+				"windowsVirtualKeyCode": 27, "nativeVirtualKeyCode": 27}, 0); err != nil {
+				panic(err)
+			}
+		}
+		e.sleep(100 * time.Millisecond)
+	}
 }
 
 func readPoint(s string) ([2]int, error) {
@@ -559,50 +570,106 @@ func toIntLike(v any) (int, bool) {
 }
 
 var (
-	planRe      = regexp.MustCompile(`(?i)^(.+?)\s*plan$`)
-	weeklyRe    = regexp.MustCompile(`Weekly limit resets? on (.+)`)
-	pctUsedRe   = regexp.MustCompile(`(\d+)%\s*used`)
-	pctUsedPair = regexp.MustCompile(`(\d+)%\s*used\s*\(([^)]+)\)`)
+	planRe = regexp.MustCompile(`(?i)^.{1,60}?(?:\s+plan|計劃|计划|方案)$`)
+	weeklyRe = regexp.MustCompile(`(?i)Weekly limit resets? on ([^\n]+)`)
+	weeklyReZh = regexp.MustCompile(
+		`(?i)(?:每(?:週|周|星期)|週|周)(?:上限|限額|限额|額度|额度)(?:會|会|將|将)?(?:於|于|在)\s*([^\n]+?)\s*(?:重設|重置)`)
+	extraAtRe = regexp.MustCompile(`(?i)^(?:(?:Additional|Extra)\s+tokens|(?:額外|额外)(?:的)?(?:符元|符記|代幣|代币|令牌|憑證|凭证|tokens))`)
+	pctUsedEn = regexp.MustCompile(`(?i)(\d+(?:\.\d+)?)\s*%\s*(?:used\b|已(?:使)?用)`)
+	pctUsedZh = regexp.MustCompile(`已(?:使)?用\s*(\d+(?:\.\d+)?)\s*%`)
+	neverRe   = regexp.MustCompile(`(?i)Never expires|永不過期|永不过期`)
 )
 
 // parseQuota 对应 _parse_quota()。
 func parseQuota(txt string) map[string]any {
+	normalized := uninorm.NFKC.String(txt)
 	var lines []string
-	for _, ln := range strings.Split(txt, "\n") {
+	for _, ln := range strings.Split(normalized, "\n") {
 		if s := strings.TrimSpace(ln); s != "" {
 			lines = append(lines, s)
 		}
 	}
-	tail := lines
-	if len(tail) > 40 {
-		tail = tail[:40]
+	// 避开 Usage 段之前的账号/资料文本。
+	start := 0
+	for i, ln := range lines {
+		switch strings.ToLower(ln) {
+		case "usage", "用量", "使用量":
+			start = i + 1
+		}
+		if start != 0 {
+			break
+		}
 	}
-	out := map[string]any{"raw": strings.Join(tail, "\n")}
+	lines = lines[start:]
+	end := len(lines)
+	for i, ln := range lines {
+		switch strings.ToLower(ln) {
+		case "language", "语言", "語言":
+			end = i
+		}
+		if end != len(lines) {
+			break
+		}
+	}
+	lines = lines[:end]
+	out := map[string]any{"raw": strings.Join(lines, "\n")}
 	for _, ln := range lines {
 		if planRe.MatchString(ln) {
 			out["plan"] = ln
 			break
 		}
 	}
-	if m := weeklyRe.FindStringSubmatch(txt); m != nil {
+	text := strings.Join(lines, "\n")
+	if m := weeklyRe.FindStringSubmatch(text); m != nil {
+		out["weekly_reset"] = strings.TrimSpace(m[1])
+	} else if m := weeklyReZh.FindStringSubmatch(text); m != nil {
 		out["weekly_reset"] = strings.TrimSpace(m[1])
 	}
-	if m := pctUsedRe.FindStringSubmatch(txt); m != nil {
-		n, _ := strconv.Atoi(m[1])
-		out["weekly_used_pct"] = n
+
+	extraAt := len(lines)
+	for i, ln := range lines {
+		if extraAtRe.MatchString(ln) {
+			extraAt = i
+			break
+		}
 	}
-	if m := pctUsedPair.FindStringSubmatch(txt); m != nil {
-		n, _ := strconv.Atoi(m[1])
-		out["extra_used_pct"] = n
-		out["extra_left"] = strings.TrimSpace(m[2])
+
+	percentage := func(line string) any {
+		m := pctUsedEn.FindStringSubmatch(line)
+		if m == nil {
+			m = pctUsedZh.FindStringSubmatch(line)
+		}
+		if m == nil {
+			return nil
+		}
+		value, perr := strconv.ParseFloat(m[1], 64)
+		if perr != nil || value < 0 || value > 100 {
+			return nil
+		}
+		if value == float64(int(value)) {
+			return int(value)
+		}
+		return value
 	}
-	if strings.Contains(txt, "Never expires") {
+	for _, ln := range lines[:extraAt] {
+		if v := percentage(ln); v != nil {
+			out["weekly_used_pct"] = v
+			break
+		}
+	}
+	for _, ln := range lines[extraAt:] {
+		if v := percentage(ln); v != nil {
+			out["extra_used_pct"] = v
+			if m := regexp.MustCompile(`\(([^)]+)\)`).FindStringSubmatch(ln); m != nil {
+				out["extra_left"] = strings.TrimSpace(m[1])
+			}
+			break
+		}
+	}
+	if neverRe.MatchString(text) {
 		out["extra_expires"] = "never"
 	}
-	_, hasPct := out["weekly_used_pct"]
-	planVal, hasPlan := out["plan"]
-	out["found"] = hasPlan && planVal != "" || hasPct
+	// 只认到用量百分比才算读成功：只有 plan 文本不够，保留旧缓存。
+	_, out["found"] = out["weekly_used_pct"]
 	return out
 }
-
-func sortStrings(s []string) { sort.Strings(s) }

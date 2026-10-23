@@ -10,9 +10,9 @@ Upstream
 - Project: muse2api
 - Repository: https://github.com/czg86389-hub/muse2api
 - Upstream license: MIT (see `LICENSE`), copyright (c) 2026 MUSE2API Authors
-- Ported baseline: upstream `v1.6.1` (`662f51a`). The reference snapshots used
+- Ported baseline: upstream `v1.6.3` (`e2b8936`). The reference snapshots used
   while porting were taken from the deployed container running version 1.5.3
-  (`2374061`), reconciled against 1.5.4 (`42ee039`), and later synced to 1.6.1.
+  (`2374061`), reconciled against 1.5.4 (`42ee039`), and later synced to 1.6.3.
 
 What is derived from upstream
 -----------------------------

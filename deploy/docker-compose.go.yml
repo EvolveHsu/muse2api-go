@@ -18,7 +18,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: muse2api-go:1.6.1
+    image: muse2api-go:1.6.3
     container_name: muse2api-go
     restart: unless-stopped
     # init: true —— 让 docker 自带的最小 init 当 PID 1 负责收尸。

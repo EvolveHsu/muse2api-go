@@ -46,7 +46,7 @@ const HOST = hostOnly(needEnv('NAS_HOST')), USER = needEnv('NAS_USER'), PORT = N
 // NAS_REMOTE_DIR 是构建上下文与 data-go 的落点，默认给一个中性路径；
 // 各家 NAS 的挂载点不同（例如飞牛是 /vol1/1000/docker/…），按需用自己的那个，别写进仓库。
 const REMOTE_DIR = (process.env.NAS_REMOTE_DIR || '/opt/muse2api-go').trim().replace(/\/+$/, '');
-const IMG = 'muse2api-go:1.6.1';
+const IMG = 'muse2api-go:1.6.3';
 const CONTAINER = 'muse2api-go';
 const HOST_PORT = process.env.NAS_HOST_PORT || '8080';
 

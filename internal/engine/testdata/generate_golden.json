@@ -5282,6 +5282,50 @@
       },
       "log": [
         [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
           "js",
           19,
           false,
@@ -5367,9 +5411,75 @@
             "windowsVirtualKeyCode": 27,
             "nativeVirtualKeyCode": 27
           }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
         ]
       ],
       "sends": [
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
         [
           "send",
           "Input.dispatchMouseEvent",
@@ -5435,24 +5545,556 @@
             "windowsVirtualKeyCode": 27,
             "nativeVirtualKeyCode": 27
           }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
         ]
       ]
     },
     "quota_no_button": {
-      "err": "MuseGenerationError:找不到 Settings 按钮",
+      "err": "MuseGenerationError:找不到设置入口（Settings／設定／设置）",
       "log": [
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
         [
           "js",
           19,
           false,
           null,
           false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          19,
+          false,
+          null,
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
         ]
       ]
     },
     "quota_no_menu": {
-      "err": "MuseGenerationError:Settings 菜单未弹出",
+      "err": "MuseGenerationError:设置菜单未出现可识别的设置项",
       "log": [
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
         [
           "js",
           19,
@@ -5488,15 +6130,478 @@
           false,
           null,
           false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "js",
+          20,
+          false,
+          null,
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
         ]
       ]
     },
     "quota_no_text": {
-      "ret": {
-        "raw": "",
-        "found": false
-      },
+      "err": "MuseGenerationError:额度面板未读到有效用量；旧缓存未覆盖",
       "log": [
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
         [
           "js",
           19,
@@ -5596,6 +6701,413 @@
           false,
           "",
           false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "js",
+          21,
+          false,
+          "",
+          false
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyDown",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
+        ],
+        [
+          "send",
+          "Input.dispatchKeyEvent",
+          {
+            "type": "keyUp",
+            "key": "Escape",
+            "code": "Escape",
+            "windowsVirtualKeyCode": 27,
+            "nativeVirtualKeyCode": 27
+          }
         ],
         [
           "send",
@@ -9991,9 +11503,9 @@
     "(function(t){var ta=document.querySelector('textarea');if(!ta) return 0;ta.focus();var s=Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set;s.call(ta,t);ta.dispatchEvent(new Event('input',{bubbles:true}));ta.dispatchEvent(new Event('change',{bubbles:true}));return (ta.value||'').length;})(\"hi\")",
     "document.body.innerText.slice(-500)",
     "JSON.stringify({atts:[...document.querySelectorAll('[data-testid^=\"hatch-chat-attachment-presentation-\"]')].map(function(a){var m=a.querySelector('img,video');return {tid:a.getAttribute('data-testid'),src:m?(m.currentSrc||m.src||'').slice(0,60):''};}),buttons:[...document.querySelectorAll('button,[role=button]')].filter(b=>b.offsetParent!==null).map(b=>b.getAttribute('aria-label')||b.innerText.trim().slice(0,20)).filter(Boolean).slice(-40),tail:document.body.innerText.slice(-500)})",
-    "(function(){var sel=\"button[aria-label=\\\"Settings\\\"]\";var b=[...document.querySelectorAll(sel)].filter(function(x){return x.offsetParent!==null;})[0];if(!b)return null;var r=b.getBoundingClientRect();return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});})()",
-    "(function(){var els=[...document.querySelectorAll('div,span,li,[role=menuitem],button')].filter(function(e){return e.offsetParent!==null&&(e.textContent||'').trim()==='Settings'&&e.getAttribute('aria-label')!=='Settings'&&e.children.length<=3;});if(!els.length)return null;var el=els[els.length-1];var r=el.getBoundingClientRect();return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});})()",
-    "(function(){var d=document.querySelector('[role=dialog],[aria-modal=true]');return d?(d.innerText||''):'';})()",
+    "(() => {\n        const visible = e => e.getClientRects().length > 0\n            && getComputedStyle(e).visibility !== 'hidden';\n        const labels = ['Settings', '設定', '设置'];\n        const b = [...document.querySelectorAll('[data-testid=\"hatch-dock-more\"]')].find(visible)\n            || [...document.querySelectorAll('button,[role=button]')].find(e =>\n                visible(e) && labels.includes((e.getAttribute('aria-label') || '').trim()));\n        if (!b) return null;\n        const r = b.getBoundingClientRect();\n        return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});\n    })()",
+    "(() => {\n        const visible = e => e.getClientRects().length > 0\n            && getComputedStyle(e).visibility !== 'hidden';\n        const labels = ['Settings', '設定', '设置'];\n        const exact = e => labels.includes((e.textContent || '').trim());\n        // Menu items include a shortcut suffix (for example 設定Ctrl+,).\n        const b = [...document.querySelectorAll('[role=menuitem]')].find(e =>\n            visible(e) && (exact(e) || [...e.querySelectorAll('span,div')].some(exact)))\n            || [...document.querySelectorAll('[role=menu] button,[role=menu] span,[role=menu] div')]\n                .find(e => visible(e) && exact(e));\n        if (!b) return null;\n        const r = b.getBoundingClientRect();\n        return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});\n    })()",
+    "(() => {\n        const d = [...document.querySelectorAll('[role=dialog],[aria-modal=true]')]\n            .find(e => e.getClientRects().length > 0 && getComputedStyle(e).visibility !== 'hidden');\n        return d ? (d.innerText || '') : '';\n    })()",
     "(function(){var btns=Array.from(document.querySelectorAll('button[aria-label]')).filter(function(b){var al=b.getAttribute('aria-label')||'';return /remove\\s*attachment|移除附件|删除附件|移除|删除/i.test(al);});btns.forEach(function(b){b.click();});Array.from(document.querySelectorAll('input[type=\"file\"]')).forEach(function(inp){inp.value='';});return btns.length;})()",
     "\n        (function(b64, mime) {\n            try {\n                var byteChars = atob(b64);\n                var byteNumbers = new Array(byteChars.length);\n                for (var i = 0; i < byteChars.length; i++) {\n                    byteNumbers[i] = byteChars.charCodeAt(i);\n                }\n                var byteArray = new Uint8Array(byteNumbers);\n                var blob = new Blob([byteArray], {type: mime});\n                var ext = mime.split('/')[1] || 'png';\n                if (ext === 'jpeg') ext = 'jpg';\n                var file = new File([blob], 'reference_image.' + ext, {type: mime});\n                // 现网 composer 里可能有多个 file input；优先取位于 composer 内的那个\n                var inputs = Array.from(document.querySelectorAll('input[type=\"file\"]'));\n                if (!inputs.length) return JSON.stringify({ok: false, err: 'no-file-input'});\n                var ov = document.querySelector('[data-testid=\"hatch-composer-placeholder-overlay\"]');\n                var composer = ov ? ov.closest('form') : null;\n                var input = null;\n                if (composer) {\n                    input = inputs.find(function(x){ return composer.contains(x); }) || null;\n                }\n                if (!input) {\n                    // 退而求其次：取不在对话气泡里的那个 input\n                    input = inputs.find(function(x){\n                        return !x.closest('[class*=chat-user-bubble], [class*=\"group/msg\"]');\n                    }) || inputs[0];\n                }\n                // 有些版本 accept 为空，补上 image/* 让页面接受本次 File\n                if (!input.getAttribute('accept')) input.setAttribute('accept', 'image/*');\n                var dt = new DataTransfer();\n                dt.items.add(file);\n                input.files = dt.files;\n                input.dispatchEvent(new Event('change', {bubbles: true}));\n                input.dispatchEvent(new Event('input', {bubbles: true}));\n                return JSON.stringify({ok: true});\n            } catch(e) {\n                return JSON.stringify({ok: false, err: String(e)});\n            }\n        })(\"iVBORw0KGgo=\", \"image/png\")\n        ",
     "(function(){\n                var btns = Array.from(document.querySelectorAll('button[aria-label]'));\n                var hasRemove = btns.some(function(b){\n                    return /remove\\s*attachment|移除附件|删除附件/i.test(b.getAttribute('aria-label') || '');\n                });\n                if (hasRemove) return 'remove';\n                // 兜底：composer 内出现附件缩略图（img/video）\n                var ov = document.querySelector('[data-testid=\"hatch-composer-placeholder-overlay\"]');\n                var composer = ov ? (ov.closest('form') || ov.parentElement.parentElement.parentElement) : null;\n                if (composer) {\n                    var media = composer.querySelectorAll('img, video');\n                    if (media.length > 0) return 'thumb';\n                }\n                return '';\n                })()",

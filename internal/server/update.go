@@ -118,6 +118,7 @@ func (a *App) checkUpdate(c *reqCtx) (any, error) {
 
 	remoteVersion := localVersion
 	highlights := toAnyList(localVerObj["highlights"])
+	highlightsEN := toAnyList(localVerObj["highlights_en"])
 	if body, ok := httpGet(a, "https://raw.githubusercontent.com/czg86389-hub/muse2api/main/version.json?t="+
 		strconv.FormatInt(int64(now), 10), 6, nil); ok {
 		var rvj map[string]any
@@ -127,6 +128,12 @@ func (a *App) checkUpdate(c *reqCtx) (any, error) {
 			}
 			if h := toAnyList(rvj["highlights"]); len(h) > 0 {
 				highlights = h
+			}
+			// 远端没有英文版时，仅在版本相同时沿用本地英文说明，否则界面回退中文。
+			if h := toAnyList(rvj["highlights_en"]); len(h) > 0 {
+				highlightsEN = h
+			} else if remoteVersion != localVersion {
+				highlightsEN = nil
 			}
 		}
 	}
@@ -194,7 +201,7 @@ func (a *App) checkUpdate(c *reqCtx) (any, error) {
 		{"remote_sha", remoteSHA}, {"remote_msg", remoteMsg}, {"remote_time", remoteTime},
 		{"has_update", hasUpdate},
 		{"up_to_date", !hasUpdate && (remoteSHA != "" || remoteVersion != "")},
-		{"highlights", highlights}, {"recent_commits", recent},
+		{"highlights", highlights}, {"highlights_en", highlightsEN}, {"recent_commits", recent},
 		{"checked_at", int64(now)},
 	}
 	a.updCache = updateCache{ts: now, data: data}

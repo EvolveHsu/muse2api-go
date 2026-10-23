@@ -1001,10 +1001,10 @@
       "__items__": {
         "files": {
           "__type__": "array",
-          "__n__": 5,
+          "__n__": 7,
           "__first__": {
             "__type__": "str",
-            "__value__": "README.md"
+            "__value__": "_locales/en/messages.json"
           }
         }
       }
@@ -1175,6 +1175,7 @@
         "has_update",
         "up_to_date",
         "highlights",
+        "highlights_en",
         "recent_commits",
         "checked_at"
       ],
@@ -1234,6 +1235,11 @@
             "__type__": "str",
             "__value__": "媒体库新增文件批量选择、一键全选与按需删除功能，有效释放 VPS 磁盘存储空间"
           }
+        },
+        "highlights_en": {
+          "__type__": "array",
+          "__n__": 0,
+          "__first__": null
         },
         "recent_commits": {
           "__type__": "array",
@@ -1301,6 +1307,7 @@
         "has_update",
         "up_to_date",
         "highlights",
+        "highlights_en",
         "recent_commits",
         "checked_at"
       ],
@@ -1361,6 +1368,11 @@
             "__value__": "媒体库新增文件批量选择、一键全选与按需删除功能，有效释放 VPS 磁盘存储空间"
           }
         },
+        "highlights_en": {
+          "__type__": "array",
+          "__n__": 0,
+          "__first__": null
+        },
         "recent_commits": {
           "__type__": "array",
           "__n__": 5,
@@ -1411,8 +1423,8 @@
     "request_body": null,
     "request_raw": null,
     "request_ctype": "",
-    "blob_sha256": "f262e7efe51d34850ec4b6d1326653faea9737bb3881ebc394bc1909c353b1cd",
-    "blob_len": 86100,
+    "blob_sha256": "045c1ec4cf3b7cbec772b9a0ba688eeec317f7e6435505c853a59f2d41a8f22e",
+    "blob_len": 136050,
     "blob_head": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>muse2api · 账号池控制台</title>\n<style>\n  :root{\n    --bg:#0a0e17"
   },
   "admin_page": {
@@ -1427,8 +1439,8 @@
     "request_body": null,
     "request_raw": null,
     "request_ctype": "",
-    "blob_sha256": "f262e7efe51d34850ec4b6d1326653faea9737bb3881ebc394bc1909c353b1cd",
-    "blob_len": 86100,
+    "blob_sha256": "045c1ec4cf3b7cbec772b9a0ba688eeec317f7e6435505c853a59f2d41a8f22e",
+    "blob_len": 136050,
     "blob_head": "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>muse2api · 账号池控制台</title>\n<style>\n  :root{\n    --bg:#0a0e17"
   },
   "openapi": {

@@ -16,7 +16,7 @@ import (
 )
 
 // EssentialCookies 决定账号生死的核心 cookie（与 engine 侧保持一致）。
-var EssentialCookies = []string{"hatch_sess", "hatch_gw", "hatch_vml", "hatch_native_auth_device"}
+var EssentialCookies = []string{"hatch_sess", "hatch_vml", "hatch_native_auth_device"}
 
 // VML_TTL：hatch_vml 固定约 2 天且不因使用而延长，它就是决定账号寿命的那条 cookie。
 // 拿不到它的 expires 时按「导入时间 + 2 天」估算，而不是退回 hatch_native_auth_device

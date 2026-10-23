@@ -45,18 +45,30 @@ func OpenAPIDoc() []byte { return openAPIDoc }
 // OAuth2RedirectHTML 是 /docs/oauth2-redirect 的响应体。
 func OAuth2RedirectHTML() []byte { return oauth2RedirectHTML }
 
-// ExtensionFiles 列扩展目录里的文件名（对应 os.listdir + 只留文件）。
-// 注意：Python 排的是 os.listdir 的结果再 sorted，这里同样按字节序排。
+// ExtensionFiles 递归列扩展目录里的文件（相对路径），按字节序排，
+// 对应 Python 的 walk + sorted：1.6.3 起扩展带 _locales 子目录。
 func ExtensionFiles() []string {
-	entries, err := extensionFS.ReadDir("extension")
-	if err != nil {
+	var out []string
+	var walk func(dir string) error
+	walk = func(dir string) error {
+		entries, err := extensionFS.ReadDir(dir)
+		if err != nil {
+			return err
+		}
+		for _, e := range entries {
+			p := path.Join(dir, e.Name())
+			if e.IsDir() {
+				if err := walk(p); err != nil {
+					return err
+				}
+			} else {
+				out = append(out, strings.TrimPrefix(p, "extension/"))
+			}
+		}
 		return nil
 	}
-	var out []string
-	for _, e := range entries {
-		if !e.IsDir() {
-			out = append(out, e.Name())
-		}
+	if err := walk("extension"); err != nil {
+		return nil
 	}
 	sort.Strings(out)
 	return out

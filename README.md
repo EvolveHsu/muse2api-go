@@ -14,7 +14,7 @@ The goal was **same logic, different language**: routes, status codes, error env
 |---|---|
 | Original project | https://github.com/czg86389-hub/muse2api |
 | Upstream license | MIT (`LICENSE` is upstream's text verbatim; derivation notes in `NOTICE`) |
-| Port baseline | started from upstream `2374061` (1.5.3); synced to upstream `v1.6.1` (`662f51a`) — includes the 1.6.0 multi-account concurrency rework |
+| Port baseline | started from upstream `2374061` (1.5.3); synced to upstream `v1.6.3` (`e2b8936`) — includes the 1.6.0 multi-account concurrency rework and the 1.6.2/1.6.3 quota + i18n updates |
 | This repository | the Go port; contains no upstream Python source |
 
 The port deliberately avoids "read it, understand it, retype it". The JavaScript injected into the browser is **extracted programmatically** from the deployed `engine.py` via AST by `tools/gen_js.mjs`, which generates `internal/engine/js.go`; the admin panel HTML, `/openapi.json` and `oauth2-redirect.html` are **byte snapshots** taken from the running service (`internal/webui/`). None of that was rewritten, so it cannot be "close enough but subtly different".
@@ -63,7 +63,7 @@ curl -X POST http://<host>:<port>/v1/videos/generations \
 `Dockerfile` is two-stage: the builder stage compiles the single entrypoint statically with the official `golang` image (`CGO_ENABLED=0`, so runtime depends on nothing beyond glibc), and the runtime stage keeps only the binary plus chromium. **Clone and build — Go is not needed on the host.**
 
 ```bash
-docker build -t muse2api-go:1.6.1 .
+docker build -t muse2api-go:1.6.3 .
 ```
 
 The runtime image is `debian:bookworm-slim` plus the distribution's own `chromium` — **same distro and same browser package as upstream**, otherwise DOM behaviour is not comparable; changing the chromium version means changing the thing under test.
@@ -73,7 +73,7 @@ The runtime image is `debian:bookworm-slim` plus the distribution's own `chromiu
 ```bash
 docker run -d --name muse2api-go --restart unless-stopped --init \
   -p 8080:18610 -v $PWD/data-go:/app/data --shm-size=2gb \
-  -e MUSE2API_KEY=<your key> muse2api-go:1.6.1
+  -e MUSE2API_KEY=<your key> muse2api-go:1.6.3
 ```
 
 None of those three flags is decoration:

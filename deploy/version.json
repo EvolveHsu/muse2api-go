@@ -1,9 +1,12 @@
 {
-  "version": "1.6.1",
-  "updated_at": "2026-10-16",
+  "version": "1.6.3",
+  "updated_at": "2026-10-23",
   "repo": "https://github.com/czg86389-hub/muse2api",
   "port": "go",
   "highlights": [
+    "跟进上游 1.6.2/1.6.3：额度查询适配新版设置入口（hatch-dock-more），支持中英文/繁简额度面板；读不到有效用量时报错而非误报成功",
+    "跟进上游 1.6.2/1.6.3：核心 cookie 校验收窄为 hatch_sess / hatch_vml / hatch_native_auth_device（hatch_gw 不再必需）",
+    "跟进上游 1.6.3：管理面板与浏览器扩展新增中英文切换；更新面板增加英文更新说明 highlights_en",
     "跟进上游 1.6.0：多账号并发（MUSE2API_CONCURRENCY，默认 2）——每个任务独立 Incognito BrowserContext，同一账号不并发、跨账号可并行",
     "跟进上游 1.6.0：视频只认真实视频源，封面静帧不再冒充成品；提取/下载得到图片时明确报错",
     "跟进上游 1.6.0：提示词 30 秒未送达（Still sending / Delivery not confirmed）快速失败；任务耗时不再包含排队等待",

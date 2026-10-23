@@ -49,6 +49,8 @@ def intern(expr):
 # 于是"分支没被驱动"却看不出问题（上一版就是这么把 state 误判成 agent_cnt 的）。
 RULES = [
     ("data-hatch-shell-hydration-state", "ws_ready"),
+    ("hatch-dock-more", "quota_settings"),             # 1.6.3：Settings 入口（hatch-dock-more 或中英文按钮）
+    ("role=menuitem", "quota_menu"),                   # 1.6.3：设置菜单项（兼容“设定Ctrl+,”等后缀）
     ("block: 'center'", "focus"),                        # _send 第一步：滚进视口并 focus
     ("slice(-700)", "state"),                        # _wait_attachment 的状态探测
     ("cnt:nonEmpty.length,total:bs.length", "state"),  # _POLL_CHAT_JS
@@ -78,7 +80,8 @@ RULES = [
 ]
 
 DEFAULTS = {"focus": 1, "scroll": 1, "has_ta": True, "user_cnt": 0, "agent_cnt": 0, "ws_ready": "ready",
-            "body": "", "tail": "", "dump": "{}", "agent_text": ""}
+            "body": "", "tail": "", "dump": "{}", "agent_text": "",
+            "quota_settings": '{"x":10,"y":20}', "quota_menu": '{"x":30,"y":40}'}
 
 
 def rule_of(expr):
@@ -479,14 +482,14 @@ except Exception as exc:  # noqa: BLE001
     out["generate_lost_file"] = {"err": type(exc).__name__ + ":" + str(exc)}
 
 # ---------------- quota ----------------
-e, p = fresh({"click_pt": ['{"x":10,"y":20}'], "menu_item": ['{"x":30,"y":40}'], "dialog_txt": [
+e, p = fresh({"quota_settings": ['{"x":10,"y":20}'], "quota_menu": ['{"x":30,"y":40}'], "dialog_txt": [
     "Free plan\nWeekly limit resets on Sep 30\n1% used\nAdditional tokens\nNever expires\n0% used (2B tokens left)"]})
 e.ensure_page = lambda *a, **k: p
 q = e.quota({"a": "1"})
 out["quota"] = {"ret": q, "log": p.log, "sends": [x for x in p.log if x[0] == "send"]}
 
 # Settings 按钮找不到 / 菜单没弹出 / 面板文本一直没有 "used"（走完 6 次轮询后 found=False）
-e, p = fresh({"click_pt": [None]})
+e, p = fresh({"quota_settings": [None]})
 e.ensure_page = lambda *a, **k: p
 try:
     e.quota({"a": "1"})
@@ -494,7 +497,7 @@ try:
 except Exception as exc:  # noqa: BLE001
     out["quota_no_button"] = {"err": type(exc).__name__ + ":" + str(exc), "log": p.log}
 
-e, p = fresh({"click_pt": ['{"x":10,"y":20}'], "menu_item": [None]})
+e, p = fresh({"quota_settings": ['{"x":10,"y":20}'], "quota_menu": [None]})
 e.ensure_page = lambda *a, **k: p
 try:
     e.quota({"a": "1"})
@@ -502,10 +505,14 @@ try:
 except Exception as exc:  # noqa: BLE001
     out["quota_no_menu"] = {"err": type(exc).__name__ + ":" + str(exc), "log": p.log}
 
-e, p = fresh({"click_pt": ['{"x":10,"y":20}'], "menu_item": ['{"x":30,"y":40}'],
+e, p = fresh({"quota_settings": ['{"x":10,"y":20}'], "quota_menu": ['{"x":30,"y":40}'],
               "dialog_txt": [""]})
 e.ensure_page = lambda *a, **k: p
-out["quota_no_text"] = {"ret": e.quota({"a": "1"}), "log": p.log}
+try:
+    e.quota({"a": "1"})
+    out["quota_no_text"] = {"err": None}
+except Exception as exc:  # noqa: BLE001
+    out["quota_no_text"] = {"err": type(exc).__name__ + ":" + str(exc), "log": p.log}
 
 # ---------------- _clear_attachments / _attach_image ----------------
 REF = "data:image/png;base64,iVBORw0KGgo="

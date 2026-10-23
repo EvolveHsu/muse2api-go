@@ -21,7 +21,7 @@ import (
 )
 
 // 决定账号生死的核心 cookie（缺失或过期 = 会话失效）。与 store 保持一致，见测试。
-var essentialCookies = []string{"hatch_sess", "hatch_gw", "hatch_vml", "hatch_native_auth_device"}
+var essentialCookies = []string{"hatch_sess", "hatch_vml", "hatch_native_auth_device"}
 
 var loginRe = regexp.MustCompile(`log in|sign in|create an account|登录|use another account`)
 
